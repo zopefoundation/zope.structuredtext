@@ -31,3 +31,4 @@ Consider the following example::
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
