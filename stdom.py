@@ -12,7 +12,7 @@
 ##############################################################################
 """DOM implementation in StructuredText: read-only methods
 
-$Id: stdom.py,v 1.1 2004/02/19 19:46:31 philikon Exp $
+$Id$
 """
 
 string_types = (str, unicode)

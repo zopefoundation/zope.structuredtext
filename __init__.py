@@ -29,5 +29,5 @@ Consider the following example::
   >>> output = HTMLWithImages()(doc, level=1)
   >>> output = DocBook()(doc, level=1)
 
-$Id: __init__.py,v 1.1 2004/02/19 19:46:31 philikon Exp $
+$Id$
 """
