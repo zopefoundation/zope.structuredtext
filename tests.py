@@ -23,7 +23,7 @@ from zope.structuredtext import stng
 from zope.structuredtext.document import Document
 from zope.structuredtext.html import HTML
 
-package_dir = os.path.split(stng.__file__)[0]
+package_dir = os.path.dirname(stng.__file__)
 regressions = os.path.join(package_dir, 'regressions')
 
 files = ['index.stx','Acquisition.stx','ExtensionClass.stx',
