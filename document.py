@@ -11,7 +11,7 @@
 #
 ##############################################################################
 """
-$Id: document.py,v 1.1 2004/02/19 19:46:31 philikon Exp $
+$Id: document.py,v 1.2 2004/02/19 19:55:22 philikon Exp $
 """
 
 import re
@@ -65,11 +65,11 @@ class Document:
 
     def __call__(self, doc):
         if isinstance(doc, string_types):
-            doc=stng.StructuredText(doc)
+            doc = stng.structurize(doc)
             doc.setSubparagraphs(self.color_paragraphs(
                doc.getSubparagraphs()))
         else:
-            doc=stng.StructuredTextDocument(self.color_paragraphs(
+            doc = stng.StructuredTextDocument(self.color_paragraphs(
                doc.getSubparagraphs()))
         return doc
 
