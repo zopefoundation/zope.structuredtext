@@ -127,7 +127,7 @@ class ParentNode:
             n=TextNode(n)
         return n.__of__(self)
 
-#XXX ugh
+
 class NodeWrapper(ParentNode):
     """
     This is an acquisition-like wrapper that provides parent access for
@@ -220,7 +220,6 @@ class Node(ParentNode):
     """
 
     # Get a DOM wrapper with a parent link
-    #XXX ugh
     def __of__(self, parent):
         return NodeWrapper(self, parent)
 

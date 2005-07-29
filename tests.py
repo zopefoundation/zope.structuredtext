@@ -112,7 +112,7 @@ class BasicTests(unittest.TestCase):
         self._test("this is a '\"literal\":http://www.zope.org/.' eh",
         '<code>"literal":http://www.zope.org/.</code>')
 
-    # XXX need unicode tests
+    # TODO need unicode tests
 
 
 def test_suite():
