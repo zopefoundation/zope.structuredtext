@@ -32,3 +32,29 @@ Consider the following example::
 $Id$
 """
 __docformat__ = 'restructuredtext'
+
+import re
+from zope.structuredtext import stng, document, html
+
+def stx2html(aStructuredString, level=1, header=1):
+    st = stng.structurize(aStructuredString)
+    doc = document.DocumentWithImages()(st)
+    return html.HTMLWithImages()(doc, header=header, level=level)
+
+def stx2htmlWithReferences(text, level=1, header=1):
+    text = re.sub(
+        r'[\000\n]\.\. \[([0-9_%s-]+)\]' % letters,
+        r'\n  <a name="\1">[\1]</a>',
+        text)
+
+    text = re.sub(
+        r'([\000- ,])\[(?P<ref>[0-9_%s-]+)\]([\000- ,.:])'   % letters,
+        r'\1<a href="#\2">[\2]</a>\3',
+        text)
+
+    text = re.sub(
+        r'([\000- ,])\[([^]]+)\.html\]([\000- ,.:])',
+        r'\1<a href="\2.html">[\2]</a>\3',
+        text)
+
+    return stx2html(text, level=level, header=header)
