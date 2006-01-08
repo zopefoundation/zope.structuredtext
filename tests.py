@@ -20,8 +20,8 @@ import unittest
 import StringIO
 
 from zope.structuredtext import stng
-from zope.structuredtext.document import Document
-from zope.structuredtext.html import HTML
+from zope.structuredtext.document import Document, DocumentWithImages
+from zope.structuredtext.html import HTML, HTMLWithImages
 
 package_dir = os.path.dirname(stng.__file__)
 regressions = os.path.join(package_dir, 'regressions')
@@ -64,9 +64,13 @@ class BasicTests(unittest.TestCase):
 
     def _test(self, stxtxt, expected):
         doc = stng.structurize(stxtxt)
-        doc = Document()(doc)
-        output = HTML()(doc, level=1)
-        self.failIf(output.find(expected) == -1)
+        doc = DocumentWithImages()(doc)
+        output = HTMLWithImages()(doc, level=1)
+        if not expected in output:
+            print "Text:     ", stxtxt.encode('utf-8')
+            print "Converted:", output.encode('utf-8')
+            print "Expected: ", expected.encode('utf-8')
+            self.fail("'%s' not in result" % expected)        
 
     def testUnderline(self):
         self._test("xx _this is html_ xx",
@@ -112,7 +116,54 @@ class BasicTests(unittest.TestCase):
         self._test("this is a '\"literal\":http://www.zope.org/.' eh",
         '<code>"literal":http://www.zope.org/.</code>')
 
-    # TODO need unicode tests
+    def testLink(self):
+        self._test('"foo":http://www.zope.org/foo/bar',
+                   '<p><a href="http://www.zope.org/foo/bar">foo</a></p>')
+
+        self._test('"foo":http://www.zope.org/foo/bar/%20x',
+                   '<p><a href="http://www.zope.org/foo/bar/%20x">foo</a></p>')
+
+        self._test('"foo":http://www.zope.org/foo/bar?arg1=1&arg2=2',
+                   '<p><a href="http://www.zope.org/foo/bar?arg1=1&arg2=2">foo</a></p>')
+
+        self._test('"foo bar":http://www.zope.org/foo/bar',
+                   '<p><a href="http://www.zope.org/foo/bar">foo bar</a></p>')
+
+        self._test('"[link goes here]":http://www.zope.org/foo/bar',
+                   '<p><a href="http://www.zope.org/foo/bar">[link goes here]</a></p>')
+
+        self._test('"[Dad\'s car]":http://www.zope.org/foo/bar',
+                   '<p><a href="http://www.zope.org/foo/bar">[Dad\'s car]</a></p>')
+
+     
+    def testImgLink(self):
+        self._test('"foo":img:http://www.zope.org/bar.gif',
+                   '<img src="http://www.zope.org/bar.gif" alt="foo" />')
+
+        self._test('"foo":img:http://www.zope.org:8080/bar.gif',
+                   '<img src="http://www.zope.org:8080/bar.gif" alt="foo" />')
+
+        self._test('"foo":img:http://www.zope.org:8080/foo/bar?arg=1',
+                   '<img src="http://www.zope.org:8080/foo/bar?arg=1" alt="foo" />')
+
+        self._test('"foo":img:http://www.zope.org:8080/foo/b%20ar?arg=1',
+                   '<img src="http://www.zope.org:8080/foo/b%20ar?arg=1" alt="foo" />')
+
+        self._test('"foo bar":img:http://www.zope.org:8080/foo/bar',
+                   '<img src="http://www.zope.org:8080/foo/bar" alt="foo bar" />')
+
+        self._test('"[link goes here]":img:http://www.zope.org:8080/foo/bar',
+                   '<img src="http://www.zope.org:8080/foo/bar" alt="[link goes here]" />')
+
+        self._test('"[Dad\'s new car]":img:http://www.zope.org:8080/foo/bar',
+                   '<img src="http://www.zope.org:8080/foo/bar" alt="[Dad\'s new car]" />')
+
+    def TODOtestUnicodeContent(self):
+        # This fails because ST uses the default locale to get "letters"
+        # whereas it should use \w+ and re.U if the string is Unicode.
+        #self._test(u"h\xe9 **y\xe9** xx",
+        #           u"h\xe9 <strong>y\xe9</strong> xx")
+        pass
 
 
 def test_suite():
