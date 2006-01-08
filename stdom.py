@@ -245,14 +245,13 @@ class Node(ParentNode):
         """
         return ()
 
-    def getPreviousSibling(self, type=type, sts=string_types,
-                           getattr=getattr):
+    def getPreviousSibling(self):
         """
         The node immediately preceding this node.  If
         there is no such node, this returns None.
         """
 
-    def getNextSibling(self, type=type, sts=string_types):
+    def getNextSibling(self):
         """
         The node immediately preceding this node.  If
         there is no such node, this returns None.
