@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2006 Zope Corporation and Contributors.
+# Copyright (c) 2004 Zope Corporation and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -11,7 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Setup for zope.structuredtext package
+"""Setup for zope.i18nmessageid package
 
 $Id$
 """
@@ -23,21 +23,19 @@ try:
 except ImportError, e:
     from distutils.core import setup, Extension
 
-setup(name='zope_structuredtext',
-      version='3.2',
-
+setup(name='zope.structuredtext',
+      version='1.0',
       url='http://svn.zope.org/zope.structuredtext',
       license='ZPL 2.1',
-      description='Zope 3 Structured Text',
+      description='XXX',
       author='Zope Corporation and Contributors',
       author_email='zope3-dev@zope.org',
       long_description='',
       
       packages=['zope', 'zope.structuredtext'],
-      package_dir = {'': 'src'},
+      package_dir = {'': os.path.join(os.path.dirname(__file__), 'src')},
 
       namespace_packages=['zope',],
-      tests_require = ['zope_testing'],
       include_package_data = True,
 
       zip_safe = False,
