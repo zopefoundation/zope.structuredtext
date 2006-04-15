@@ -24,7 +24,7 @@ except ImportError, e:
     from distutils.core import setup, Extension
 
 setup(name='zope.structuredtext',
-      version='3.0.0',
+      version='3.0.0.1',
       url='http://svn.zope.org/zope.structuredtext/tags/3.0.0',
       license='ZPL 2.1',
       description='Zope Structured Text Processing',
