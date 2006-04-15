@@ -24,7 +24,7 @@ except ImportError, e:
     from distutils.core import setup, Extension
 
 setup(name='zope.structuredtext',
-      version='1.0',
+      version='3.3-dev',
       url='http://svn.zope.org/zope.structuredtext',
       license='ZPL 2.1',
       description='XXX',
@@ -33,7 +33,7 @@ setup(name='zope.structuredtext',
       long_description='',
       
       packages=['zope', 'zope.structuredtext'],
-      package_dir = {'': os.path.join(os.path.dirname(__file__), 'src')},
+      package_dir = {'': 'src'},
 
       namespace_packages=['zope',],
       include_package_data = True,
