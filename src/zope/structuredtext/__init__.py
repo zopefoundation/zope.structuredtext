@@ -35,6 +35,7 @@ __docformat__ = 'restructuredtext'
 
 import re
 from zope.structuredtext import stng, document, html
+from string import letters
 
 def stx2html(aStructuredString, level=1, header=1):
     st = stng.structurize(aStructuredString)
