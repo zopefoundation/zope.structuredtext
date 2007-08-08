@@ -28,7 +28,7 @@ setup(name='zope.structuredtext',
       author='Zope Corporation and Contributors',
       author_email='zope3-dev@zope.org',
       long_description='',
-      
+
       packages=find_packages('src'),
       package_dir = {'': 'src'},
 
