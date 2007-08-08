@@ -11,7 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Setup for zope.i18nmessageid package
+"""Setup for zope.structuredtext package
 
 $Id$
 """
@@ -33,6 +33,7 @@ setup(name='zope.structuredtext',
       package_dir = {'': 'src'},
 
       namespace_packages=['zope',],
+      install_requires = ['setuptools'],
       include_package_data = True,
 
       zip_safe = False,
