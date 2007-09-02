@@ -1,0 +1,4 @@
+StructuredText
+**************
+
+.. contents::

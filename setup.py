@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2004 Zope Corporation and Contributors.
+# Copyright (c) 2004-2007 Zope Corporation and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -20,21 +20,46 @@ import os
 
 from setuptools import setup, find_packages
 
-setup(name='zope.structuredtext',
-      version = '3.4.0b1',
-      url='http://svn.zope.org/zope.structuredtext',
-      license='ZPL 2.1',
-      description='XXX',
-      author='Zope Corporation and Contributors',
-      author_email='zope3-dev@zope.org',
-      long_description='',
+def read(*rnames):
+    return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
-      packages=find_packages('src'),
-      package_dir = {'': 'src'},
+long_description = (
+    read('README.txt')
+    + '\n' +
+    read('CHANGES.txt')
+    + '\n' +
+    'Detailed Documentation\n'
+    '**********************\n'
+    + '\n' +
+    read('src', 'zope', 'structuredtext', 'STNG.txt')
+    + '\n' +
+    'Download\n'
+    '********\n'
+    )
 
-      namespace_packages=['zope',],
-      install_requires = ['setuptools'],
-      include_package_data = True,
+setup(
+    name='zope.structuredtext',
+    version = '3.4.0',
+    url='http://pypi.python.org/pypi/zope.structuredtext',
+    author='Zope Corporation and Contributors',
+    author_email='zope3-dev@zope.org',
+    license='ZPL 2.1',
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: Zope Public License',
+        'Programming Language :: Python',
+        'Operating System :: OS Independent',
+        'Topic :: Internet :: WWW/HTTP',
+        'Topic :: Software Development',
+        ],
+    description='StructuredText parser',
+    long_description=long_description,
 
-      zip_safe = False,
-      )
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    namespace_packages=['zope',],
+    include_package_data=True,
+    install_requires=['setuptools'],
+    zip_safe=False,
+    )
