@@ -271,7 +271,6 @@
 <p>      If an attribute name is contained in a Python string object,
       rather than a C string object, then the macro <code>Py_FindAttr</code> should
       be used to look up an attribute value.</p>
-</p>
 <h2>    Linking</h2>
 <p>      The extension class mechanism was designed to be useful with
       dynamically linked extension modules.  Modules that implement
@@ -279,7 +278,6 @@
       class library.  The macro <code>PyExtensionClass_Export</code> imports the
       <code>ExtensionClass</code> module and uses objects imported from this module
       to initialize an extension class with necessary behavior.</p>
-</p>
 <h2>    Example: MultiMapping objects</h2>
 <p>      An <a href="MultiMapping.html">example</a>, is provided that illustrates the
       changes needed to convert an existing type to an ExtensionClass.</p>
@@ -412,14 +410,12 @@
         be used to compute an attribute, and calls the function when
         it's <code>__of__</code> method is called:</p>
 <p>          import ExtensionClass</p>
-</p>
 <h5>          class ComputedAttribute(ExtensionClass.Base):</h5>
 <p>            def __init__(self, func): self.func=func</p>
 <p>            def __of__(self, parent): return self.func(parent)</p>
 <p>        Then we can use this class to create computed attributes.  In the
         example below, we create a computed attribute, 'radius':</p>
 <p>          from math import sqrt</p>
-</p>
 <h5>          class Point(ExtensionClass.Base):</h5>
 <p>            def __init__(self, x, y): self.x, self.y = x, y</p>
 <p>            radius=ComputedAttribute(lambda self: sqrt(self.x<strong>2+self.y</strong>2))</p>
@@ -589,10 +585,8 @@
 
 <ul>
 <li>Sub-classing extension classes in Python,</li>
-</p>
 <li>Construction of extension class instances by calling extension
         classes,</li>
-</p>
 <li>Extension classes to provide meta-data, such as unbound methods
         and their documentation string.</li>
 

@@ -155,13 +155,16 @@ class HTML:
             if c.getNodeName() in self.paragraph_nestable:
                 if not in_p:
                     output('<p>')
+                    in_p = True
                 self.dispatch(c, level, output)
             else:
-                output('</p>\n')
-                in_p = False
+                if in_p:
+                    output('</p>\n')
+                    in_p = False
                 self.dispatch(c, level, output)
         if in_p:
             output('</p>\n')
+            in_p = False
 
     def link(self, doc, level, output):
         output('<a href="%s">' % doc.href)
