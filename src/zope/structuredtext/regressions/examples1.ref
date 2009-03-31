@@ -4,12 +4,13 @@
 </head>
 <body>
 <h1>Test</h1>
-<p>  For instance:
+<p>  For instance:</p>
+
 <pre>
     &lt;table border="0"&gt;
       &lt;tr&gt;&lt;td&gt;blabla&lt;/td&gt;&lt;/tr&gt;
     &lt;/table&gt;
 </pre>
-</p>
 </body>
 </html>
+

@@ -11,7 +11,8 @@
   object, the encapsulated mapping objects are searched until an
   object is found.</p>
 <p>  Consider an implementation of a MultiMapping extension type,
-  without use of the extension class mechanism:
+  without use of the extension class mechanism:</p>
+
 <pre>
     #include "Python.h"
 
@@ -170,7 +171,6 @@
            Py_FatalError("can't initialize module MultiMapping");
     }
 </pre>
-</p>
 <p>  This module defines an extension type, <code>MultiMapping</code>, and exports a
   module function, <code>MultiMapping</code>, that creates <code>MultiMapping</code>
   Instances. The type provides two methods, <code>push</code>, and <code>pop</code>, for
@@ -179,7 +179,8 @@
   and subscript operators but not mapping a subscript assignment
   operator.</p>
 <p>  Now consider an extension class implementation of MultiMapping
-  objects:
+  objects:</p>
+
 <pre>
     #include "Python.h"
     #include "ExtensionClass.h"
@@ -360,23 +361,23 @@
            Py_FatalError("can't initialize module MultiMapping");
     }
 </pre>
-</p>
 <p>  This version includes <code>ExtensionClass.h</code>.  The two declarations of
   <code>MMtype</code> have been changed from <code>PyTypeObject</code> to <code>PyExtensionClass</code>.
   The <code>METHOD_CHAIN</code> macro has been used to add methods to the end of
   the definition for <code>MMtype</code>.  The module function, newMMobject has
   been replaced by the <code>MMtype</code> method, <code>MM__init__</code>.  Note that this
-  method does not create or return a new object.  Finally, the lines:
+  method does not create or return a new object.  Finally, the lines:</p>
+
 <pre>
     d = PyModule_GetDict(m);
     PyExtensionClass_Export(d,"MultiMapping",MMtype);
 </pre>
-</p>
 <p>  Have been added to both initialize the extension class and to export
   it in the module dictionary.</p>
 <p>  To use this module, compile, link, and import it as with any other
   extension module.  The following python code illustrates the
-  module's use:
+  module's use:</p>
+
 <pre>
     from MultiMapping import MultiMapping
     m=MultiMapping()
@@ -387,13 +388,13 @@
     m['ham']  # returns 4
     m['foo']  # raises a key error
 </pre>
-</p>
 <p>  Creating the <code>MultiMapping</code> object took three steps, one to create
   an empty <code>MultiMapping</code>, and two to add mapping objects to it.  We
   might wish to simplify the process of creating MultiMapping
   objects by providing a constructor that takes source mapping
   objects as parameters.  We can do this by sub-classing MultiMapping
-  in Python:
+  in Python:</p>
+
 <pre>
     from MultiMapping import MultiMapping
     class ExtendedMultiMapping(MultiMapping):
@@ -407,9 +408,9 @@
     m['ham']  # returns 4
     m['foo']  # raises a key error
 </pre>
-</p>
 <p>  Note that the source file included in the ExtensionClass
   distribution has numerous enhancements beyond the version shown in
   this document.</p>
 </body>
 </html>
+

@@ -22,8 +22,21 @@ __metaclass__ = type
 
 class HTML:
 
-    element_types = {
+    paragraph_nestable = {
         '#text': '_text',
+        'StructuredTextLiteral': 'literal',
+        'StructuredTextEmphasis': 'emphasis',
+        'StructuredTextStrong': 'strong',
+        'StructuredTextLink': 'link',
+        'StructuredTextXref': 'xref',
+        'StructuredTextInnerLink':'innerLink',
+        'StructuredTextNamedLink':'namedLink',
+        'StructuredTextUnderline':'underline',
+        'StructuredTextSGML':'sgml', # this might or might not be valid
+        }
+
+    element_types = paragraph_nestable.copy()
+    element_types.update({
         'StructuredTextDocument': 'document',
         'StructuredTextParagraph': 'paragraph',
         'StructuredTextExample': 'example',
@@ -34,18 +47,8 @@ class HTML:
         'StructuredTextDescriptionBody': 'descriptionBody',
         'StructuredTextSection': 'section',
         'StructuredTextSectionTitle': 'sectionTitle',
-        'StructuredTextLiteral': 'literal',
-        'StructuredTextEmphasis': 'emphasis',
-        'StructuredTextStrong': 'strong',
-        'StructuredTextLink': 'link',
-        'StructuredTextXref': 'xref',
-        'StructuredTextInnerLink':'innerLink',
-        'StructuredTextNamedLink':'namedLink',
-        'StructuredTextUnderline':'underline',
         'StructuredTextTable':'table',
-        'StructuredTextSGML':'sgml',
-        }
-
+        })
 
     def dispatch(self, doc, level, output):
         getattr(self, self.element_types[doc.getNodeName()])(doc, level, output)
@@ -147,14 +150,18 @@ class HTML:
 
     def paragraph(self, doc, level, output):
         output('<p>')
+        in_p = True
         for c in doc.getChildNodes():
-            if c.getNodeName() in ['StructuredTextParagraph']:
-                getattr(self, self.element_types[c.getNodeName()])(
-                    c, level, output)
+            if c.getNodeName() in self.paragraph_nestable:
+                if not in_p:
+                    output('<p>')
+                self.dispatch(c, level, output)
             else:
-                getattr(self, self.element_types[c.getNodeName()])(
-                    c, level, output)
-        output('</p>\n')
+                output('</p>\n')
+                in_p = False
+                self.dispatch(c, level, output)
+        if in_p:
+            output('</p>\n')
 
     def link(self, doc, level, output):
         output('<a href="%s">' % doc.href)
@@ -242,7 +249,10 @@ class HTML:
 
 class HTMLWithImages(HTML):
 
-    element_types = HTML.element_types
+    paragraph_nestable = HTML.paragraph_nestable.copy()
+    paragraph_nestable.update({'StructuredTextImage': 'image'})
+    
+    element_types = HTML.element_types.copy()
     element_types.update({'StructuredTextImage': 'image'})
 
     def image(self, doc, level, output):

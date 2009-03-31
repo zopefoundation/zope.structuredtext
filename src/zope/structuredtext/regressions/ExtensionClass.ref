@@ -251,18 +251,19 @@
 
 </ul>
 <p>      where <code>name</code> is the module name and <code>type</code> is the extension class
-      type object.<h2>    Attribute lookup</h2>
+      type object.</p>
+<h2>    Attribute lookup</h2>
 <p>      Attribute lookup is performed by calling the base extension class
       <code>getattr</code> operation for the base extension class that includes C
       data, or for the first base extension class, if none of the base
       extension classes include C data.  <code>ExtensionClass.h</code> defines a
       macro <code>Py_FindAttrString</code> that can be used to find an object's
       attributes that are stored in the object's instance dictionary or
-      in the object's class or base classes:
+      in the object's class or base classes:</p>
+
 <pre>
          v = Py_FindAttrString(self,name);
 </pre>
-</p>
 <p>      where <code>name</code> is a C string containing the attribute name.</p>
 <p>      In addition, a macro is provided that replaces <code>Py_FindMethod</code>
       calls with logic to perform the same sort of lookup that is
@@ -270,6 +271,7 @@
 <p>      If an attribute name is contained in a Python string object,
       rather than a C string object, then the macro <code>Py_FindAttr</code> should
       be used to look up an attribute value.</p>
+</p>
 <h2>    Linking</h2>
 <p>      The extension class mechanism was designed to be useful with
       dynamically linked extension modules.  Modules that implement
@@ -277,10 +279,10 @@
       class library.  The macro <code>PyExtensionClass_Export</code> imports the
       <code>ExtensionClass</code> module and uses objects imported from this module
       to initialize an extension class with necessary behavior.</p>
+</p>
 <h2>    Example: MultiMapping objects</h2>
 <p>      An <a href="MultiMapping.html">example</a>, is provided that illustrates the
       changes needed to convert an existing type to an ExtensionClass.</p>
-</p>
 <h2>  Implementing base extension class constructors</h2>
 <p>    Some care should be taken when implementing or overriding base
     class constructors.  When a Python class overrides a base class
@@ -300,7 +302,8 @@
     This was not done above to simplify the example.</p>
 <h2>  Overriding methods inherited from Python base classes</h2>
 <p>    A problem occurs when trying to overide methods inherited from
-    Python base classes.  Consider the following example:
+    Python base classes.  Consider the following example:</p>
+
 <pre>
       from ExtensionClass import Base
 
@@ -315,7 +318,6 @@
           Spam.__init__(self,name)
           self.favorite_color=favorite_color
 </pre>
-</p>
 <p>    This implementation will fail when an <code>ECSpam</code> object is
     instantiated.  The problem is that <code>ECSpam.__init__</code> calls
     <code>Spam.__init__</code>, and <code>Spam.__init__</code> can only be called with a
@@ -326,7 +328,8 @@
     <code>inheritedAttribute</code> that can be used to obtain an inherited
     attribute that is suitable for calling with an extension class
     instance.  Using the <code>inheritedAttribute</code> method, the above
-    example can be rewritten as:
+    example can be rewritten as:</p>
+
 <pre>
       from ExtensionClass import Base
 
@@ -341,7 +344,6 @@
           ECSpam.inheritedAttribute('__init__')(self,name)
           self.favorite_color=favorite_color
 </pre>
-</p>
 <p>    This isn't as pretty but does provide the desired result.</p>
 <h2>  New class and instance semantics</h2>
 <h3>    Context Wrapping</h3>
@@ -370,7 +372,8 @@
         extension class that defines an <code>__of__</code> method, then when the
         attribute is accessed through an instance, it's <code>__of__</code> method
         will be called to create a bound method.</p>
-<p>        Consider the following example:
+<p>        Consider the following example:</p>
+
 <pre>
           import ExtensionClass
 
@@ -393,7 +396,6 @@
           x=bar()
           hi=x.hi()
 </pre>
-</p>
 <p>        Note that <code>ExtensionClass.Base</code> is a base extension class that
         provides very basic ExtensionClass behavior. </p>
 <p>        When run, this program outputs: <code>a bar was called</code>.</p>
@@ -408,17 +410,19 @@
         computed attributes. First, we define a ComputedAttribute
         class.  a ComputedAttribute is constructed with a function to
         be used to compute an attribute, and calls the function when
-        it's <code>__of__</code> method is called:<p>          import ExtensionClass</p>
+        it's <code>__of__</code> method is called:</p>
+<p>          import ExtensionClass</p>
+</p>
 <h5>          class ComputedAttribute(ExtensionClass.Base):</h5>
 <p>            def __init__(self, func): self.func=func</p>
 <p>            def __of__(self, parent): return self.func(parent)</p>
-</p>
 <p>        Then we can use this class to create computed attributes.  In the
-        example below, we create a computed attribute, 'radius':<p>          from math import sqrt</p>
+        example below, we create a computed attribute, 'radius':</p>
+<p>          from math import sqrt</p>
+</p>
 <h5>          class Point(ExtensionClass.Base):</h5>
 <p>            def __init__(self, x, y): self.x, self.y = x, y</p>
 <p>            radius=ComputedAttribute(lambda self: sqrt(self.x<strong>2+self.y</strong>2))</p>
-</p>
 <h5>        which we can use just like an ordinary attribute:</h5>
 <p>          p=Point(2,2)
           print p.radius</p>
@@ -450,7 +454,8 @@
 <h3>    Method attributes</h3>
 <p>      Methods of ExtensionClass instances can have user-defined
       attributes, which are stored in their associated instances.</p>
-<p>      For example:
+<p>      For example:</p>
+
 <pre>
         class C(ExtensionClass.Base):
 
@@ -467,7 +472,6 @@
 
         print C.f.__roles__ # fails, unbound method
 </pre>
-</p>
 <p>      A bound method attribute is set by setting an attribute in it's
       instance with a name consisting of the concatination of the
       method's <code>__name__</code> attribute and the attribute name.
@@ -581,16 +585,18 @@
     Synchonized classes have also been used in recent products.</p>
 <h2>  Summary</h2>
 <p>    The extension-class mechanism described here provides a way to add
-    class services to extension types.  It allows:
+    class services to extension types.  It allows:</p>
+
 <ul>
 <li>Sub-classing extension classes in Python,</li>
+</p>
 <li>Construction of extension class instances by calling extension
         classes,</li>
+</p>
 <li>Extension classes to provide meta-data, such as unbound methods
         and their documentation string.</li>
 
 </ul>
-</p>
 <p>    In addition, the extension class module provides a relatively
     concise example of the use of mechanisms that were added to Python
     to support MESS <a href="#ref6">[6]</a>, and that were described at the fourth Python

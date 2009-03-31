@@ -13,7 +13,8 @@
   extension base classes that can be used to add acquisition as a
   feature to extension subclasses.  These mix-in classes use the
   context-wrapping feature of ExtensionClasses to implement
-  acquisition. Consider the following example:
+  acquisition. Consider the following example:</p>
+
 <pre>
     import ExtensionClass, Acquisition
 
@@ -39,7 +40,6 @@
 
     a.report() # raises an attribute error
 </pre>
-</p>
 <p>  The class <code>A</code> inherits acquisition behavior from
   <code>Acquisition.Implicit</code>.  The object, <code>a</code>, "has" the color of
   objects <code>c</code> and <code>d</code> when it is accessed through them, but it
@@ -56,21 +56,21 @@
     cannot be found in <code>a</code>.</p>
 <p>    Aquisition wrappers provide access to the wrapped objects
     through the attributes <code>aq_parent</code>, <code>aq_self</code>, <code>aq_base</code>.  
-    In the example above, the expressions:
+    In the example above, the expressions:</p>
+
 <pre>
        'c.a.aq_parent is c'
 </pre>
-</p>
-<p>    and:
+<p>    and:</p>
+
 <pre>
        'c.a.aq_self is a'
 </pre>
-</p>
-<p>    both evaluate to true, but the expression:
+<p>    both evaluate to true, but the expression:</p>
+
 <pre>
        'c.a is a'
 </pre>
-</p>
 <p>    evaluates to false, because the expression <code>c.a</code> evaluates
     to an acquisition wrapper around <code>c</code> and <code>a</code>, not <code>a</code> itself.</p>
 <p>    The attribute <code>aq_base</code> is similar to <code>aq_self</code>.  Wrappers may be
@@ -91,11 +91,11 @@
 <h3>    Explicit Acquisition</h3>
 <p>      When explicit acquisition is used, attributes are not
       automatically obtained from the environment.  Instead, the
-      method <code>aq_aquire</code> must be used, as in:
+      method <code>aq_aquire</code> must be used, as in:</p>
+
 <pre>
         print c.a.aq_acquire('color')
 </pre>
-</p>
 <p>      To support explicit acquisition, an object should inherit
       from the mix-in class <code>Acquisition.Explicit</code>.</p>
 <h3>    Controlled Acquisition</h3>
@@ -107,7 +107,8 @@
 <li>setting all attributes that should be acquired to the special
         value: <code>Acquisition.Acquired</code>.  Setting an attribute to this
         value also allows inherited attributes to be overridden with
-        acquired ones.<p>        For example, in:
+        acquired ones.<p>        For example, in:</p>
+
 <pre>
           class C(Acquisition.Explicit):
              id=1
@@ -115,7 +116,6 @@
              color=Acquisition.Acquired
              __roles__=Acquisition.Acquired
 </pre>
-</p>
 <p>        The <em>only</em> attributes that are automatically acquired from
         containing objects are <code>color</code>, and <code>__roles__</code>.  Note also
         that the <code>__roles__</code> attribute is acquired even though it's
@@ -145,7 +145,8 @@
 </ul>
 <p>      If the filter returns a true object that the object found is
       returned, otherwise, the acquisition search continues.</p>
-<p>      For example, in:
+<p>      For example, in:</p>
+
 <pre>
         from Acquisition import Explicit
 
@@ -174,15 +175,14 @@
 
         print a.b.c.aq_acquire('p', find_nice)
 </pre>
-</p>
 <p>      The filtered acquisition in the last line skips over the first
       attribute it finds with the name <code>p</code>, because the attribute
       doesn't satisfy the condition given in the filter. The output of
-      the last line is:
+      the last line is:</p>
+
 <pre>
         spam(Nice) and I am nice!
 </pre>
-</p>
 <h2>  Acquisition and methods</h2>
 <p>    Python methods of objects that support acquisition can use
     acquired attributes as in the <code>report</code> method of the first example
@@ -196,7 +196,8 @@
     this time.  This is because wrapper objects do not conform to the
     data structures expected by these methods.</p>
 <h2>  Acquiring Acquiring objects</h2>
-<p>    Consider the following example:
+<p>    Consider the following example:</p>
+
 <pre>
       from Acquisition import Implicit
 
@@ -216,7 +217,6 @@
 
       o=a.b.c.x
 </pre>
-</p>
 <p>    The expression <code>o.color</code> might be expected to return <code>"red"</code>. In
     earlier versions of ExtensionClass, however, this expression
     failed.  Acquired acquiring objects did not acquire from the
