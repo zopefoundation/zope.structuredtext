@@ -1,4 +1,10 @@
 
+- html.py should be made to produce valid (x)html, this requires
+
+   i) extending the paragraph_nestable concept to observe all html nesting rules - see http://www.cs.tut.fi/~jkorpela/html/nesting.html
+   
+   ii) html quoting in the _text method.
+
 - better unit tests
 
 - make usage easier
