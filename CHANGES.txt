@@ -1,7 +1,7 @@
 ``zope.structuredtext`` Changelog
 =================================
 
-3.5.0 (unreleased)
+3.5.0 (2010-04-30)
 ------------------
 
 - Updated docs to conform to ZTK / Sphinx usage.

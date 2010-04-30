@@ -36,7 +36,7 @@ long_description = (
 
 setup(
     name='zope.structuredtext',
-    version = '3.5.0dev',
+    version = '3.5.0',
     url='http://pypi.python.org/pypi/zope.structuredtext',
     author='Zope Foundation and Contributors',
     author_email='zope3-dev@zope.org',
