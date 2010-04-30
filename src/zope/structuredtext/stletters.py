@@ -10,8 +10,7 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-"""
-$Id$
+""" Structured text character classes
 """
 
 import string
