@@ -10,8 +10,7 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-"""
-$Id$
+""" Core document model.
 """
 
 import re
@@ -376,7 +375,9 @@ class StructuredTextTable(StructuredTextParagraph):
         """
         for row_index in range(len(self._rows)):
             for column_index in range(len(self._rows[row_index]._columns)):
-                self._rows[row_index]._columns[column_index].setColorizableTexts((texts[0],))
+                self._rows[row_index
+                          ]._columns[column_index
+                                    ].setColorizableTexts((texts[0],))
                 texts = texts[1:]
 
     def _getColorizableTexts(self):
