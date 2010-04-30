@@ -10,13 +10,14 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-"""
+""" Zope structured text markeup
+
 Consider the following example::
 
-  >>> from structuredtext.stng import structurize
-  >>> from structuredtext.document import DocumentWithImages
-  >>> from structuredtext.html import HTMLWithImages
-  >>> from structuredtext.docbook import DocBook
+  >>> from zope.structuredtext.stng import structurize
+  >>> from zope.structuredtext.document import DocumentWithImages
+  >>> from zope.structuredtext.html import HTMLWithImages
+  >>> from zope.structuredtext.docbook import DocBook
 
   We first need to structurize the string and make a full-blown
   document out of it:
@@ -29,18 +30,20 @@ Consider the following example::
   >>> output = HTMLWithImages()(doc, level=1)
   >>> output = DocBook()(doc, level=1)
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
 import re
-from zope.structuredtext import stng, document, html
 from string import letters
 
+from zope.structuredtext.stng import structurize
+from zope.structuredtext.document import DocumentWithImages
+from zope.structuredtext.html import HTMLWithImages
+
 def stx2html(aStructuredString, level=1, header=1):
-    st = stng.structurize(aStructuredString)
-    doc = document.DocumentWithImages()(st)
-    return html.HTMLWithImages()(doc, header=header, level=level)
+    st = structurize(aStructuredString)
+    doc = DocumentWithImages()(st)
+    return HTMLWithImages()(doc, header=header, level=level)
 
 def stx2htmlWithReferences(text, level=1, header=1):
     text = re.sub(
@@ -49,7 +52,7 @@ def stx2htmlWithReferences(text, level=1, header=1):
         text)
 
     text = re.sub(
-        r'([\000- ,])\[(?P<ref>[0-9_%s-]+)\]([\000- ,.:])'   % letters,
+        r'([\000- ,])\[(?P<ref>[0-9_%s-]+)\]([\000- ,.:])' % letters,
         r'\1<a href="#\2">[\2]</a>\3',
         text)
 
