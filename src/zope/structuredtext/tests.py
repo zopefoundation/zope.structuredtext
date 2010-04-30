@@ -10,25 +10,23 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-"""
-$Id$
-"""
-
-import sys
-import os
 import unittest
-import StringIO
 
-from zope.structuredtext import stng
-from zope.structuredtext.document import Document, DocumentWithImages
-from zope.structuredtext.html import HTML, HTMLWithImages
+import os
 
-package_dir = os.path.dirname(stng.__file__)
-regressions = os.path.join(package_dir, 'regressions')
+here = os.path.dirname(__file__)
+regressions = os.path.join(here, 'regressions')
 
-files = ['index.stx','Acquisition.stx','ExtensionClass.stx',
-        'MultiMapping.stx','examples.stx','Links.stx','examples1.stx',
-        'table.stx','InnerLinks.stx']
+files = ['index.stx',
+         'Acquisition.stx',
+         'ExtensionClass.stx',
+         'MultiMapping.stx',
+         'examples.stx',
+         'Links.stx',
+         'examples1.stx',
+         'table.stx',
+         'InnerLinks.stx',
+        ]
 
 def readFile(dirname,fname):
     myfile = open(os.path.join(dirname, fname), "r")
@@ -41,6 +39,8 @@ class StngTests(unittest.TestCase):
     def testDocumentClass(self):
         # testing Document
         # *cough* *cough* this can't be enough...
+        from zope.structuredtext import stng
+        from zope.structuredtext.document import Document
         for f in files:
             doc = Document()
             raw_text = readFile(regressions, f)
@@ -49,6 +49,9 @@ class StngTests(unittest.TestCase):
 
     def testRegressionsTests(self):
         # HTML regression test
+        from zope.structuredtext import stng
+        from zope.structuredtext.document import Document
+        from zope.structuredtext.html import HTML
         for f in files:
             raw_text = readFile(regressions, f)
             doc = stng.structurize(raw_text)
@@ -63,6 +66,9 @@ class StngTests(unittest.TestCase):
 class BasicTests(unittest.TestCase):
 
     def _test(self, stxtxt, expected):
+        from zope.structuredtext import stng
+        from zope.structuredtext.document import DocumentWithImages
+        from zope.structuredtext.html import HTMLWithImages
         doc = stng.structurize(stxtxt)
         doc = DocumentWithImages()(doc)
         output = HTMLWithImages()(doc, level=1)
@@ -257,7 +263,7 @@ class BasicTests(unittest.TestCase):
     def testHeader1(self):
         self._test("Title\n\n    following paragraph", ("<h1>Title</h1>\n<p>    following paragraph</p>"))
 
-    def testHeader1(self):
+    def testHeader1_again(self):
         self._test("""Title
         
             first paragraph
@@ -281,9 +287,3 @@ def test_suite():
     suite.addTest(unittest.makeSuite(StngTests))
     suite.addTest(unittest.makeSuite(BasicTests))
     return suite
-
-def main():
-    unittest.TextTestRunner().run(test_suite())
-
-if __name__ == '__main__':
-    main()
