@@ -11,8 +11,6 @@
 #
 ##############################################################################
 """DOM implementation in StructuredText: read-only methods
-
-$Id$
 """
 
 string_types = (str, unicode)
