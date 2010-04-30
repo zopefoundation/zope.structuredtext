@@ -32,14 +32,6 @@ long_description = (
     read('README.txt')
     + '\n' +
     read('CHANGES.txt')
-    + '\n' +
-    'Detailed Documentation\n'
-    '**********************\n'
-    + '\n' +
-    read('src', 'zope', 'structuredtext', 'STNG.txt')
-    + '\n' +
-    'Download\n'
-    '********\n'
     )
 
 setup(
