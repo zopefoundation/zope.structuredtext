@@ -10,18 +10,37 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-"""
-$Id$
+""" Structured text document parser
 """
 
 import re
 
-import stng
-import stdom
-from stletters import letters, literal_punc, under_punc, \
-     strongem_punc, phrase_delimiters, dbl_quoted_punc
+from zope.structuredtext.stletters import letters
+from zope.structuredtext.stletters import literal_punc
+from zope.structuredtext.stletters import under_punc
+from zope.structuredtext.stletters import strongem_punc
+from zope.structuredtext.stletters import phrase_delimiters
+from zope.structuredtext.stletters import dbl_quoted_punc
+from zope.structuredtext.stng import StructuredTextBullet
+from zope.structuredtext.stng import StructuredTextDescription
+from zope.structuredtext.stng import StructuredTextDocument
+from zope.structuredtext.stng import StructuredTextEmphasis
+from zope.structuredtext.stng import StructuredTextExample
+from zope.structuredtext.stng import StructuredTextImage
+from zope.structuredtext.stng import StructuredTextInnerLink
+from zope.structuredtext.stng import StructuredTextLink
+from zope.structuredtext.stng import StructuredTextNamedLink
+from zope.structuredtext.stng import StructuredTextNumbered
+from zope.structuredtext.stng import StructuredTextLiteral
+from zope.structuredtext.stng import StructuredTextParagraph
+from zope.structuredtext.stng import StructuredTextSGML
+from zope.structuredtext.stng import StructuredTextSection
+from zope.structuredtext.stng import StructuredTextStrong
+from zope.structuredtext.stng import StructuredTextTable
+from zope.structuredtext.stng import StructuredTextUnderline
+from zope.structuredtext.stng import StructuredTextXref
+from zope.structuredtext.stng import structurize
 
-string_types = (str, unicode)
 
 __metaclass__ = type
 
@@ -65,12 +84,12 @@ class Document:
         ]
 
     def __call__(self, doc):
-        if isinstance(doc, string_types):
-            doc = stng.structurize(doc)
+        if isinstance(doc, basestring):
+            doc = structurize(doc)
             doc.setSubparagraphs(self.color_paragraphs(
                doc.getSubparagraphs()))
         else:
-            doc = stng.StructuredTextDocument(self.color_paragraphs(
+            doc = StructuredTextDocument(self.color_paragraphs(
                doc.getSubparagraphs()))
         return doc
 
@@ -89,7 +108,7 @@ class Document:
 
         tmp = []    # the list to be returned if raw_string is split
 
-        if isinstance(text_type, string_types):
+        if isinstance(text_type, basestring):
             text_type = getattr(self, text_type)
 
         while True:
@@ -102,7 +121,7 @@ class Document:
             if start:
                 tmp.append(raw_string[:start])
 
-            if isinstance(t, string_types):
+            if isinstance(t, basestring):
                 # if we get a string back, add it to text to be parsed
                 raw_string = t + raw_string[end:len(raw_string)]
             else:
@@ -132,13 +151,13 @@ class Document:
 
         for text_type in types:
 
-            if isinstance(text, string_types):
+            if isinstance(text, basestring):
                 text = self.parse(text, text_type)
             elif isinstance(text, list):  #Waaaa
                 result = []
 
                 for s in text:
-                    if isinstance(s, string_types):
+                    if isinstance(s, basestring):
                         s = self.parse(s, text_type)
                         if isinstance(s, list):
                             result.extend(s)
@@ -163,7 +182,7 @@ class Document:
 
     def color_paragraphs(self, raw_paragraphs,
                            type=type, sequence_types=(tuple, list),
-                           sts=string_types):
+                           sts=basestring):
         result=[]
         for paragraph in raw_paragraphs:
             if paragraph.getNodeName() != 'StructuredTextParagraph':
@@ -192,7 +211,7 @@ class Document:
                 kw = dict([(att, getattr(paragraph, att))
                             for att in atts])
                 subs = self.color_paragraphs(paragraph.getSubparagraphs())
-                new_paragraphs=stng.StructuredTextParagraph(
+                new_paragraphs=StructuredTextParagraph(
                    paragraph. getColorizableTexts()[0], subs, **kw),
 
             # color the inline StructuredText types
@@ -202,7 +221,7 @@ class Document:
                 if paragraph.getNodeName() is "StructuredTextTable":
 #                cells = paragraph.getColumns()
                     text = paragraph.getColorizableTexts()
-                    text = map(stng.structurize, text)
+                    text = map(structurize, text)
                     text = map(self.__call__,text)
                     for t in range(len(text)):
                         text[t] = text[t].getSubparagraphs()
@@ -470,7 +489,7 @@ class Document:
                         )
             rows.append(cols)
             cols = []
-        return stng.StructuredTextTable(rows,
+        return StructuredTextTable(rows,
                                 text, subs, indent=paragraph.indent)
 
     def doc_bullet(self, paragraph, expr = re.compile(r'\s*[-*o]\s+').match):
@@ -482,9 +501,9 @@ class Document:
 
         subs=paragraph.getSubparagraphs()
         if top[-2:] == '::':
-            subs=[stng.StructuredTextExample(subs)]
+            subs=[StructuredTextExample(subs)]
             top=top[:-1]
-        return stng.StructuredTextBullet(top[m.span()[1]:], subs,
+        return StructuredTextBullet(top[m.span()[1]:], subs,
                                          indent=paragraph.indent,
                                          bullet=top[:m.span()[1]]
                                          )
@@ -511,9 +530,9 @@ class Document:
 
         subs = paragraph.getSubparagraphs()
         if top[-2:] == '::':
-            subs = [stng.StructuredTextExample(subs)]
+            subs = [StructuredTextExample(subs)]
             top = top[:-1]
-        return stng.StructuredTextNumbered(top[m.span()[1]:], subs,
+        return StructuredTextNumbered(top[m.span()[1]:], subs,
                                            indent=paragraph.indent,
                                            number=top[:m.span()[1]])
 
@@ -538,10 +557,10 @@ class Document:
 
         subs = paragraph.getSubparagraphs()
         if top[-2:] == '::':
-            subs = [stng.StructuredTextExample(subs)]
+            subs = [StructuredTextExample(subs)]
             top = top[:-1]
 
-        return stng.StructuredTextDescription(
+        return StructuredTextDescription(
            title, top, subs,
            indent=paragraph.indent,
            delim=d)
@@ -556,17 +575,17 @@ class Document:
             return None
 
         if top[-2:] == '::':
-            subs = stng.StructuredTextExample(subs)
+            subs = StructuredTextExample(subs)
             if top.strip() == '::': return subs
             # copy attrs when returning a paragraph
             kw = {}
             atts = getattr(paragraph, '_attributes', [])
             for att in atts:
                 kw[att] = getattr(paragraph, att)
-            return stng.StructuredTextParagraph(top[:-1], [subs], **kw)
+            return StructuredTextParagraph(top[:-1], [subs], **kw)
 
         if top.find('\n') >= 0: return None
-        return stng.StructuredTextSection(top, subs, indent=paragraph.indent)
+        return StructuredTextSection(top, subs, indent=paragraph.indent)
 
     def doc_literal(self,
                     s,
@@ -578,7 +597,7 @@ class Document:
         r = expr(s)
         if r:
             start, end = r.span(2)
-            return (stng.StructuredTextLiteral(s[start:end]), start-1, end+1)
+            return (StructuredTextLiteral(s[start:end]), start-1, end+1)
 
     def doc_emphasize(self,
                       s,
@@ -589,7 +608,7 @@ class Document:
         r=expr(s)
         if r:
             start, end = r.span(1)
-            return (stng.StructuredTextEmphasis(s[start:end]),
+            return (StructuredTextEmphasis(s[start:end]),
                     start-1, end+1)
 
     def doc_inner_link(self,
@@ -606,12 +625,12 @@ class Document:
                 return None
             else:
                 # the .. is somewhere else, ignore it
-                return (stng.StructuredTextInnerLink(s[start2 + 1:end2 - 1]),
+                return (StructuredTextInnerLink(s[start2 + 1:end2 - 1]),
                         start2,end2)
             return None
         elif expr2(s) and not expr1(s):
             start, end = expr2(s).span()
-            return (stng.StructuredTextInnerLink(s[start + 1:end - 1]),
+            return (StructuredTextInnerLink(s[start + 1:end - 1]),
                     start,end)
 
     def doc_named_link(self,
@@ -625,7 +644,7 @@ class Document:
             start,end   = result.span(2)
             str = s[start + 1:end - 1]
             st,en = result.span()
-            return (stng.StructuredTextNamedLink(str), st, en)
+            return (StructuredTextNamedLink(str), st, en)
 
     def doc_underline(self,
                       s,
@@ -640,7 +659,7 @@ class Document:
                 return None # no double unders
             start,end = result.span(1)
             st, e = result.span()
-            return (stng.StructuredTextUnderline(s[start:end]),
+            return (StructuredTextUnderline(s[start:end]),
                     st, e-len(result.group(2)))
 
     def doc_strong(self,
@@ -652,7 +671,7 @@ class Document:
         r=expr(s)
         if r:
             start, end = r.span(1)
-            return (stng.StructuredTextStrong(s[start:end]),
+            return (StructuredTextStrong(s[start:end]),
                     start-2, end+2)
 
     ## Some constants to make the doc_href() regex easier to read.
@@ -703,7 +722,7 @@ class Document:
 
             # name is the href title, link is the target
             # of the href
-            return (stng.StructuredTextLink(name, href=link),
+            return (StructuredTextLink(name, href=link),
                     start, end)
 
     def doc_sgml(self,
@@ -716,7 +735,7 @@ class Document:
         if r:
             start, end = r.span()
             text = s[start:end]
-            return (stng.StructuredTextSGML(text),
+            return (StructuredTextSGML(text),
                     start, end)
 
     def doc_xref(self,
@@ -727,7 +746,7 @@ class Document:
         r = expr(s)
         if r:
             start, end = r.span(1)
-            return (stng.StructuredTextXref(s[start:end]),
+            return (StructuredTextXref(s[start:end]),
                     start-1, end+1)
 
 class DocumentWithImages(Document):
@@ -752,7 +771,7 @@ class DocumentWithImages(Document):
             startt, endt = r.span(1)
             starth, endh = r.span(2)
             start, end = r.span()
-            return (stng.StructuredTextImage(
+            return (StructuredTextImage(
                             s[startt + 1:endt - 1],
                             href=s[starth:endh]),
                     start, end)
