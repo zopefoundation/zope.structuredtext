@@ -10,12 +10,9 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-"""
-$Id$
+""" HTML renderer for STX documents.
 """
 
-import re
-import sys
 from cgi import escape
 
 __metaclass__ = type
@@ -51,7 +48,8 @@ class HTML:
         })
 
     def dispatch(self, doc, level, output):
-        getattr(self, self.element_types[doc.getNodeName()])(doc, level, output)
+        getattr(self, self.element_types[doc.getNodeName()]
+               )(doc, level, output)
 
     def __call__(self, doc, level=1, header=True):
         r=[]
@@ -74,7 +72,8 @@ class HTML:
             output('<body>\n')
 
         for c in children:
-            getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
 
         if self.header:
             output('</body>\n')
@@ -83,12 +82,14 @@ class HTML:
     def section(self, doc, level, output):
         children=doc.getChildNodes()
         for c in children:
-            getattr(self, self.element_types[c.getNodeName()])(c, level+1, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level+1, output)
 
     def sectionTitle(self, doc, level, output):
         output('<h%d>' % (level))
         for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
         output('</h%d>\n' % (level))
 
     def description(self, doc, level, output):
@@ -96,7 +97,8 @@ class HTML:
         if p is None or  p.getNodeName() is not doc.getNodeName():
             output('<dl>\n')
         for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
         n=doc.getNextSibling()
         if n is None or n.getNodeName() is not doc.getNodeName():
             output('</dl>\n')
@@ -104,13 +106,15 @@ class HTML:
     def descriptionTitle(self, doc, level, output):
         output('<dt>')
         for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
         output('</dt>\n')
 
     def descriptionBody(self, doc, level, output):
         output('<dd>')
         for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
         output('</dd>\n')
 
     def bullet(self, doc, level, output):
@@ -119,7 +123,8 @@ class HTML:
             output('\n<ul>\n')
         output('<li>')
         for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
         n=doc.getNextSibling()
         output('</li>\n')
         if n is None or n.getNodeName() is not doc.getNodeName():
@@ -131,7 +136,8 @@ class HTML:
             output('\n<ol>\n')
         output('<li>')
         for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
         n=doc.getNextSibling()
         output('</li>\n')
         if n is None or n.getNodeName() is not doc.getNodeName():
@@ -169,13 +175,15 @@ class HTML:
     def link(self, doc, level, output):
         output('<a href="%s">' % doc.href)
         for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
         output('</a>')
 
     def emphasis(self, doc, level, output):
         output('<em>')
         for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
         output('</em>')
 
     def literal(self, doc, level, output):
@@ -187,36 +195,43 @@ class HTML:
     def strong(self, doc, level, output):
         output('<strong>')
         for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
         output('</strong>')
 
     def underline(self, doc, level, output):
         output("<u>")
         for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
         output("</u>")
 
     def innerLink(self, doc, level, output):
         output('<a href="#ref');
         for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
         output('">[')
         for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
         output(']</a>')
 
     def namedLink(self, doc, level, output):
         output('<a name="ref')
         for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
         output('">[')
         for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
         output(']</a>')
 
     def sgml(self,doc,level,output):
         for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
 
     def xref(self, doc, level, output):
         val = doc.getNodeValue()
@@ -234,15 +249,17 @@ class HTML:
             output("<tr>\n")
             for column in row.getColumns()[0]:
                 if hasattr(column,"getAlign"):
-                    str = '<%s colspan="%s" align="%s" valign="%s">' % (column.getType(),
-                                                                  column.getSpan(),
-                                                                  column.getAlign(),
-                                                                  column.getValign())
+                    str = ('<%s colspan="%s" align="%s" valign="%s">'
+                                % (column.getType(),
+                                   column.getSpan(),
+                                   column.getAlign(),
+                                   column.getValign()))
                 else:
                     str = '<td colspan="%s">' % column.getSpan()
                 output(str)
                 for c in column.getChildNodes():
-                    getattr(self, self.element_types[c.getNodeName()])(c, level, output)
+                    getattr(self, self.element_types[c.getNodeName()]
+                           )(c, level, output)
                 if hasattr(column,"getType"):
                     output("</"+column.getType()+">\n")
                 else:
@@ -261,6 +278,8 @@ class HTMLWithImages(HTML):
     def image(self, doc, level, output):
         if hasattr(doc, 'key'):
             output('<a name="%s"></a>\n' % doc.key)
-        output('<img src="%s" alt="%s" />\n' % (doc.href, doc.getNodeValue()))
+        output('<img src="%s" alt="%s" />\n'
+                    % (doc.href, doc.getNodeValue()))
         if doc.getNodeValue() and hasattr(doc, 'key'):
-            output('<p><b>Figure %s</b> %s</p>\n' % (doc.key, doc.getNodeValue()))
+            output('<p><b>Figure %s</b> %s</p>\n'
+                        % (doc.key, doc.getNodeValue()))
