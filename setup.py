@@ -39,7 +39,7 @@ setup(
     version = '3.5.0',
     url='http://pypi.python.org/pypi/zope.structuredtext',
     author='Zope Foundation and Contributors',
-    author_email='zope3-dev@zope.org',
+    author_email='zope-dev@zope.org',
     license='ZPL 2.1',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
