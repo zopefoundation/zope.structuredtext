@@ -1,11 +1,12 @@
 ``zope.structuredtext`` Changelog
 =================================
 
-Unreleased
-----------
+3.5.1 (2010-12-03)
+------------------
 
 - Removed antique copyright assertions in regression texts, in conformance
   with repository policy.
+
 
 3.5.0 (2010-04-30)
 ------------------
