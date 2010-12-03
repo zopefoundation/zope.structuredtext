@@ -3,8 +3,6 @@ Extension Classes, Python Extension Types Become Classes
   Jim Fulton, Digital Creations, Inc.
   jim@digicool.com
 
-  "Copyright (C) 1996-1998, Digital Creations":COPYRIGHT.html.
-
   Abstract
   
     A lightweight mechanism has been developed for making Python

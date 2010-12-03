@@ -6,7 +6,6 @@
 <h1>Extension Classes, Python Extension Types Become Classes</h1>
 <p>  Jim Fulton, Digital Creations, Inc.
   jim@digicool.com</p>
-<p>  <a href="COPYRIGHT.html">Copyright (C) 1996-1998, Digital Creations</a>.</p>
 <h2>  Abstract</h2>
 <p>    A lightweight mechanism has been developed for making Python
     extension types more class-like.  Classes can be developed in an

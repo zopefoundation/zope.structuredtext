@@ -4,7 +4,6 @@
 </head>
 <body>
 <h1>Acquisition</h1>
-<p>  <a href="COPYRIGHT.html">Copyright (C) 1996-1998, Digital Creations</a>.</p>
 <p>  Acquisition <a href="#ref1">[1]</a> is a mechanism that allows objects to obtain
   attributes from their environment.  It is similar to inheritence,
   except that, rather than traversing an inheritence hierarchy

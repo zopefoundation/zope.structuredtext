@@ -1,8 +1,5 @@
-
 Extension Class
   
-    "Copyright (C) 1996-1998, Digital Creations":COPYRIGHT.html.
-
     A lightweight mechanism has been developed for making Python
     extension types more class-like.  Classes can be developed in an
     extension language, such as C or C++, and these classes can be

@@ -1,7 +1,5 @@
 Acquisition
 
-  "Copyright (C) 1996-1998, Digital Creations":COPYRIGHT.html.
-
   Acquisition [1] is a mechanism that allows objects to obtain
   attributes from their environment.  It is similar to inheritence,
   except that, rather than traversing an inheritence hierarchy

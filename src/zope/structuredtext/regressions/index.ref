@@ -4,7 +4,6 @@
 </head>
 <body>
 <h1>Extension Class</h1>
-<p>    <a href="COPYRIGHT.html">Copyright (C) 1996-1998, Digital Creations</a>.</p>
 <p>    A lightweight mechanism has been developed for making Python
     extension types more class-like.  Classes can be developed in an
     extension language, such as C or C++, and these classes can be
