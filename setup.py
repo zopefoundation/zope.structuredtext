@@ -18,9 +18,7 @@
 ##############################################################################
 """Setup for zope.structuredtext package
 """
-
 import os
-
 from setuptools import setup, find_packages
 
 def read(*rnames):
@@ -34,27 +32,32 @@ long_description = (
 
 setup(
     name='zope.structuredtext',
-    version = '3.5.2dev',
-    url='http://pypi.python.org/pypi/zope.structuredtext',
+    version = '4.0.0',
     author='Zope Foundation and Contributors',
     author_email='zope-dev@zope.org',
-    license='ZPL 2.1',
+    description='StructuredText parser',
+    long_description=long_description,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Zope Public License',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: Implementation :: CPython',
         'Operating System :: OS Independent',
-        'Topic :: Internet :: WWW/HTTP',
         'Topic :: Software Development',
         ],
-    description='StructuredText parser',
-    long_description=long_description,
-
+    url='http://pypi.python.org/pypi/zope.structuredtext',
+    license='ZPL 2.1',
     packages=find_packages('src'),
     package_dir={'': 'src'},
     namespace_packages=['zope',],
+    install_requires=['setuptools', 'six'],
+    test_suite='zope.structuredtext.tests.test_suite',
     include_package_data=True,
-    install_requires=['setuptools'],
     zip_safe=False,
     )

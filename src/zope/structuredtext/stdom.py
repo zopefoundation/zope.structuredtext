@@ -12,8 +12,7 @@
 ##############################################################################
 """DOM implementation in StructuredText: read-only methods
 """
-
-string_types = (str, unicode)
+from six import string_types
 
 __metaclass__ = type
 
@@ -89,7 +88,7 @@ class ParentNode:
         """
         r = []
         for n in self.getChildren():
-            if type(n) in sts:
+            if isinstance(n, sts):
                 n=TextNode(n)
             r.append(n.__of__(self))
 
@@ -107,7 +106,7 @@ class ParentNode:
 
         n = children[0]
 
-        if type(n) in sts:
+        if isinstance(n, sts):
             n = TextNode(n)
 
         return n.__of__(self)
@@ -121,7 +120,7 @@ class ParentNode:
         if not children:
             return None
         n = children[-1]
-        if type(n) in sts:
+        if isinstance(n, sts):
             n=TextNode(n)
         return n.__of__(self)
 
@@ -176,7 +175,7 @@ class NodeWrapper(ParentNode):
         try: n=children[index]
         except IndexError: return None
         else:
-            if type(n) in string_types:
+            if isinstance(n,  string_types):
                 n=TextNode(n)
             n._DOMIndex=index
             return n.__of__(self)
@@ -311,7 +310,7 @@ class Element(Node):
     def getNodeValue(self):
         r=[]
         for c in self.getChildren():
-            if type(c) not in string_types:
+            if not isinstance(c, string_types):
                 c=c.getNodeValue()
             r.append(c)
         return ''.join(r)

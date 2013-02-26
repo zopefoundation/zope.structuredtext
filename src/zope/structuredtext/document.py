@@ -12,8 +12,8 @@
 ##############################################################################
 """ Structured text document parser
 """
-
 import re
+import six
 
 from zope.structuredtext.stletters import letters
 from zope.structuredtext.stletters import literal_punc
@@ -84,7 +84,7 @@ class Document:
         ]
 
     def __call__(self, doc):
-        if isinstance(doc, basestring):
+        if isinstance(doc, six.string_types):
             doc = structurize(doc)
             doc.setSubparagraphs(self.color_paragraphs(
                doc.getSubparagraphs()))
@@ -108,7 +108,7 @@ class Document:
 
         tmp = []    # the list to be returned if raw_string is split
 
-        if isinstance(text_type, basestring):
+        if isinstance(text_type, six.string_types):
             text_type = getattr(self, text_type)
 
         while True:
@@ -121,7 +121,7 @@ class Document:
             if start:
                 tmp.append(raw_string[:start])
 
-            if isinstance(t, basestring):
+            if isinstance(t, six.string_types):
                 # if we get a string back, add it to text to be parsed
                 raw_string = t + raw_string[end:len(raw_string)]
             else:
@@ -151,23 +151,21 @@ class Document:
 
         for text_type in types:
 
-            if isinstance(text, basestring):
+            if isinstance(text, six.string_types):
                 text = self.parse(text, text_type)
             elif isinstance(text, list):  #Waaaa
                 result = []
 
                 for s in text:
-                    if isinstance(s, basestring):
+                    if isinstance(s, six.string_types):
                         s = self.parse(s, text_type)
                         if isinstance(s, list):
                             result.extend(s)
                         else:
                             result.append(s)
                     else:
-                        s.setColorizableTexts(
-                           map(self.color_text,
-                               s.getColorizableTexts()
-                               ))
+                        s.setColorizableTexts(list(
+                           map(self.color_text, s.getColorizableTexts())))
                         result.append(s)
                 text = result
             else:
@@ -182,7 +180,7 @@ class Document:
 
     def color_paragraphs(self, raw_paragraphs,
                            type=type, sequence_types=(tuple, list),
-                           sts=basestring):
+                           sts=six.string_types):
         result=[]
         for paragraph in raw_paragraphs:
             if paragraph.getNodeName() != 'StructuredTextParagraph':
@@ -222,15 +220,15 @@ class Document:
 #                cells = paragraph.getColumns()
                     text = paragraph.getColorizableTexts()
                     text = map(structurize, text)
-                    text = map(self.__call__,text)
+                    text = list(map(self.__call__,text))
                     for t in range(len(text)):
                         text[t] = text[t].getSubparagraphs()
                     paragraph.setColorizableTexts(text)
 
                 paragraph.setColorizableTexts(
-                   map(self.color_text,
+                   list(map(self.color_text,
                        paragraph.getColorizableTexts()
-                       ))
+                       )))
                 result.append(paragraph)
 
         return result
@@ -396,7 +394,7 @@ class Document:
         for row in rows:
             for index in range(len(row)):
                 if not COLS:
-                    COLS = range(len(row))
+                    COLS = list(range(len(row)))
                     for i in range(len(COLS)):
                         COLS[i] = ["", 1 ,""]
                 if TDdivider(row[index][0]) or THdivider(row[index][0]):

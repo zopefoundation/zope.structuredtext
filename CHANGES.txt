@@ -1,10 +1,12 @@
 ``zope.structuredtext`` Changelog
 =================================
 
-Unreleased
-----------
+4.0.0 (unreleased)
+------------------
 
-- TBD
+- Added support for Python 3.3.
+
+- Dropped support for Python 2.4 and 2.5.
 
 
 3.5.1 (2010-12-03)

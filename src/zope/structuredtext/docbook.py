@@ -12,6 +12,7 @@
 ##############################################################################
 """ Render STX document as docbook.
 """
+from __future__ import print_function
 
 __metaclass__ = type
 
@@ -81,7 +82,7 @@ class DocBook:
                 getattr(self, self.element_types[c.getNodeName()]
                        )(c, level, output)
             except:
-                print "failed", c.getNodeName(), c
+                print("failed", c.getNodeName(), c)
         output('</title>\n')
 
     def description(self, doc, level, output):

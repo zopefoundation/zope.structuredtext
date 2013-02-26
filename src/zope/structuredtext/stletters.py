@@ -23,7 +23,7 @@ def punc_func(exclude):
     return punc
 
 digits = string.digits
-letters = string.letters
+letters = string.ascii_letters
 literal_punc = punc_func("'")
 dbl_quoted_punc = punc_func("\"")
 strongem_punc = punc_func('*')

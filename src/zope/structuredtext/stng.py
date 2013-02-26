@@ -12,9 +12,11 @@
 ##############################################################################
 """ Core document model.
 """
+from __future__ import print_function
+from __future__ import print_function
 
 import re
-import stdom
+from . import stdom
 
 __metaclass__ = type
 
@@ -50,7 +52,7 @@ def display(struct):
     orignal paragraphs.
     """
     if struct.getColorizableTexts():
-        print '\n'.join(struct.getColorizableTexts())
+        print('\n'.join(struct.getColorizableTexts()))
     if struct.getSubparagraphs():
         for x in struct.getSubparagraphs():
             display(x)
@@ -61,7 +63,7 @@ def display2(struct):
     orignal paragraphs.
     """
     if struct.getNodeValue():
-        print struct.getNodeValue(),"\n"
+        print(struct.getNodeValue(),"\n")
     if struct.getSubparagraphs():
         for x in struct.getSubparagraphs():
             display(x)
@@ -70,7 +72,7 @@ def findlevel(levels,indent):
     """Remove all level information of levels with a greater level of
     indentation. Then return which level should insert this paragraph
     """
-    keys = levels.keys()
+    keys = list(levels.keys())
     for key in keys:
         if levels[key] > indent:
             del(levels[key])
@@ -223,7 +225,7 @@ class StructuredTextParagraph(stdom.Element):
           ('%s(' % self.__class__.__name__)
           +str(self._src)+', ['
           )
-        for p in self._subs: a(`p`)
+        for p in self._subs: a(repr(p))
         a((' '*(self.indent or 0))+'])')
         return '\n'.join(r)
 
@@ -248,7 +250,7 @@ class StructuredTextDocument(StructuredTextParagraph):
     def __repr__(self):
         r=[]; a=r.append
         a('%s([' % self.__class__.__name__)
-        for p in self._subs: a(`p`+',')
+        for p in self._subs: a(repr(p)+',')
         a('])')
         return '\n'.join(r)
 
@@ -487,7 +489,7 @@ class StructuredTextMarkup(stdom.Element):
         self._value=v[0]
 
     def __repr__(self):
-        return '%s(%s)' % (self.__class__.__name__, `self._value`)
+        return '%s(%s)' % (self.__class__.__name__, repr(self._value))
 
 class StructuredTextLiteral(StructuredTextMarkup):
     def getColorizableTexts(self):

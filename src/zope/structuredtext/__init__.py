@@ -26,7 +26,7 @@ Consider the following example::
   >>> doc = DocumentWithImages()(struct)
 
   Now feed it to some output generator, in this case HTML or DocBook:
-  
+
   >>> output = HTMLWithImages()(doc, level=1)
   >>> output = DocBook()(doc, level=1)
 
@@ -34,7 +34,7 @@ Consider the following example::
 __docformat__ = 'restructuredtext'
 
 import re
-from string import letters
+from string import ascii_letters
 
 from zope.structuredtext.stng import structurize
 from zope.structuredtext.document import DocumentWithImages
@@ -47,12 +47,12 @@ def stx2html(aStructuredString, level=1, header=1):
 
 def stx2htmlWithReferences(text, level=1, header=1):
     text = re.sub(
-        r'[\000\n]\.\. \[([0-9_%s-]+)\]' % letters,
+        r'[\000\n]\.\. \[([0-9_%s-]+)\]' % ascii_letters,
         r'\n  <a name="\1">[\1]</a>',
         text)
 
     text = re.sub(
-        r'([\000- ,])\[(?P<ref>[0-9_%s-]+)\]([\000- ,.:])' % letters,
+        r'([\000- ,])\[(?P<ref>[0-9_%s-]+)\]([\000- ,.:])' % ascii_letters,
         r'\1<a href="#\2">[\2]</a>\3',
         text)
 
