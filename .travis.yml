@@ -5,6 +5,9 @@ python:
     - 2.7
     - 3.3
     - 3.4
+#   Pending normalization of HTML output for regressions.
+#   - pypy
+#   - pypy3
 install:
     - pip install .
 script:
