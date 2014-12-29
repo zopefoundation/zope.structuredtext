@@ -1,6 +1,4 @@
 from __future__ import print_function
-from __future__ import print_function
-from __future__ import print_function
 ##############################################################################
 #
 # Copyright (c) 2001 Zope Foundation and Contributors.
@@ -76,9 +74,9 @@ class BasicTests(unittest.TestCase):
         doc = DocumentWithImages()(doc)
         output = HTMLWithImages()(doc, level=1)
         if not expected in output:
-            print("Text:     ", stxtxt.encode('utf-8'))
-            print("Converted:", output.encode('utf-8'))
-            print("Expected: ", expected.encode('utf-8'))
+            print("Text:      %s" % stxtxt.encode('utf-8'))
+            print("Converted: %s" % output.encode('utf-8'))
+            print("Expected:  %s" % expected.encode('utf-8'))
             self.fail("'%s' not in result" % expected)        
 
     def testUnderline(self):

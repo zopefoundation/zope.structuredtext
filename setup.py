@@ -58,7 +58,7 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     namespace_packages=['zope',],
-    install_requires=['setuptools', 'six'],
+    install_requires=['setuptools'],
     test_suite='zope.structuredtext.tests.test_suite',
     include_package_data=True,
     zip_safe=False,

@@ -12,7 +12,10 @@
 ##############################################################################
 """DOM implementation in StructuredText: read-only methods
 """
-from six import string_types
+try:
+    string_types = (unicode, str)
+except NameError:   # pragma: NO COVER Py3k
+    string_types = (str,)
 
 __metaclass__ = type
 

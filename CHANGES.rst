@@ -4,6 +4,8 @@ Changes
 4.1.0 (unreleased)
 ------------------
 
+- Drop dependency on ``six``.
+
 - Add support for Python 3.4.
 
 - Add support for testing on Travis.

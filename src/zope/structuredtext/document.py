@@ -13,7 +13,6 @@
 """ Structured text document parser
 """
 import re
-import six
 
 from zope.structuredtext.stletters import letters
 from zope.structuredtext.stletters import literal_punc
@@ -41,6 +40,10 @@ from zope.structuredtext.stng import StructuredTextUnderline
 from zope.structuredtext.stng import StructuredTextXref
 from zope.structuredtext.stng import structurize
 
+try:
+    string_types = (unicode, str)
+except NameError:   # pragma: NO COVER Py3k
+    string_types = (str,)
 
 __metaclass__ = type
 
@@ -84,7 +87,7 @@ class Document:
         ]
 
     def __call__(self, doc):
-        if isinstance(doc, six.string_types):
+        if isinstance(doc, string_types):
             doc = structurize(doc)
             doc.setSubparagraphs(self.color_paragraphs(
                doc.getSubparagraphs()))
@@ -108,7 +111,7 @@ class Document:
 
         tmp = []    # the list to be returned if raw_string is split
 
-        if isinstance(text_type, six.string_types):
+        if isinstance(text_type, string_types):
             text_type = getattr(self, text_type)
 
         while True:
@@ -121,7 +124,7 @@ class Document:
             if start:
                 tmp.append(raw_string[:start])
 
-            if isinstance(t, six.string_types):
+            if isinstance(t, string_types):
                 # if we get a string back, add it to text to be parsed
                 raw_string = t + raw_string[end:len(raw_string)]
             else:
@@ -151,13 +154,13 @@ class Document:
 
         for text_type in types:
 
-            if isinstance(text, six.string_types):
+            if isinstance(text, string_types):
                 text = self.parse(text, text_type)
             elif isinstance(text, list):  #Waaaa
                 result = []
 
                 for s in text:
-                    if isinstance(s, six.string_types):
+                    if isinstance(s, string_types):
                         s = self.parse(s, text_type)
                         if isinstance(s, list):
                             result.extend(s)
@@ -180,7 +183,7 @@ class Document:
 
     def color_paragraphs(self, raw_paragraphs,
                            type=type, sequence_types=(tuple, list),
-                           sts=six.string_types):
+                           sts=string_types):
         result=[]
         for paragraph in raw_paragraphs:
             if paragraph.getNodeName() != 'StructuredTextParagraph':
