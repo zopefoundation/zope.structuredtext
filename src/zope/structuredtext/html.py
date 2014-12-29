@@ -13,7 +13,13 @@
 """ HTML renderer for STX documents.
 """
 
-from cgi import escape
+try:
+    from html import escape
+except ImportError:  # pragma: NO COVER Python2
+    from cgi import escape
+else:                # pragma: NO COVER Py3k
+    from functools import partial
+    escape = partial(escape, quote=False)
 
 __metaclass__ = type
 

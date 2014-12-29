@@ -46,7 +46,7 @@ class StngTests(unittest.TestCase):
             doc = Document()
             raw_text = readFile(regressions, f)
             text = stng.structurize(raw_text)
-            self.assert_(doc(text))
+            self.assertTrue(doc(text))
 
     def testRegressionsTests(self):
         # HTML regression test
