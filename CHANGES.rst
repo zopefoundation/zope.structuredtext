@@ -1,5 +1,5 @@
-``zope.structuredtext`` Changelog
-=================================
+Changes
+=======
 
 4.0.1 (unreleased)
 ------------------
@@ -10,22 +10,22 @@
 4.0.0 (2013-02-25)
 ------------------
 
-- Added support for Python 3.3.
+- Add support for Python 3.3.
 
-- Dropped support for Python 2.4 and 2.5.
+- Drop support for Python 2.4 and 2.5.
 
 
 3.5.1 (2010-12-03)
 ------------------
 
-- Removed antique copyright assertions in regression texts, in conformance
+- Remove antique copyright assertions in regression texts, in conformance
   with repository policy.
 
 
 3.5.0 (2010-04-30)
 ------------------
 
-- Updated docs to conform to ZTK / Sphinx usage.
+- Update docs to conform to ZTK / Sphinx usage.
 
 - LP #120376:  Output valid html for non-ASCII characters.
 

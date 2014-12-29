@@ -1,5 +1,5 @@
-``zope.structuredtext`` README
-==============================
+``zope.structuredtext``
+=======================
 
 This package provides a parser and renderers for the classic Zope
 "structured text" markup dialect (STX).  STX is a plain text markup in
