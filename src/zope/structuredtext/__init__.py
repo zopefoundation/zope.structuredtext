@@ -22,6 +22,10 @@ Consider the following example::
   We first need to structurize the string and make a full-blown
   document out of it:
 
+  >>> structured_string = '''
+  ... Title Here
+  ...
+  ...     Body text here.'''
   >>> struct = structurize(structured_string)
   >>> doc = DocumentWithImages()(struct)
 
