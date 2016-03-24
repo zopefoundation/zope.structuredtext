@@ -33,7 +33,7 @@ long_description = (
 
 setup(
     name='zope.structuredtext',
-    version='4.1.1.dev0',
+    version='4.2.0.dev0',
     author='Zope Foundation and Contributors',
     author_email='zope-dev@zope.org',
     description='StructuredText parser',
@@ -44,7 +44,6 @@ setup(
         'License :: OSI Approved :: Zope Public License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
