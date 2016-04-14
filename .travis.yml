@@ -4,6 +4,7 @@ python:
     - 2.7
     - 3.3
     - 3.4
+    - 3.5
 #   Pending normalization of HTML output for regressions.
 #   - pypy
 #   - pypy3
