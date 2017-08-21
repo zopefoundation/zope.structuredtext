@@ -58,9 +58,15 @@ class StngTests(unittest.TestCase):
 
     def _compare(self, filename, output, expected_extension=".ref"):
         expected_filename = filename.replace('.stx', expected_extension)
-        expected = readFile(regressions, expected_filename)
-
-        self.assertEqual(output.strip(), expected.strip())
+        try:
+            expected = readFile(regressions, expected_filename)
+        except IOError: # pragma: no cover
+            full_expected_fname = os.path.join(regressions, expected_filename)
+            if not os.path.exists(full_expected_fname):
+                with open(full_expected_fname, 'w') as f:
+                    f.write(output)
+        else:
+            self.assertEqual(output.strip(), expected.strip())
 
     def testHTMLRegressions(self):
         # HTML regression test
@@ -88,6 +94,7 @@ class StngTests(unittest.TestCase):
             doc = Document()(text)
             __traceback_info__ = f
             docbook = DocBook()(doc)
+            self._compare(f, docbook, '.xml')
 
 
 class BasicTests(unittest.TestCase):
