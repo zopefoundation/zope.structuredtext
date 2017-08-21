@@ -1,8 +1,11 @@
-:mod:`zope.structuredtext` Documentation
-========================================
+==========================================
+ :mod:`zope.structuredtext` Documentation
+==========================================
+
+.. currentmodule:: zope.restructuredtext
 
 Using Structured Text
----------------------
+=====================
 
 The goal of StructuredText is to make it possible to express
 structured text using a relatively simple plain text format. Simple
@@ -14,7 +17,7 @@ structure is inspired by the Python programming language.
 
 Use of StructuredText consists of one to three logical steps. In the
 first step, a text string is converted to a network of objects using
-the :func:`structurize` facility, as in the following example:
+the :func:`~.structurize` facility, as in the following example:
 
 .. code-block:: python
 
@@ -22,8 +25,8 @@ the :func:`structurize` facility, as in the following example:
   from zope.structuredtext.stng import structurize
   st = structurize(raw)
 
-The output of :func:`structurize` is simply a :class:`StructuredTextDocument`
-object containing :class:`StructuredTextParagraph` objects arranged in a
+The output of :func:`~.structurize` is simply a :class:`~.StructuredTextDocument`
+object containing :class:`~.StructuredTextParagraph` objects arranged in a
 hierarchy. Paragraphs are delimited by strings of two or more
 whitespace characters beginning and ending with newline
 characters. Hierarchy is indicated by indentation. The indentation
@@ -31,9 +34,9 @@ of a paragraph is the minimum number of leading spaces in a line
 containing non-white-space characters after converting tab
 characters to spaces (assuming a tab stop every eight characters).
 
-:class:`StructuredTextNode` objects support the read-only subset of the
+:class:`~.StructuredTextNode` objects support the read-only subset of the
 Document Object Model (DOM) API. It should be possible to process
-:class:`StructuredTextNode` hierarchies using XML tools such as XSLT.
+:class:`~.StructuredTextNode` hierarchies using XML tools such as XSLT.
 
 The second step in using StructuredText is to apply additional
 structuring rules based on text content. A variety of differentText
@@ -77,7 +80,7 @@ Language (HTML) text:
 
 
 Customizing the document processor
-----------------------------------
+==================================
 
 The document processor is driven by two tables. The first table,
 named ``paragraph_types``, is a sequence of callable objects or method
@@ -95,7 +98,7 @@ examples.
 
 A paragraph type may return a list or tuple of replacement
 paragraphs, this allowing a paragraph to be split into multiple
-paragraphs. 
+paragraphs.
 
 The second table, ``text_types``, is a sequence of callable objects or
 method names for coloring text. The callable objects in this table
@@ -124,11 +127,12 @@ Contents:
    :maxdepth: 2
 
    api
+   changelog
 
-Indices and tables
-==================
+====================
+ Indices and tables
+====================
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

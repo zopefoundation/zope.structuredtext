@@ -29,7 +29,7 @@ long_description = (
     read('README.rst')
     + '\n\n' +
     read('CHANGES.rst')
-    )
+)
 
 setup(
     name='zope.structuredtext',
@@ -46,21 +46,31 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Operating System :: OS Independent',
         'Topic :: Software Development',
-        ],
-    url='http://pypi.python.org/pypi/zope.structuredtext',
+    ],
+    url='http://github.com/zopefoundation/zope.structuredtext',
     license='ZPL 2.1',
     packages=find_packages('src'),
     package_dir={'': 'src'},
     namespace_packages=['zope',],
-    install_requires=['setuptools'],
+    install_requires=[
+        'setuptools',
+    ],
+    extras_require={
+        'test': [
+            'zope.testrunner',
+        ],
+        'docs': [
+            'Sphinx',
+        ]
+    },
     test_suite='zope.structuredtext.tests.test_suite',
     include_package_data=True,
     zip_safe=False,
-    )
+)

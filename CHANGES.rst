@@ -1,16 +1,17 @@
-Changes
-=======
+=========
+ Changes
+=========
 
 4.2.0 (unreleased)
-------------------
+==================
 
-- Add support for Python 3.5.
+- Add support for Python 3.5 and 3.6.
 
-- Drop support for Python 2.6.
+- Drop support for Python 2.6 and 3.3.
 
 
 4.1.0 (2014-12-29)
-------------------
+==================
 
 - Drop dependency on ``six``.
 
@@ -20,7 +21,7 @@ Changes
 
 
 4.0.0 (2013-02-25)
-------------------
+==================
 
 - Add support for Python 3.3.
 
@@ -28,14 +29,14 @@ Changes
 
 
 3.5.1 (2010-12-03)
-------------------
+==================
 
 - Remove antique copyright assertions in regression texts, in conformance
   with repository policy.
 
 
 3.5.0 (2010-04-30)
-------------------
+==================
 
 - Update docs to conform to ZTK / Sphinx usage.
 
@@ -43,13 +44,13 @@ Changes
 
 
 3.4.0 (2007/09/01)
-------------------
+==================
 
 - Public release for completeness of Zope 3.4.
 
 
 3.2.0 (2006/01/05)
-------------------
+==================
 
 - Corresponds to the verison of the ``zope.structuredtext`` package shipped
   as part of the Zope 3.2.0 release.
@@ -58,7 +59,7 @@ Changes
 
 
 3.0.0 (2004/11/07)
-------------------
+==================
 
 - Corresponds to the verison of the ``zope.structuredtext`` package shipped
   as part of the Zope X3.0.0 release.
