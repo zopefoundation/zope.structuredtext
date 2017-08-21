@@ -461,14 +461,14 @@ class Document(object):
                 left.sort()
                 right.sort()
 
+                valign = "middle"
                 if topindent == bottomindent:
                     valign = "middle"
                 elif topindent < 1:
                     valign = "top"
                 elif bottomindent < 1:
                     valign = "bottom"
-                else:
-                    valign = "middle"
+
 
                 if left[0] < 1:
                     align = "left"

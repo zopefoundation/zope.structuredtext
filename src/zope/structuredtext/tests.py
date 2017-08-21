@@ -60,7 +60,7 @@ class StngTests(unittest.TestCase):
                 with open(full_expected_fname, 'w') as f:
                     f.write(output)
         else:
-            self.assertEqual(output.strip(), expected.strip())
+            self.assertEqual(expected.strip(), output.strip())
 
     def _check_html(self, f):
         # HTML regression test
