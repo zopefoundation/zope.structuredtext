@@ -113,45 +113,29 @@ class HTML(object):
                    )(c, level, output)
         output('</dd>\n')
 
-    def _list(self, doc, level, output, list_tag=None):
+    def _list(self, doc, level, output, list_tag, item_tag='li'):
         p = doc.getPreviousSibling()
         if p is None or p.getNodeName() != doc.getNodeName():
             output('\n<' + list_tag + '>\n')
-        output('<li>')
+        if item_tag:
+            output('<' + item_tag + '>')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
                    )(c, level, output)
         n = doc.getNextSibling()
-        output('</li>\n')
+        if item_tag:
+            output('</' + item_tag + '>\n')
         if n is None or n.getNodeName() != doc.getNodeName():
-            output('\n</' + list_tag + '\n')
+            output('\n</' + list_tag + '>\n')
 
     def description(self, doc, level, output):
-        p = doc.getPreviousSibling()
-        if p is None or  p.getNodeName() != doc.getNodeName():
-            output('<dl>\n')
-        for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
-        n = doc.getNextSibling()
-        if n is None or n.getNodeName() != doc.getNodeName():
-            output('</dl>\n')
+        self._list(doc, level, output, 'dl', item_tag=None)
 
     def bullet(self, doc, level, output):
-        self._list(doc, level, output, "<ul>")
+        self._list(doc, level, output, "ul")
 
     def numbered(self, doc, level, output):
-        p = doc.getPreviousSibling()
-        if p is None or p.getNodeName() != doc.getNodeName():
-            output('\n<ol>\n')
-        output('<li>')
-        for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
-        n = doc.getNextSibling()
-        output('</li>\n')
-        if n is None or n.getNodeName() != doc.getNodeName():
-            output('\n</ol>\n')
+        self._list(doc, level, output, "ol")
 
     def example(self, doc, level, output):
         i = 0

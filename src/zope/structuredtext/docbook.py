@@ -114,10 +114,10 @@ class DocBook(object):
         output('</para></listitem>\n')
         output('</varlistentry>\n')
 
-    def bullet(self, doc, level, output):
+    def _list(self, doc, level, output, list_tag):
         p = doc.getPreviousSibling()
         if p is None or p.getNodeName() is not doc.getNodeName():
-            output('<itemizedlist>\n')
+            output('<' + list_tag + '>\n')
         output('<listitem><para>\n')
 
         for c in doc.getChildNodes():
@@ -126,20 +126,13 @@ class DocBook(object):
         n = doc.getNextSibling()
         output('</para></listitem>\n')
         if n is None or n.getNodeName() is not doc.getNodeName():
-            output('</itemizedlist>\n')
+            output('</' + list_tag + '>\n')
+
+    def bullet(self, doc, level, output):
+        self._list(doc, level, output, 'itemizedlist')
 
     def numbered(self, doc, level, output):
-        p = doc.getPreviousSibling()
-        if p is None or p.getNodeName() is not doc.getNodeName():
-            output('<orderedlist>\n')
-        output('<listitem><para>\n')
-        for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
-        n = doc.getNextSibling()
-        output('</para></listitem>\n')
-        if n is None or n.getNodeName() is not doc.getNodeName():
-            output('</orderedlist>\n')
+        self._list(doc, level, output, 'orderedlist')
 
     def example(self, doc, level, output):
         i = 0
@@ -253,7 +246,7 @@ class DocBookChapter(DocBook):
 
 class DocBookChapterWithFigures(DocBookChapter):
 
-    element_types = DocBook.element_types
+    element_types = DocBook.element_types.copy()
     element_types.update({'StructuredTextImage': 'image'})
 
     def image(self, doc, level, output):

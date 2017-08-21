@@ -194,6 +194,7 @@
 <h3>    Meta Information</h3>
 <p>      Like standard python classes, extension classes have the following
       attributes containing meta-data:</p>
+
 <dl>
 <dt>      <code>__doc__</code></dt>
 <dd>a documentation string for the class,</dd>
@@ -206,6 +207,7 @@
 <dt>      <code>__module__</code></dt>
 <dd>the name of the module in which the class was
                       defined. </dd>
+
 </dl>
 <p>      The class dictionary provides access to unbound methods and their
       documentation strings, including extension methods and special
