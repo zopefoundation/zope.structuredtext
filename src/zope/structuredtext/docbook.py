@@ -135,18 +135,13 @@ class DocBook(object):
         self._list(doc, level, output, 'orderedlist')
 
     def example(self, doc, level, output):
-        i = 0
         for c in doc.getChildNodes():
-            if i == 0:
-                output('<programlisting>\n<![CDATA[\n')
-                ##
-                ## eek.  A ']]>' in your body will break this...
-                ##
-                output(prestrip(c.getNodeValue()))
-                output('\n]]></programlisting>\n')
-            else:
-                getattr(self, self.element_types[c.getNodeName()])(
-                    c, level, output)
+            output('<programlisting>\n<![CDATA[\n')
+            ##
+            ## eek.  A ']]>' in your body will break this...
+            ##
+            output(prestrip(c.getNodeValue()))
+            output('\n]]></programlisting>\n')
 
     def paragraph(self, doc, level, output):
         output('<para>\n\n')

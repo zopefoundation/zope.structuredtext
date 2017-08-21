@@ -138,16 +138,10 @@ class HTML(object):
         self._list(doc, level, output, "ol")
 
     def example(self, doc, level, output):
-        i = 0
         for c in doc.getChildNodes():
-            if i == 0:
-                output('\n<pre>\n')
-                output(escape(c.getNodeValue()))
-                output('\n</pre>\n')
-                # XXX: Nothing ever changes the value of i!
-            else:
-                getattr(self, self.element_types[c.getNodeName()])(
-                    c, level, output)
+            output('\n<pre>\n')
+            output(escape(c.getNodeValue()))
+            output('\n</pre>\n')
 
     def paragraph(self, doc, level, output):
         output('<p>')
