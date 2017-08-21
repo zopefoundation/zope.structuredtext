@@ -19,6 +19,8 @@ Consider the following example::
   >>> from zope.structuredtext.document import DocumentWithImages
   >>> from zope.structuredtext.html import HTMLWithImages
   >>> from zope.structuredtext.docbook import DocBook
+  >>> from zope.structuredtext.docbook import DocBookChapterWithFigures
+  >>> from zope.structuredtext.docbook import DocBookArticle
 
 We first need to structurize the string and make a full-blown
 document out of it::
@@ -35,7 +37,11 @@ Now feed it to some output generator, in this case HTML or DocBook::
   >>> HTMLWithImages()(doc, level=1)
   '<html>...'
   >>> DocBook()(doc, level=1)
-  '<!DOCTYPE book ...'
+  '<!DOCTYPE book ...<book>...'
+  >>> DocBookArticle()(doc, level=1)
+  '<!DOCTYPE article ...<article>...'
+  >>> DocBookChapterWithFigures()(doc, level=1)
+  '<chapter>...'
 
 For HTML, there is a shortcut::
 

@@ -12,42 +12,40 @@
 ##############################################################################
 """DOM implementation in StructuredText: read-only methods
 """
-try:
-    string_types = (unicode, str)
-except NameError:   # pragma: NO COVER Py3k
-    string_types = (str,)
+
+string_types = (str,) if bytes is not str else (unicode, str)
 
 __metaclass__ = type
 
 # Node type codes
 # ---------------
 
-ELEMENT_NODE                  = 1
-ATTRIBUTE_NODE                = 2
-TEXT_NODE                     = 3
-CDATA_SECTION_NODE            = 4
-ENTITY_REFERENCE_NODE         = 5
-ENTITY_NODE                   = 6
-PROCESSING_INSTRUCTION_NODE   = 7
-COMMENT_NODE                  = 8
-DOCUMENT_NODE                 = 9
-DOCUMENT_TYPE_NODE            = 10
-DOCUMENT_FRAGMENT_NODE        = 11
-NOTATION_NODE                 = 12
+ELEMENT_NODE = 1
+ATTRIBUTE_NODE = 2
+TEXT_NODE = 3
+CDATA_SECTION_NODE = 4
+ENTITY_REFERENCE_NODE = 5
+ENTITY_NODE = 6
+PROCESSING_INSTRUCTION_NODE = 7
+COMMENT_NODE = 8
+DOCUMENT_NODE = 9
+DOCUMENT_TYPE_NODE = 10
+DOCUMENT_FRAGMENT_NODE = 11
+NOTATION_NODE = 12
 
 # Exception codes
 # ---------------
 
-INDEX_SIZE_ERR                = 1
-DOMSTRING_SIZE_ERR            = 2
-HIERARCHY_REQUEST_ERR         = 3
-WRONG_DOCUMENT_ERR            = 4
-INVALID_CHARACTER_ERR         = 5
-NO_DATA_ALLOWED_ERR           = 6
-NO_MODIFICATION_ALLOWED_ERR   = 7
-NOT_FOUND_ERR                 = 8
-NOT_SUPPORTED_ERR             = 9
-INUSE_ATTRIBUTE_ERR           = 10
+INDEX_SIZE_ERR = 1
+DOMSTRING_SIZE_ERR = 2
+HIERARCHY_REQUEST_ERR = 3
+WRONG_DOCUMENT_ERR = 4
+INVALID_CHARACTER_ERR = 5
+NO_DATA_ALLOWED_ERR = 6
+NO_MODIFICATION_ALLOWED_ERR = 7
+NOT_FOUND_ERR = 8
+NOT_SUPPORTED_ERR = 9
+INUSE_ATTRIBUTE_ERR = 10
 
 # Exceptions
 # ----------
@@ -78,7 +76,7 @@ class InUseAttributeException(DOMException):
 # Node classes
 # ------------
 
-class ParentNode:
+class ParentNode(object):
     """
     A node that can have children, or, more precisely, that implements
     the child access methods of the DOM.
@@ -92,7 +90,7 @@ class ParentNode:
         r = []
         for n in self.getChildren():
             if isinstance(n, sts):
-                n=TextNode(n)
+                n = TextNode(n)
             r.append(n.__of__(self))
 
         return NodeList(r)
@@ -124,7 +122,7 @@ class ParentNode:
             return None
         n = children[-1]
         if isinstance(n, sts):
-            n=TextNode(n)
+            n = TextNode(n)
         return n.__of__(self)
 
 
@@ -135,8 +133,8 @@ class NodeWrapper(ParentNode):
     """
 
     def __init__(self, aq_self, aq_parent):
-        self.aq_self=aq_self
-        self.aq_parent=aq_parent
+        self.aq_self = aq_self
+        self.aq_parent = aq_parent
 
     def __getattr__(self, name):
         return getattr(self.aq_self, name)
@@ -149,13 +147,13 @@ class NodeWrapper(ParentNode):
         return self.aq_parent
 
     def _getDOMIndex(self, children, getattr=getattr):
-        i=0
-        self=self.aq_self
+        i = 0
+        self = self.aq_self
         for child in children:
             if getattr(child, 'aq_self', child) is self:
-                self._DOMIndex=i
+                self._DOMIndex = i
                 return i
-            i=i+1
+            i = i+1
         return None
 
     def getPreviousSibling(self):
@@ -168,19 +166,23 @@ class NodeWrapper(ParentNode):
         if not children:
             return None
 
-        index=getattr(self, '_DOMIndex', None)
+        index = getattr(self, '_DOMIndex', None)
         if index is None:
-            index=self._getDOMIndex(children)
-            if index is None: return None
+            index = self._getDOMIndex(children)
+            if index is None:
+                return None
 
-        index=index-1
-        if index < 0: return None
-        try: n=children[index]
-        except IndexError: return None
+        index = index-1
+        if index < 0:
+            return None
+        try:
+            n = children[index]
+        except IndexError:
+            return None
         else:
-            if isinstance(n,  string_types):
-                n=TextNode(n)
-            n._DOMIndex=index
+            if isinstance(n, string_types):
+                n = TextNode(n)
+            n._DOMIndex = index
             return n.__of__(self)
 
 
@@ -193,20 +195,21 @@ class NodeWrapper(ParentNode):
         if not children:
             return None
 
-        index=getattr(self, '_DOMIndex', None)
+        index = getattr(self, '_DOMIndex', None)
         if index is None:
-            index=self._getDOMIndex(children)
+            index = self._getDOMIndex(children)
             if index is None:
                 return None
 
-        index=index+1
-        try: n=children[index]
+        index = index + 1
+        try:
+            n = children[index]
         except IndexError:
             return None
         else:
-            if type(n) in string_types:
-                n=TextNode(n)
-            n._DOMIndex=index
+            if isinstance(n, string_types):
+                n = TextNode(n)
+            n._DOMIndex = index
             return n.__of__(self)
 
     def getOwnerDocument(self):
@@ -280,7 +283,8 @@ class Node(ParentNode):
 
 class TextNode(Node):
 
-    def __init__(self, str): self._value=str
+    def __init__(self, str):
+        self._value = str
 
     def getNodeType(self):
         return TEXT_NODE
@@ -311,10 +315,10 @@ class Element(Node):
         return ELEMENT_NODE
 
     def getNodeValue(self):
-        r=[]
+        r = []
         for c in self.getChildren():
             if not isinstance(c, string_types):
-                c=c.getNodeValue()
+                c = c.getNodeValue()
             r.append(c)
         return ''.join(r)
 
@@ -327,27 +331,23 @@ class Element(Node):
     # Element Methods
     # ---------------
 
-    _attributes=()
-
-    def getAttribute(self, name): return getattr(self, name, None)
-    def getAttributeNode(self, name):
-        if hasattr(self, name):
-            return Attr(name, getattr(self, name))
-
-    def getAttributes(self):
-        d={}
-        for a in self._attributes:
-            d[a]=getattr(self, a, '')
-        return NamedNodeMap(d)
+    _attributes = ()
 
     def getAttribute(self, name):
         """Retrieves an attribute value by name."""
-        return None
+        return getattr(self, name, None)
 
     def getAttributeNode(self, name):
         """ Retrieves an Attr node by name or None if
         there is no such attribute. """
-        return None
+        if hasattr(self, name):
+            return Attr(name, getattr(self, name))
+
+    def getAttributes(self):
+        d = {}
+        for a in self._attributes:
+            d[a] = getattr(self, a, '')
+        return NamedNodeMap(d)
 
     def getElementsByTagName(self, tagname):
         """
@@ -359,18 +359,20 @@ class Element(Node):
         """
         nodeList = []
         for child in self.getChildren():
-            if not hasattr(child, 'getNodeType'): continue
-            if (child.getNodeType()==ELEMENT_NODE and \
-                child.getTagName()==tagname or tagname== '*'):
+            if not hasattr(child, 'getNodeType'):
+                continue
+            if (child.getNodeType() == ELEMENT_NODE
+                and child.getTagName() == tagname
+                or tagname == '*'):
 
                 nodeList.append(child)
 
             if hasattr(child, 'getElementsByTagName'):
-                n1       = child.getElementsByTagName(tagname)
+                n1 = child.getElementsByTagName(tagname)
                 nodeList = nodeList + n1._data
         return NodeList(nodeList)
 
-class NodeList:
+class NodeList(object):
     """NodeList interface - Provides the abstraction of an ordered
     collection of nodes.
 
@@ -378,7 +380,7 @@ class NodeList:
     'for..in' constructs.
     """
 
-    def __init__(self,list=None):
+    def __init__(self, list=None):
         self._data = list or []
 
     def __getitem__(self, index, type=type, sts=string_types):
@@ -399,7 +401,7 @@ class NodeList:
 
     __len__ = getLength
 
-class NamedNodeMap:
+class NamedNodeMap(object):
     """
     NamedNodeMap interface - Is used to represent collections
     of nodes that can be accessed by name.  NamedNodeMaps are not
@@ -418,13 +420,12 @@ class NamedNodeMap:
         """Returns the index-th item in the map
         """
         return self._data.values().get(index, None)
-        
+
 
     def __getitem__(self, key):
         if isinstance(key, int):
             return self.item(key)
-        else:
-            return self._data[key]
+        return self._data[key]
 
     def getLength(self):
         """
