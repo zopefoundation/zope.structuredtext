@@ -10,6 +10,7 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+import doctest
 import unittest
 
 import os
@@ -291,3 +292,12 @@ class BasicTests(unittest.TestCase):
         # whereas it should use \w+ and re.U if the string is Unicode.
         self._test(u"h\xe9 **y\xe9** xx",
                    u"h\xe9 <strong>y\xe9</strong> xx")
+
+
+def test_suite():
+    suite = unittest.defaultTestLoader.loadTestsFromName(__name__)
+    suite.addTest(doctest.DocTestSuite(
+        'zope.structuredtext',
+        optionflags=doctest.ELLIPSIS,
+    ))
+    return suite
