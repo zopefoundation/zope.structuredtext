@@ -35,34 +35,62 @@ def readFile(dirname, fname):
         lines = myfile.readlines()
     return ''.join(lines)
 
+def structurizedFiles():
+    from zope.structuredtext import stng
+    from zope.structuredtext.document import Document
+    for f in files:
+        raw_text = readFile(regressions, f)
+        text = stng.structurize(raw_text)
+        yield f, text
+
 class StngTests(unittest.TestCase):
+
+    maxDiff = None
 
     def testDocumentClass(self):
         # testing Document
         # *cough* *cough* this can't be enough...
         from zope.structuredtext import stng
         from zope.structuredtext.document import Document
-        for f in files:
+        for _, text in structurizedFiles():
             doc = Document()
-            raw_text = readFile(regressions, f)
-            text = stng.structurize(raw_text)
             self.assertTrue(doc(text))
 
-    def testRegressionsTests(self):
+    def testHTMLRegressions(self):
         # HTML regression test
-        from zope.structuredtext import stng
         from zope.structuredtext.document import Document
         from zope.structuredtext.html import HTML
-        for f in files:
-            raw_text = readFile(regressions, f)
-            doc = stng.structurize(raw_text)
-            doc = Document()(doc)
+        for f, text in structurizedFiles():
+            __traceback_info__ = f
+            doc = Document()(text)
             html = HTML()(doc)
 
             reg_fname = f.replace('.stx', '.ref')
             reg_html = readFile(regressions, reg_fname)
 
             self.assertEqual(reg_html.strip(), html.strip())
+
+    def testDocBookRegressions(self):
+        from zope.structuredtext.document import Document
+        from zope.structuredtext.docbook import DocBook
+
+        fails_to_docbook = {
+            # Doesn't support StructuredTextInnerLink
+            'Acquisition.stx',
+            'ExtensionClass.stx',
+            'examples.stx',
+            'InnerLinks.stx',
+            # Doesn't support StructuredTextTable
+            'table.stx',
+        }
+
+        for f, text in structurizedFiles():
+            if f in fails_to_docbook:
+                continue
+            doc = Document()(text)
+            __traceback_info__ = f
+            docbook = DocBook()(doc)
+
 
 class BasicTests(unittest.TestCase):
 
