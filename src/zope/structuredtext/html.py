@@ -98,16 +98,6 @@ class HTML(object):
                    )(c, level, output)
         output('</h%d>\n' % (level))
 
-    def description(self, doc, level, output):
-        p = doc.getPreviousSibling()
-        if p is None or  p.getNodeName() != doc.getNodeName():
-            output('<dl>\n')
-        for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
-        n = doc.getNextSibling()
-        if n is None or n.getNodeName() != doc.getNodeName():
-            output('</dl>\n')
 
     def descriptionTitle(self, doc, level, output):
         output('<dt>')
@@ -123,10 +113,10 @@ class HTML(object):
                    )(c, level, output)
         output('</dd>\n')
 
-    def bullet(self, doc, level, output):
+    def _list(self, doc, level, output, list_tag=None):
         p = doc.getPreviousSibling()
         if p is None or p.getNodeName() != doc.getNodeName():
-            output('\n<ul>\n')
+            output('\n<' + list_tag + '>\n')
         output('<li>')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
@@ -134,7 +124,21 @@ class HTML(object):
         n = doc.getNextSibling()
         output('</li>\n')
         if n is None or n.getNodeName() != doc.getNodeName():
-            output('\n</ul>\n')
+            output('\n</' + list_tag + '\n')
+
+    def description(self, doc, level, output):
+        p = doc.getPreviousSibling()
+        if p is None or  p.getNodeName() != doc.getNodeName():
+            output('<dl>\n')
+        for c in doc.getChildNodes():
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
+        n = doc.getNextSibling()
+        if n is None or n.getNodeName() != doc.getNodeName():
+            output('</dl>\n')
+
+    def bullet(self, doc, level, output):
+        self._list(doc, level, output, "<ul>")
 
     def numbered(self, doc, level, output):
         p = doc.getPreviousSibling()

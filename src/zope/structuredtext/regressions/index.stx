@@ -1,16 +1,16 @@
 Extension Class
-  
+
     A lightweight mechanism has been developed for making Python
     extension types more class-like.  Classes can be developed in an
     extension language, such as C or C++, and these classes can be
     treated like other python classes:
-  
-    - They can be sub-classed in python,
-  
-    - They provide access to method documentation strings, and
-  
-    - They can be used to directly create new instances.
-  
+
+    1. They can be sub-classed in python,
+
+    2. They provide access to method documentation strings, and
+
+    3. They can be used to directly create new instances.
+
     Extension classes provide additional extensions to class and
     instance semantics, including:
 
@@ -24,11 +24,11 @@ Extension Class
 
     - A protocol for class initialization that supports execution of a
       special '__class_init__' method after a class has been
-      initialized. 
-  
+      initialized.
+
     Extension classes illustrate how the Python class mechanism can be
     extended and may provide a basis for improved or specialized class
-    models. 
+    models.
 
   Releases
 
@@ -41,9 +41,6 @@ Extension Class
   Windows Binaries
 
     A win32 binary release, "ec12.zip":ec12.zip, is available.  This
-    release includes all of the ExtensionClass modules built as 
+    release includes all of the ExtensionClass modules built as
     Windows extension modules (.pyd) files.  These were built for
     Python 1.5.1 using Microsoft Visual C++ 5.0 in "Release" mode.
-
-    
-
