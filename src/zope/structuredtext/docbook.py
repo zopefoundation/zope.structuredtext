@@ -34,7 +34,10 @@ class DocBook(object):
         'StructuredTextLiteral': 'literal',
         'StructuredTextEmphasis': 'emphasis',
         'StructuredTextStrong': 'strong',
+        'StructuredTextUnderline':'underline',
         'StructuredTextLink': 'link',
+        'StructuredTextInnerLink':'innerLink',
+        'StructuredTextNamedLink':'namedLink',
         'StructuredTextXref': 'xref',
         'StructuredTextSGML': 'sgml',
     }
@@ -166,25 +169,49 @@ class DocBook(object):
                    )(c, level, output)
         output('</ulink>')
 
-    def emphasis(self, doc, level, output):
-        output('<emphasis>')
+    def innerLink(self, doc, level, output):
+        output('<ulink href="#ref')
+        for c in doc.getChildNodes():
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
+        output('">[')
+        for c in doc.getChildNodes():
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
+        output(']</ulink>')
+
+    def namedLink(self, doc, level, output):
+        output('<anchor id="ref')
+        for c in doc.getChildNodes():
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
+        output('"/>[')
+        for c in doc.getChildNodes():
+            getattr(self, self.element_types[c.getNodeName()]
+                   )(c, level, output)
+        output(']')
+
+    def _emphasis(self, doc, level, output, role):
+        output('<emphasis Role="%s">' % role)
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
                    )(c, level, output)
         output('</emphasis> ')
+
+    def emphasis(self, doc, level, output):
+        self._emphasis(doc, level, output, 'emphasis')
+
+    def strong(self, doc, level, output):
+        self._emphasis(doc, level, output, 'strong')
+
+    def underline(self, doc, level, output):
+        self._emphasis(doc, level, output, 'underline')
 
     def literal(self, doc, level, output):
         output('<literal>')
         for c in doc.getChildNodes():
             output(c.getNodeValue())
         output('</literal>')
-
-    def strong(self, doc, level, output):
-        output('<emphasis>')
-        for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
-        output('</emphasis>')
 
     def xref(self, doc, level, output):
         output('<xref linkend="%s"/>' % doc.getNodeValue())

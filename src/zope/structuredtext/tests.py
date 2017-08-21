@@ -56,6 +56,12 @@ class StngTests(unittest.TestCase):
             doc = Document()
             self.assertTrue(doc(text))
 
+    def _compare(self, filename, output, expected_extension=".ref"):
+        expected_filename = filename.replace('.stx', expected_extension)
+        expected = readFile(regressions, expected_filename)
+
+        self.assertEqual(output.strip(), expected.strip())
+
     def testHTMLRegressions(self):
         # HTML regression test
         from zope.structuredtext.document import Document
@@ -65,21 +71,13 @@ class StngTests(unittest.TestCase):
             doc = Document()(text)
             html = HTML()(doc)
 
-            reg_fname = f.replace('.stx', '.ref')
-            reg_html = readFile(regressions, reg_fname)
-
-            self.assertEqual(reg_html.strip(), html.strip())
+            self._compare(f, html)
 
     def testDocBookRegressions(self):
         from zope.structuredtext.document import Document
         from zope.structuredtext.docbook import DocBook
 
         fails_to_docbook = {
-            # Doesn't support StructuredTextInnerLink
-            'Acquisition.stx',
-            'ExtensionClass.stx',
-            'examples.stx',
-            'InnerLinks.stx',
             # Doesn't support StructuredTextTable
             'table.stx',
         }
