@@ -164,8 +164,8 @@ class Document(object):
                         else:
                             result.append(s)
                     else:
-                        s.setColorizableTexts(list(
-                            map(self.color_text, s.getColorizableTexts())))
+                        s.setColorizableTexts(
+                            [self.color_text(t) for t in s.getColorizableTexts()])
                         result.append(s)
                 text = result
             else:
@@ -179,7 +179,8 @@ class Document(object):
         return text
 
     def color_paragraphs(self, raw_paragraphs,
-                         type=type, sequence_types=(tuple, list),
+                         type=type,
+                         sequence_types=(tuple, list),
                          sts=string_types):
         result = []
         for paragraph in raw_paragraphs:
