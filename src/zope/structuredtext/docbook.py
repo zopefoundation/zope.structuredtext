@@ -90,13 +90,13 @@ class DocBook(object):
 
     def description(self, doc, level, output):
         p = doc.getPreviousSibling()
-        if p is None or  p.getNodeName() is not doc.getNodeName():
+        if p is None or  p.getNodeName() != doc.getNodeName():
             output('<variablelist>\n')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
                    )(c, level, output)
         n = doc.getNextSibling()
-        if n is None or n.getNodeName() is not doc.getNodeName():
+        if n is None or n.getNodeName() != doc.getNodeName():
             output('</variablelist>\n')
 
     def descriptionTitle(self, doc, level, output):
@@ -116,7 +116,7 @@ class DocBook(object):
 
     def _list(self, doc, level, output, list_tag):
         p = doc.getPreviousSibling()
-        if p is None or p.getNodeName() is not doc.getNodeName():
+        if p is None or p.getNodeName() != doc.getNodeName():
             output('<' + list_tag + '>\n')
         output('<listitem><para>\n')
 
@@ -125,7 +125,7 @@ class DocBook(object):
                    )(c, level, output)
         n = doc.getNextSibling()
         output('</para></listitem>\n')
-        if n is None or n.getNodeName() is not doc.getNodeName():
+        if n is None or n.getNodeName() != doc.getNodeName():
             output('</' + list_tag + '>\n')
 
     def bullet(self, doc, level, output):
