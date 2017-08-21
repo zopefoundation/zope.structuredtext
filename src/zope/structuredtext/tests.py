@@ -10,6 +10,7 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+from __future__ import print_function
 import doctest
 import unittest
 import glob
@@ -28,7 +29,6 @@ def readFile(dirname, fname):
 
 def structurizedFile(f):
     from zope.structuredtext import stng
-    from zope.structuredtext.document import Document
     raw_text = readFile(regressions, f)
     text = stng.structurize(raw_text)
     return f, text
@@ -49,6 +49,21 @@ class StngTests(unittest.TestCase):
         for _, text in structurizedFiles():
             doc = DocumentWithImages()
             self.assertTrue(doc(text))
+
+            def reprs(x): # coverage
+                self.assertTrue(repr(x))
+                if not hasattr(x, 'getChildren'):
+                    return
+                stng.print = lambda *args, **kwargs: None
+                try:
+                    stng.display(x)
+                    stng.display2(x)
+                finally:
+                    del stng.print
+                for i in x.getChildren():
+                    self.assertTrue(repr(i))
+                    reprs(i)
+            reprs(text)
 
     def _compare(self, filename, output, expected_extension=".ref"):
         expected_filename = filename.replace('.stx', expected_extension)

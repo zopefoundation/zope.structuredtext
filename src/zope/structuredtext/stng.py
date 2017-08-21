@@ -338,8 +338,7 @@ class StructuredTextTable(StructuredTextParagraph):
     def getRows(self):
         return [self._rows]
 
-    def _getRows(self):
-        return self.getRows()
+    _getRows = getRows
 
     def getColumns(self):
         result = []
@@ -347,15 +346,13 @@ class StructuredTextTable(StructuredTextParagraph):
             result.append(row.getColumns())
         return result
 
-    def _getColumns(self):
-        return self.getColumns()
+    _getColumns = getColumns
 
     def setColumns(self, columns):
         for index in range(len(self._rows)):
             self._rows[index].setColumns(columns[index])
 
-    def _setColumns(self, columns):
-        return self.setColumns(columns)
+    _setColumns = setColumns
 
     def getColorizableTexts(self):
         """
@@ -384,11 +381,8 @@ class StructuredTextTable(StructuredTextParagraph):
                                     ].setColorizableTexts((texts[0],))
                 texts = texts[1:]
 
-    def _getColorizableTexts(self):
-        return self.getColorizableTexts()
-
-    def _setColorizableTexts(self, texts):
-        return self.setColorizableTexts(texts)
+    _getColorizableTexts = getColorizableTexts
+    _setColorizableTexts = setColorizableTexts
 
 # StructuredTextRow holds StructuredTextColumns
 class StructuredTextRow(StructuredTextParagraph):
@@ -415,14 +409,13 @@ class StructuredTextRow(StructuredTextParagraph):
     def getColumns(self):
         return [self._columns]
 
-    def _getColumns(self):
-        return [self._columns]
+    _getColumns = getColumns
 
     def setColumns(self, columns):
         self._columns = columns
 
-    def _setColumns(self, columns):
-        return self.setColumns(columns)
+    _setColumns = setColumns
+
 
 # this holds the text of a table cell
 class StructuredTextColumn(StructuredTextParagraph):
@@ -443,26 +436,23 @@ class StructuredTextColumn(StructuredTextParagraph):
     def getSpan(self):
         return self._span
 
-    def _getSpan(self):
-        return self._span
+    _getSpan = getSpan
 
     def getAlign(self):
         return self._align
 
-    def _getAlign(self):
-        return self.getAlign()
+    _getAlign = getAlign
 
     def getValign(self):
         return self._valign
 
-    def _getValign(self):
-        return self.getValign()
+    _getValign = getValign
 
     def getType(self):
         return self._type
 
-    def _getType(self):
-        return self.getType()
+    _getType = getType
+
 
 class StructuredTextTableHeader(StructuredTextParagraph):
     pass
