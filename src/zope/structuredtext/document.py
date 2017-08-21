@@ -40,15 +40,12 @@ from zope.structuredtext.stng import StructuredTextUnderline
 from zope.structuredtext.stng import StructuredTextXref
 from zope.structuredtext.stng import structurize
 
-try:
-    string_types = (unicode, str)
-except NameError:   # pragma: NO COVER Py3k
-    string_types = (str,)
+string_types = (str,) if bytes is not str else (unicode, str)
 
 __metaclass__ = type
 
 
-class Document:
+class Document(object):
     """
     Class instance calls [ex.=> x()] require a structured text
     structure. Doc will then parse each paragraph in the structure
@@ -90,10 +87,10 @@ class Document:
         if isinstance(doc, string_types):
             doc = structurize(doc)
             doc.setSubparagraphs(self.color_paragraphs(
-               doc.getSubparagraphs()))
+                doc.getSubparagraphs()))
         else:
             doc = StructuredTextDocument(self.color_paragraphs(
-               doc.getSubparagraphs()))
+                doc.getSubparagraphs()))
         return doc
 
     def parse(self, raw_string, text_type, type=type):
@@ -149,7 +146,7 @@ class Document:
     def color_text(self, text, types=None):
         """Search the paragraph for each special structure
         """
-        if types is None: 
+        if types is None:
             types = self.text_types
 
         for text_type in types:
@@ -168,7 +165,7 @@ class Document:
                             result.append(s)
                     else:
                         s.setColorizableTexts(list(
-                           map(self.color_text, s.getColorizableTexts())))
+                            map(self.color_text, s.getColorizableTexts())))
                         result.append(s)
                 text = result
             else:
@@ -182,9 +179,9 @@ class Document:
         return text
 
     def color_paragraphs(self, raw_paragraphs,
-                           type=type, sequence_types=(tuple, list),
-                           sts=string_types):
-        result=[]
+                         type=type, sequence_types=(tuple, list),
+                         sts=string_types):
+        result = []
         for paragraph in raw_paragraphs:
             if paragraph.getNodeName() != 'StructuredTextParagraph':
                 result.append(paragraph)
@@ -193,76 +190,72 @@ class Document:
             for pt in self.paragraph_types:
                 if isinstance(pt, sts):
                     # grab the corresponding function
-                    pt=getattr(self, pt)
+                    pt = getattr(self, pt)
                 # evaluate the paragraph
-                new_paragraphs=pt(paragraph)
+                new_paragraphs = pt(paragraph)
                 if new_paragraphs:
                     if not isinstance(new_paragraphs, sequence_types):
                         new_paragraphs = (new_paragraphs, )
 
                     for paragraph in new_paragraphs:
                         subs = self.color_paragraphs(
-                                    paragraph.getSubparagraphs()
-                                    )
+                            paragraph.getSubparagraphs()
+                        )
                         paragraph.setSubparagraphs(subs)
                     break
             else:
                 # copy, retain attributes
                 atts = getattr(paragraph, '_attributes', [])
                 kw = dict([(att, getattr(paragraph, att))
-                            for att in atts])
+                           for att in atts])
                 subs = self.color_paragraphs(paragraph.getSubparagraphs())
-                new_paragraphs=StructuredTextParagraph(
-                   paragraph. getColorizableTexts()[0], subs, **kw),
+                new_paragraphs = StructuredTextParagraph(
+                    paragraph.getColorizableTexts()[0], subs, **kw),
 
             # color the inline StructuredText types
             # for each StructuredTextParagraph
             for paragraph in new_paragraphs:
 
-                if paragraph.getNodeName() is "StructuredTextTable":
+                if paragraph.getNodeName() == "StructuredTextTable":
 #                cells = paragraph.getColumns()
                     text = paragraph.getColorizableTexts()
-                    text = map(structurize, text)
-                    text = list(map(self.__call__,text))
-                    for t in range(len(text)):
-                        text[t] = text[t].getSubparagraphs()
+                    text = [structurize(t) for t in text]
+                    text = [self(t) for t in text]
+                    text = [t.getSubparagraphs() for t in text]
                     paragraph.setColorizableTexts(text)
 
                 paragraph.setColorizableTexts(
-                   list(map(self.color_text,
-                       paragraph.getColorizableTexts()
-                       )))
+                    [self.color_text(t) for t in paragraph.getColorizableTexts()])
                 result.append(paragraph)
 
         return result
 
-    def doc_table(self, paragraph, expr = re.compile(r'\s*\|[-]+\|').match):
+    def doc_table(self, paragraph, expr=re.compile(r'\s*\|[-]+\|').match):
         text = paragraph.getColorizableTexts()[0]
-        m    = expr(text)
+        m = expr(text)
 
         subs = paragraph.getSubparagraphs()
 
-        if not (m):
+        if not m:
             return None
         rows = []
 
-        spans   = []
-        ROWS    = []
-        COLS    = []
+        spans = []
+        ROWS = []
+        COLS = []
         indexes = []
-        ignore  = []
+        ignore = []
 
-        TDdivider   = re.compile("[\-]+").match
-        THdivider   = re.compile("[\=]+").match
-        col         = re.compile('\|').search
-        innertable  = re.compile('\|([-]+|[=]+)\|').search
+        TDdivider = re.compile(r"[\-]+").match
+        THdivider = re.compile(r"[\=]+").match
+        col = re.compile(r'\|').search
+        innertable = re.compile(r'\|([-]+|[=]+)\|').search
 
         text = text.strip()
         rows = text.split('\n')
-        foo  = ""
+        foo = ""
 
-        for row in range(len(rows)):
-            rows[row] = rows[row].strip()
+        rows = [x.strip() for x in rows]
 
         # have indexes store if a row is a divider
         # or a cell part
@@ -276,22 +269,22 @@ class Document:
                 indexes.append("cell")
 
         for index in range(len(indexes)):
-            if indexes[index] is "TDdivider" or indexes[index] is "THdivider":
+            if indexes[index] in ("TDdivider", "THdivider"):
                 ignore = [] # reset ignore
                 #continue    # skip dividers
 
-            tmp     = rows[index].strip()    # clean the row up
-            tmp     = tmp[1:-1]     # remove leading + trailing |
-            offset  = 0
+            tmp = rows[index].strip()    # clean the row up
+            tmp = tmp[1:-1]     # remove leading + trailing |
+            offset = 0
 
             # find the start and end of inner
             # tables. ignore everything between
             if innertable(tmp):
                 tmpstr = tmp.strip()
                 while innertable(tmpstr):
-                    start,end   = innertable(tmpstr).span()
-                    if not (start, end-1) in ignore:
-                        ignore.append((start,end-1))
+                    start, end = innertable(tmpstr).span()
+                    if not (start, end - 1) in ignore:
+                        ignore.append((start, end - 1))
                     tmpstr = " " + tmpstr[end:]
 
             # find the location of column dividers
@@ -299,18 +292,18 @@ class Document:
             #   as column dividers
             if col(tmp):
                 while col(tmp):
-                    bar         = 1   # true if start is not in ignore
-                    start, end   = col(tmp).span()
+                    bar = 1   # true if start is not in ignore
+                    start, end = col(tmp).span()
 
                     if not start + offset in spans:
-                        for s,e in ignore:
+                        for s, e in ignore:
                             if start + offset >= s or start + offset <= e:
                                 bar = None
                                 break
                         if bar:   # start is clean
                             spans.append(start + offset)
                     if not bar:
-                        foo +=  tmp[:end]
+                        foo += tmp[:end]
                         tmp = tmp[end:]
                         offset += end
                     else:
@@ -329,8 +322,8 @@ class Document:
         ROWS = ROWS[1:]
 
         # find each column span
-        cols    = []
-        tmp     = []
+        cols = []
+        tmp = []
 
         for row in ROWS:
             for c in row:
@@ -340,7 +333,7 @@ class Document:
 
         cur = 1
         tmp = []
-        C   = []
+        C = []
         for col in cols:
             for span in spans:
                 if not span in col:
@@ -358,14 +351,14 @@ class Document:
 
         # label things as either TableData or
         # Table header
-        TD  = []
-        TH  = []
+        TD = []
+        TH = []
         all = []
         for index in range(len(indexes)):
-            if indexes[index] is "TDdivider":
+            if indexes[index] == "TDdivider":
                 TD.append(index)
                 all.append(index)
-            if indexes[index] is "THdivider":
+            if indexes[index] == "THdivider":
                 TH.append(index)
                 all.append(index)
         TD = TD[1:]
@@ -377,14 +370,14 @@ class Document:
         for div in dividers:
             if div in TD:
                 index = all.index(div)
-                for rowindex in range(all[index-1],all[index]):
+                for rowindex in range(all[index - 1], all[index]):
                     for i in range(len(rows[rowindex])):
                         rows[rowindex][i] = (rows[rowindex][i][0],
                                              rows[rowindex][i][1],
                                              "td")
             else:
                 index = all.index(div)
-                for rowindex in range(all[index-1], all[index]):
+                for rowindex in range(all[index - 1], all[index]):
                     for i in range(len(rows[rowindex])):
                         rows[rowindex][i] = (rows[rowindex][i][0],
                                              rows[rowindex][i][1],
@@ -392,14 +385,15 @@ class Document:
 
         # now munge the multi-line cells together
         # as paragraphs
-        ROWS    = []
-        COLS    = []
+        ROWS = []
+        COLS = []
         for row in rows:
             for index in range(len(row)):
                 if not COLS:
                     COLS = list(range(len(row)))
-                    for i in range(len(COLS)):
-                        COLS[i] = ["", 1 ,""]
+                    COLS = [["", 1, ""] for _ in COLS]
+                    #for i in range(len(COLS)):
+                    #    COLS[i] = ["", 1 ,""]
                 if TDdivider(row[index][0]) or THdivider(row[index][0]):
                     ROWS.append(COLS)
                     COLS = []
@@ -417,17 +411,17 @@ class Document:
         cols = []
         for row in ROWS:
             for index in range(len(row)):
-                topindent       = 0
-                bottomindent    = 0
-                leftindent      = 0
-                rightindent     = 0
-                left            = []
-                right           = []
-                text            = row[index][0]
-                text            = text.split('\n')
-                text            = text[:-1]
-                align           = ""
-                valign          = ""
+                topindent = 0
+                bottomindent = 0
+                leftindent = 0
+                rightindent = 0
+                left = []
+                right = []
+                text = row[index][0]
+                text = text.split('\n')
+                text = text[:-1]
+                align = ""
+                valign = ""
                 for t in text:
                     t = t.strip()
                     if not t:
@@ -442,8 +436,8 @@ class Document:
                     else:
                         break
                 text.reverse()
-                tmp   = '\n'.join(text[topindent:len(text)-bottomindent])
-                pars  = re.compile("\n\s*\n").split(tmp)
+                tmp = '\n'.join(text[topindent:len(text)-bottomindent])
+                pars = re.compile(r"\n\s*\n").split(tmp)
                 for par in pars:
                     if index > 0:
                         par = par[1:]
@@ -458,7 +452,7 @@ class Document:
                     par.reverse()
                     for p in par:
                         if not p:
-                            rightindent +=  1
+                            rightindent += 1
                         else:
                             break
                     right.append(rightindent)
@@ -467,53 +461,51 @@ class Document:
                 right.sort()
 
                 if topindent == bottomindent:
-                    valign="middle"
+                    valign = "middle"
                 elif topindent < 1:
-                    valign="top"
+                    valign = "top"
                 elif bottomindent < 1:
-                    valign="bottom"
+                    valign = "bottom"
                 else:
-                    valign="middle"
+                    valign = "middle"
 
                 if left[0] < 1:
                     align = "left"
                 elif right[0] < 1:
                     align = "right"
                 elif left[0] > 1 and right[0] > 1:
-                    align="center"
+                    align = "center"
                 else:
-                    align="left"
+                    align = "left"
 
                 cols.append(
-                        (row[index][0], row[index][1],
-                        align, valign, row[index][2])
-                        )
+                    (row[index][0], row[index][1],
+                     align, valign, row[index][2])
+                )
             rows.append(cols)
             cols = []
         return StructuredTextTable(rows,
-                                text, subs, indent=paragraph.indent)
+                                   text, subs, indent=paragraph.indent)
 
-    def doc_bullet(self, paragraph, expr = re.compile(r'\s*[-*o]\s+').match):
+    def doc_bullet(self, paragraph, expr=re.compile(r'\s*[-*o]\s+').match):
         top = paragraph.getColorizableTexts()[0]
         m = expr(top)
 
         if not m:
             return None
 
-        subs=paragraph.getSubparagraphs()
+        subs = paragraph.getSubparagraphs()
         if top[-2:] == '::':
-            subs=[StructuredTextExample(subs)]
-            top=top[:-1]
+            subs = [StructuredTextExample(subs)]
+            top = top[:-1]
         return StructuredTextBullet(top[m.span()[1]:], subs,
-                                         indent=paragraph.indent,
-                                         bullet=top[:m.span()[1]]
-                                         )
+                                    indent=paragraph.indent,
+                                    bullet=top[:m.span()[1]])
 
     def doc_numbered(self,
-            paragraph,
-            expr = re.compile(
-        r'(\s*[%s]\.)|(\s*[0-9]+\.)|(\s*[0-9]+\s+)' % letters).match
-                    ):
+                     paragraph,
+                     expr=re.compile(
+                         r'(\s*[%s]\.)|(\s*[0-9]+\.)|(\s*[0-9]+\s+)' % letters).match):
 
         # This is the old expression. It had a nasty habit
         # of grabbing paragraphs that began with a single
@@ -534,21 +526,19 @@ class Document:
             subs = [StructuredTextExample(subs)]
             top = top[:-1]
         return StructuredTextNumbered(top[m.span()[1]:], subs,
-                                           indent=paragraph.indent,
-                                           number=top[:m.span()[1]])
+                                      indent=paragraph.indent,
+                                      number=top[:m.span()[1]])
 
-    def doc_description(
-        self, paragraph,
-        delim = re.compile(r'\s+--\s+').search,
-        nb = re.compile(r'[^\000- ]').search,
-        ):
+    def doc_description(self, paragraph,
+                        delim=re.compile(r'\s+--\s+').search,
+                        nb=re.compile(r'[^\000- ]').search):
 
         top = paragraph.getColorizableTexts()[0]
         d = delim(top)
         if not d:
             return None
         start, end = d.span()
-        title=top[:start]
+        title = top[:start]
         if title.find('\n') >= 0:
             return None
         if not nb(title):
@@ -562,9 +552,9 @@ class Document:
             top = top[:-1]
 
         return StructuredTextDescription(
-           title, top, subs,
-           indent=paragraph.indent,
-           delim=d)
+            title, top, subs,
+            indent=paragraph.indent,
+            delim=d)
 
     def doc_header(self, paragraph):
         subs = paragraph.getSubparagraphs()
@@ -577,7 +567,8 @@ class Document:
 
         if top[-2:] == '::':
             subs = StructuredTextExample(subs)
-            if top.strip() == '::': return subs
+            if top.strip() == '::':
+                return subs
             # copy attrs when returning a paragraph
             kw = {}
             atts = getattr(paragraph, '_attributes', [])
@@ -585,16 +576,16 @@ class Document:
                 kw[att] = getattr(paragraph, att)
             return StructuredTextParagraph(top[:-1], [subs], **kw)
 
-        if top.find('\n') >= 0: return None
+        if top.find('\n') >= 0:
+            return None
         return StructuredTextSection(top, subs, indent=paragraph.indent)
 
     def doc_literal(self,
                     s,
-                    expr = re.compile(
+                    expr=re.compile(
                         r"(\W+|^)'([\w%s\s]+)'([%s]+|$)"\
                         % (literal_punc, phrase_delimiters),
-                        re.UNICODE).search,
-                    ):
+                        re.UNICODE).search):
         r = expr(s)
         if r:
             start, end = r.span(2)
@@ -602,11 +593,10 @@ class Document:
 
     def doc_emphasize(self,
                       s,
-                      expr = re.compile(r'\*([\w%s\s]+?)\*' \
-                                    % (strongem_punc), re.UNICODE).search
-                    ):
+                      expr=re.compile(r'\*([\w%s\s]+?)\*' \
+                                      % (strongem_punc), re.UNICODE).search):
 
-        r=expr(s)
+        r = expr(s)
         if r:
             start, end = r.span(1)
             return (StructuredTextEmphasis(s[start:end]),
@@ -614,8 +604,8 @@ class Document:
 
     def doc_inner_link(self,
                        s,
-                       expr1 = re.compile(r"\.\.\s*").search,
-                       expr2 = re.compile(r"\[[\w]+\]", re.UNICODE ).search):
+                       expr1=re.compile(r"\.\.\s*").search,
+                       expr2=re.compile(r"\[[\w]+\]", re.UNICODE).search):
 
         # make sure we dont grab a named link
         if expr2(s) and expr1(s):
@@ -624,52 +614,48 @@ class Document:
             if end1 == start2:
                 # uh-oh, looks like a named link
                 return None
-            else:
-                # the .. is somewhere else, ignore it
-                return (StructuredTextInnerLink(s[start2 + 1:end2 - 1]),
-                        start2,end2)
-            return None
+
+            # the .. is somewhere else, ignore it
+            return (StructuredTextInnerLink(s[start2 + 1:end2 - 1]),
+                    start2, end2)
         elif expr2(s) and not expr1(s):
             start, end = expr2(s).span()
             return (StructuredTextInnerLink(s[start + 1:end - 1]),
-                    start,end)
+                    start, end)
 
     def doc_named_link(self,
                        s,
                        expr=re.compile(r"(\.\.\s)(\[[\w]+\])",
-                            re.UNICODE).search
-                      ):
+                                       re.UNICODE).search):
 
         result = expr(s)
         if result:
-            start,end   = result.span(2)
+            start, end = result.span(2)
             str = s[start + 1:end - 1]
-            st,en = result.span()
+            st, en = result.span()
             return (StructuredTextNamedLink(str), st, en)
 
     def doc_underline(self,
                       s,
                       expr=re.compile(r'_([\w%s\s]+)_([\s%s]|$)'\
                             % (under_punc, phrase_delimiters),
-                              re.UNICODE).search
-                      ):
+                                      re.UNICODE).search):
 
         result = expr(s)
         if result:
             if result.group(1)[:1] == '_':
                 return None # no double unders
-            start,end = result.span(1)
+            start, end = result.span(1)
             st, e = result.span()
             return (StructuredTextUnderline(s[start:end]),
                     st, e-len(result.group(2)))
 
     def doc_strong(self,
                    s,
-                   expr = re.compile('\*\*([\w%s\s]+?)\*\*' \
-                            % (strongem_punc), re.UNICODE).search
-                    ):
+                   expr=re.compile(r'\*\*([\w%s\s]+?)\*\*' \
+                                   % (strongem_punc), re.UNICODE).search):
 
-        r=expr(s)
+        r = expr(s)
         if r:
             start, end = r.span(1)
             return (StructuredTextStrong(s[start:end]),
@@ -688,8 +674,7 @@ class Document:
                   expr=re.compile(_DQUOTEDTEXT \
                                   + "(:)" \
                                   + _ABS_AND_RELATIVE_URL \
-                                  + _SPACES, re.UNICODE).search
-                   ):
+                                  + _SPACES, re.UNICODE).search):
         return self.doc_href(s, expr)
 
     def doc_href2(self,
@@ -697,28 +682,26 @@ class Document:
                   expr=re.compile(_DQUOTEDTEXT\
                                  + r'(\,\s+)' \
                                  + _ABSOLUTE_URL \
-                                 + _SPACES, re.UNICODE).search
-                  ):
+                                 + _SPACES, re.UNICODE).search):
         return self.doc_href(s, expr)
 
     def doc_href(self,
-                s,
-                expr,
-                punctuation=re.compile(r"[\,\.\?\!\;]+", re.UNICODE).match
-                ):
+                 s,
+                 expr,
+                 punctuation=re.compile(r"[\,\.\?\!\;]+", re.UNICODE).match):
         r = expr(s)
 
         if r:
             # need to grab the href part and the
             # beginning part
             start, e = r.span(1)
-            name    = s[start:e]
-            name    = name.replace('"', '', 2)
+            name = s[start:e]
+            name = name.replace('"', '', 2)
             #start   = start + 1
-            st,end   = r.span(3)
-            if punctuation(s[end-1:end]):
+            st, end = r.span(3)
+            if punctuation(s[end - 1:end]):
                 end = end -1
-            link    = s[st:end]
+            link = s[st:end]
             #end     = end - 1
 
             # name is the href title, link is the target
@@ -740,10 +723,9 @@ class Document:
                     start, end)
 
     def doc_xref(self,
-                s,
-                expr = re.compile('\[([\w\-.:/;,\n\r\~]+)\]',
-                                    re.UNICODE).search
-                ):
+                 s,
+                 expr=re.compile(r'\[([\w\-.:/;,\n\r\~]+)\]',
+                                 re.UNICODE).search):
         r = expr(s)
         if r:
             start, end = r.span(1)
@@ -755,26 +737,24 @@ class DocumentWithImages(Document):
     """
 
     text_types = [
-       'doc_img',
-       ] + Document.text_types
+        'doc_img',
+    ] + Document.text_types
 
 
     def doc_img(self,
                 s,
-                expr = re.compile(Document._DQUOTEDTEXT \
-                                 + ":img:" \
-                                 + Document._ABS_AND_RELATIVE_URL,
-                                 re.UNICODE).search
-                ):
+                expr=re.compile(Document._DQUOTEDTEXT \
+                                + ":img:" \
+                                + Document._ABS_AND_RELATIVE_URL,
+                                re.UNICODE).search):
 
         r = expr(s)
         if r:
             startt, endt = r.span(1)
             starth, endh = r.span(2)
             start, end = r.span()
-            return (StructuredTextImage(
-                            s[startt + 1:endt - 1],
-                            href=s[starth:endh]),
+            return (StructuredTextImage(s[startt + 1:endt - 1],
+                                        href=s[starth:endh]),
                     start, end)
 
         return None
