@@ -12,36 +12,30 @@
 ##############################################################################
 import doctest
 import unittest
-
+import glob
 import os
 
 here = os.path.dirname(__file__)
 regressions = os.path.join(here, 'regressions')
 
-files = [
-    'index.stx',
-    'Acquisition.stx',
-    'ExtensionClass.stx',
-    'MultiMapping.stx',
-    'examples.stx',
-    'Links.stx',
-    'examples1.stx',
-    'table.stx',
-    'InnerLinks.stx',
-]
+files = glob.glob(regressions + '/*stx')
+
 
 def readFile(dirname, fname):
     with open(os.path.join(dirname, fname), "r") as myfile:
         lines = myfile.readlines()
     return ''.join(lines)
 
-def structurizedFiles():
+def structurizedFile(f):
     from zope.structuredtext import stng
     from zope.structuredtext.document import Document
+    raw_text = readFile(regressions, f)
+    text = stng.structurize(raw_text)
+    return f, text
+
+def structurizedFiles():
     for f in files:
-        raw_text = readFile(regressions, f)
-        text = stng.structurize(raw_text)
-        yield f, text
+        yield structurizedFile(f)
 
 class StngTests(unittest.TestCase):
 
@@ -68,33 +62,45 @@ class StngTests(unittest.TestCase):
         else:
             self.assertEqual(output.strip(), expected.strip())
 
-    def testHTMLRegressions(self):
+    def _check_html(self, f):
         # HTML regression test
         from zope.structuredtext.document import Document
         from zope.structuredtext.html import HTML
-        for f, text in structurizedFiles():
-            __traceback_info__ = f
-            doc = Document()(text)
-            html = HTML()(doc)
+        __traceback_info__ = f
 
-            self._compare(f, html)
+        f, text = structurizedFile(f)
+        doc = Document()(text)
+        html = HTML()(doc)
 
-    def testDocBookRegressions(self):
+        self._compare(f, html)
+
+    def _check_docbook(self, f):
         from zope.structuredtext.document import Document
         from zope.structuredtext.docbook import DocBook
+        __traceback_info__ = f
 
         fails_to_docbook = {
             # Doesn't support StructuredTextTable
             'table.stx',
         }
 
-        for f, text in structurizedFiles():
-            if f in fails_to_docbook:
-                continue
-            doc = Document()(text)
-            __traceback_info__ = f
-            docbook = DocBook()(doc)
-            self._compare(f, docbook, '.xml')
+        if f in fails_to_docbook:
+            raise unittest.SkipTest()
+
+        f, text = structurizedFile(f)
+        doc = Document()(text)
+
+        docbook = DocBook()(doc)
+        self._compare(f, docbook, '.xml')
+
+for f in files:
+    f = os.path.basename(f)
+    test = lambda self, f=f: self._check_html(f)
+    test_xml = lambda self, f=f: self._check_docbook(f)
+
+    bn = os.path.basename(f)
+    setattr(StngTests, 'test_html_' + bn, test)
+    setattr(StngTests, 'test_xml_' + bn, test_xml)
 
 
 class BasicTests(unittest.TestCase):
