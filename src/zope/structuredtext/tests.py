@@ -45,9 +45,9 @@ class StngTests(unittest.TestCase):
         # testing Document
         # *cough* *cough* this can't be enough...
         from zope.structuredtext import stng
-        from zope.structuredtext.document import Document
+        from zope.structuredtext.document import DocumentWithImages
         for _, text in structurizedFiles():
-            doc = Document()
+            doc = DocumentWithImages()
             self.assertTrue(doc(text))
 
     def _compare(self, filename, output, expected_extension=".ref"):
@@ -64,19 +64,20 @@ class StngTests(unittest.TestCase):
 
     def _check_html(self, f):
         # HTML regression test
-        from zope.structuredtext.document import Document
-        from zope.structuredtext.html import HTML
+        from zope.structuredtext.document import DocumentWithImages
+        from zope.structuredtext.html import HTMLWithImages
         __traceback_info__ = f
 
         f, text = structurizedFile(f)
-        doc = Document()(text)
-        html = HTML()(doc)
+        doc = DocumentWithImages()(text)
+        html = HTMLWithImages()(doc)
 
         self._compare(f, html)
 
     def _check_docbook(self, f):
-        from zope.structuredtext.document import Document
+        from zope.structuredtext.document import DocumentWithImages
         from zope.structuredtext.docbook import DocBook
+        from zope.structuredtext.docbook import DocBookChapterWithFigures
         __traceback_info__ = f
 
         fails_to_docbook = {
@@ -84,14 +85,22 @@ class StngTests(unittest.TestCase):
             'table.stx',
         }
 
+        requires_images = {
+            'images.stx'
+        }
+
         if f in fails_to_docbook:
             raise unittest.SkipTest()
 
         f, text = structurizedFile(f)
-        doc = Document()(text)
+        doc = DocumentWithImages()(text)
 
-        docbook = DocBook()(doc)
+        factory = DocBook if f not in requires_images else DocBookChapterWithFigures
+
+        docbook = factory()(doc)
         self._compare(f, docbook, '.xml')
+
+
 
 for f in files:
     f = os.path.basename(f)
