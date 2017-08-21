@@ -13,14 +13,13 @@
 """ Core document model.
 """
 from __future__ import print_function
-from __future__ import print_function
 
 import re
 from . import stdom
 
 __metaclass__ = type
 
-def indention(str, front=re.compile("^\s+").match):
+def indention(str, front=re.compile(r"^\s+").match):
     """Find the number of leading spaces. If none, return 0.
     """
     result = front(str)
@@ -35,12 +34,12 @@ def insert(struct, top, level):
     that paragraph's sub-paragraphs. The new paragraph will be
     appended to those sub-paragraphs
     """
-    if not top-1 in range(len(struct)):
+    if top - 1 not in range(len(struct)):
         if struct:
             return struct[len(struct)-1].getSubparagraphs()
         return struct
     run = struct[top-1]
-    i    = 0
+    i = 0
     while i+1 < level:
         run = run.getSubparagraphs()[len(run.getSubparagraphs())-1]
         i = i + 1
@@ -63,21 +62,21 @@ def display2(struct):
     orignal paragraphs.
     """
     if struct.getNodeValue():
-        print(struct.getNodeValue(),"\n")
+        print(struct.getNodeValue(), "\n")
     if struct.getSubparagraphs():
         for x in struct.getSubparagraphs():
             display(x)
 
-def findlevel(levels,indent):
+def findlevel(levels, indent):
     """Remove all level information of levels with a greater level of
     indentation. Then return which level should insert this paragraph
     """
     keys = list(levels.keys())
     for key in keys:
         if levels[key] > indent:
-            del(levels[key])
+            del levels[key]
     keys = levels.keys()
-    if not(keys):
+    if not keys:
         return 0
     else:
         for key in keys:
@@ -106,17 +105,17 @@ def structurize(paragraphs, delimiter=re.compile(para_delim)):
     [paragraph,[sub-paragraphs]]
     """
 
-    currentlevel   = 0
-    currentindent  = 0
-    levels         = {0:0}
-    level          = 0        # which header are we under
-    struct         = []       # the structure to be returned
-    run            = struct
+    currentlevel = 0
+    currentindent = 0
+    levels = {0:0}
+    level = 0        # which header are we under
+    struct = []       # the structure to be returned
+    run = struct
 
     paragraphs = paragraphs.expandtabs()
     paragraphs = '%s%s%s' % ('\n\n', paragraphs, '\n\n')
     paragraphs = delimiter.split(paragraphs)
-    paragraphs = [ x for x in  paragraphs if x.strip() ]
+    paragraphs = [x for x in  paragraphs if x.strip()]
 
     if not paragraphs:
         return StructuredTextDocument()
@@ -126,42 +125,42 @@ def structurize(paragraphs, delimiter=re.compile(para_delim)):
         ind.append([indention(paragraph), paragraph])
 
     currentindent = indention(paragraphs[0])
-    levels[0]        = currentindent
+    levels[0] = currentindent
 
-    for indent,paragraph in ind :
+    for indent, paragraph in ind:
         if indent == 0:
-            level          = level + 1
-            currentlevel   = 0
-            currentindent  = 0
-            levels         = {0:0}
+            level = level + 1
+            currentlevel = 0
+            currentindent = 0
+            levels = {0:0}
             struct.append(StructuredTextParagraph(paragraph,
                                                   indent=indent,
                                                   level=currentlevel))
         elif indent > currentindent:
-            currentlevel            = currentlevel + 1
-            currentindent           = indent
-            levels[currentlevel]    = indent
-            run = insert(struct,level,currentlevel)
+            currentlevel = currentlevel + 1
+            currentindent = indent
+            levels[currentlevel] = indent
+            run = insert(struct, level, currentlevel)
             run.append(StructuredTextParagraph(paragraph,
                                                indent=indent,
                                                level=currentlevel))
         elif indent < currentindent:
-            result   = findlevel(levels,indent)
+            result = findlevel(levels, indent)
             if result > 0:
                 currentlevel = result
-            currentindent  = indent
+            currentindent = indent
             if not level:
                 struct.append(StructuredTextParagraph(paragraph,
                                                       indent=indent,
                                                       level=currentlevel))
             else:
-                run = insert(struct,level,currentlevel)
+                run = insert(struct, level, currentlevel)
                 run.append(StructuredTextParagraph(paragraph,
                                                    indent=indent,
                                                    level=currentlevel))
         else:
-            if insert(struct,level,currentlevel):
-                run = insert(struct,level,currentlevel)
+            if insert(struct, level, currentlevel):
+                run = insert(struct, level, currentlevel)
             else:
                 run = struct
                 currentindent = indent
@@ -178,7 +177,7 @@ class StructuredTextParagraph(stdom.Element):
 
     def __init__(self, src, subs=None, **kw):
         if subs is None:
-            subs=[]
+            subs = []
         self._src = src
         self._subs = list(subs)
 
@@ -187,9 +186,9 @@ class StructuredTextParagraph(stdom.Element):
             setattr(self, k, v)
 
     def getChildren(self):
-        src=self._src
+        src = self._src
         if not isinstance(src, list):
-            src=[src]
+            src = [src]
         return src+self._subs
 
     def getAttribute(self, name):
@@ -204,28 +203,29 @@ class StructuredTextParagraph(stdom.Element):
     def getAttributes(self):
         d = {}
         for a in self._attributes:
-            d[a]=getattr(self, a, '')
+            d[a] = getattr(self, a, '')
         return stdom.NamedNodeMap(d)
 
     def getSubparagraphs(self):
         return self._subs
 
     def setSubparagraphs(self, subs):
-        self._subs=subs
+        self._subs = subs
 
     def getColorizableTexts(self):
         return (self._src,)
 
     def setColorizableTexts(self, src):
-        self._src=src[0]
+        self._src = src[0]
 
     def __repr__(self):
-        r=[]; a=r.append
-        a((' '*(self.indent or 0))+
-          ('%s(' % self.__class__.__name__)
-          +str(self._src)+', ['
-          )
-        for p in self._subs: a(repr(p))
+        r = []
+        a = r.append
+        a((' '*(self.indent or 0))
+          + ('%s(' % self.__class__.__name__)
+          + str(self._src) + ', [')
+        for p in self._subs:
+            a(repr(p))
         a((' '*(self.indent or 0))+'])')
         return '\n'.join(r)
 
@@ -233,7 +233,7 @@ class StructuredTextDocument(StructuredTextParagraph):
     """A StructuredTextDocument holds StructuredTextParagraphs
     as its subparagraphs.
     """
-    _attributes=()
+    _attributes = ()
 
     def __init__(self, subs=None, **kw):
         super(StructuredTextDocument, self).__init__('', subs, **kw)
@@ -248,9 +248,11 @@ class StructuredTextDocument(StructuredTextParagraph):
         pass
 
     def __repr__(self):
-        r=[]; a=r.append
+        r = []
+        a = r.append
         a('%s([' % self.__class__.__name__)
-        for p in self._subs: a(repr(p)+',')
+        for p in self._subs:
+            a(repr(p)+',')
         a('])')
         return '\n'.join(r)
 
@@ -314,7 +316,7 @@ class StructuredTextSection(StructuredTextParagraph):
     def getColorizableTexts(self):
         return self._src.getColorizableTexts()
 
-    def setColorizableTexts(self,src):
+    def setColorizableTexts(self, src):
         self._src.setColorizableTexts(src)
 
 # a StructuredTextTable holds StructuredTextRows
@@ -331,7 +333,7 @@ class StructuredTextTable(StructuredTextParagraph):
         self._rows = []
         for row in rows:
             if row:
-                self._rows.append(StructuredTextRow(row,kw))
+                self._rows.append(StructuredTextRow(row, kw))
 
     def getRows(self):
         return [self._rows]
@@ -348,11 +350,11 @@ class StructuredTextTable(StructuredTextParagraph):
     def _getColumns(self):
         return self.getColumns()
 
-    def setColumns(self,columns):
+    def setColumns(self, columns):
         for index in range(len(self._rows)):
             self._rows[index].setColumns(columns[index])
 
-    def _setColumns(self,columns):
+    def _setColumns(self, columns):
         return self.setColumns(columns)
 
     def getColorizableTexts(self):
@@ -368,7 +370,7 @@ class StructuredTextTable(StructuredTextParagraph):
                 result.append(column.getColorizableTexts()[0])
         return result
 
-    def setColorizableTexts(self,texts):
+    def setColorizableTexts(self, texts):
         """
         texts is going to a tuple where each item is the
         result of being mapped to the colortext function.
@@ -391,7 +393,7 @@ class StructuredTextTable(StructuredTextParagraph):
 # StructuredTextRow holds StructuredTextColumns
 class StructuredTextRow(StructuredTextParagraph):
 
-    def __init__(self,row,kw):
+    def __init__(self, row, kw):
         """
         row is a list of tuples, where each tuple is
         the raw text for a cell/column and the span
@@ -416,10 +418,10 @@ class StructuredTextRow(StructuredTextParagraph):
     def _getColumns(self):
         return [self._columns]
 
-    def setColumns(self,columns):
+    def setColumns(self, columns):
         self._columns = columns
 
-    def _setColumns(self,columns):
+    def _setColumns(self, columns):
         return self.setColumns(columns)
 
 # this holds the text of a table cell
@@ -431,7 +433,7 @@ class StructuredTextColumn(StructuredTextParagraph):
     or StructuredTextTableData.
     """
 
-    def __init__(self,text,span,align,valign,typ,kw):
+    def __init__(self, text, span, align, valign, typ, kw):
         super(StructuredTextColumn, self).__init__(text, [], **kw)
         self._span = span
         self._align = align
@@ -477,7 +479,7 @@ class StructuredTextMarkup(stdom.Element):
             setattr(self, key, value)
 
     def getChildren(self):
-        v=self._value
+        v = self._value
         if not isinstance(v, list):
             v = [v]
         return v
@@ -486,7 +488,7 @@ class StructuredTextMarkup(stdom.Element):
         return self._value,
 
     def setColorizableTexts(self, v):
-        self._value=v[0]
+        self._value = v[0]
 
     def __repr__(self):
         return '%s(%s)' % (self.__class__.__name__, repr(self._value))
@@ -524,4 +526,3 @@ class StructuredTextXref(StructuredTextMarkup):
 class StructuredTextImage(StructuredTextMarkup):
     """A simple embedded image
     """
-
