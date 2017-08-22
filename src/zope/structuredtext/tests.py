@@ -16,6 +16,9 @@ import unittest
 import glob
 import os
 
+from zope.structuredtext import stng
+from zope.structuredtext.document import DocumentWithImages
+
 here = os.path.dirname(__file__)
 regressions = os.path.join(here, 'regressions')
 
@@ -28,25 +31,107 @@ def readFile(dirname, fname):
     return ''.join(lines)
 
 def structurizedFile(f):
-    from zope.structuredtext import stng
     raw_text = readFile(regressions, f)
     text = stng.structurize(raw_text)
-    return f, text
+    return text
 
 def structurizedFiles():
     for f in files:
         yield structurizedFile(f)
 
-class StngTests(unittest.TestCase):
+class MockParagraph(object):
+
+    co_texts = ()
+    sub_paragraphs = ()
+    indent = 0
+
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+    def getColorizableTexts(self):
+        return self.co_texts
+
+    def getSubparagraphs(self):
+        return self.sub_paragraphs
+
+class TestFiles(unittest.TestCase):
 
     maxDiff = None
+
+    def _compare(self, filename, output, expected_extension=".ref"):
+        expected_filename = filename.replace('.stx', expected_extension)
+        try:
+            expected = readFile(regressions, expected_filename)
+        except IOError: # pragma: no cover
+            full_expected_fname = os.path.join(regressions, expected_filename)
+            if not os.path.exists(full_expected_fname):
+                with open(full_expected_fname, 'w') as f:
+                    f.write(output)
+        else:
+            self.assertEqual(expected.strip(), output.strip())
+
+    def _check_html(self, f):
+        # HTML regression test
+        from zope.structuredtext.html import HTMLWithImages
+        __traceback_info__ = f
+
+        stext = structurizedFile(f)
+        doc = DocumentWithImages()(stext)
+        html = HTMLWithImages()(doc)
+
+        self._compare(f, html)
+
+        # The same thing should work if we feed it the bare text
+        text = readFile(regressions, f)
+        doc = DocumentWithImages()(text)
+        html = HTMLWithImages()(doc)
+        self._compare(f, html)
+
+    def _check_docbook(self, f):
+        from zope.structuredtext.docbook import DocBook
+        from zope.structuredtext.docbook import DocBookChapterWithFigures
+        __traceback_info__ = f
+
+        fails_to_docbook = {
+            # Doesn't support StructuredTextTable
+            'table.stx',
+        }
+
+        requires_images = {
+            'images.stx'
+        }
+
+        if f in fails_to_docbook:
+            raise unittest.SkipTest()
+
+        text = structurizedFile(f)
+        doc = DocumentWithImages()(text)
+
+        factory = DocBook if f not in requires_images else DocBookChapterWithFigures
+
+        docbook = factory()(doc)
+        self._compare(f, docbook, '.xml')
+
+
+
+    for f in files:
+        f = os.path.basename(f)
+        html = lambda self, f=f: self._check_html(f)
+        xml = lambda self, f=f: self._check_docbook(f)
+
+        bn = os.path.basename(f).replace('.', '_')
+        locals()['test_html_' + bn] = html
+        locals()['test_xml_' + bn] = xml
+
+
+class TestDocument(unittest.TestCase):
 
     def testDocumentClass(self):
         # testing Document
         # *cough* *cough* this can't be enough...
-        from zope.structuredtext import stng
-        from zope.structuredtext.document import DocumentWithImages
-        for _, text in structurizedFiles():
+
+        for text in structurizedFiles():
             doc = DocumentWithImages()
             self.assertTrue(doc(text))
 
@@ -65,73 +150,30 @@ class StngTests(unittest.TestCase):
                     reprs(i)
             reprs(text)
 
-    def _compare(self, filename, output, expected_extension=".ref"):
-        expected_filename = filename.replace('.stx', expected_extension)
-        try:
-            expected = readFile(regressions, expected_filename)
-        except IOError: # pragma: no cover
-            full_expected_fname = os.path.join(regressions, expected_filename)
-            if not os.path.exists(full_expected_fname):
-                with open(full_expected_fname, 'w') as f:
-                    f.write(output)
-        else:
-            self.assertEqual(expected.strip(), output.strip())
+    def test_description_newline(self):
+        doc = DocumentWithImages()
+        with_newline = MockParagraph(co_texts=['\nD  -- '])
+        result = doc.doc_description(with_newline)
+        self.assertIsNone(result)
 
-    def _check_html(self, f):
-        # HTML regression test
-        from zope.structuredtext.document import DocumentWithImages
-        from zope.structuredtext.html import HTMLWithImages
-        __traceback_info__ = f
+    def test_description_nb(self):
+        doc = DocumentWithImages()
+        with_nb = MockParagraph(co_texts=[' -- '])
+        result = doc.doc_description(with_nb)
+        self.assertIsNone(result)
 
-        f, text = structurizedFile(f)
-        doc = DocumentWithImages()(text)
-        html = HTMLWithImages()(doc)
+    def test_description_example(self):
+        doc = DocumentWithImages()
+        with_example = MockParagraph(co_texts=['Desc:: -- ::'])
 
-        self._compare(f, html)
-
-    def _check_docbook(self, f):
-        from zope.structuredtext.document import DocumentWithImages
-        from zope.structuredtext.docbook import DocBook
-        from zope.structuredtext.docbook import DocBookChapterWithFigures
-        __traceback_info__ = f
-
-        fails_to_docbook = {
-            # Doesn't support StructuredTextTable
-            'table.stx',
-        }
-
-        requires_images = {
-            'images.stx'
-        }
-
-        if f in fails_to_docbook:
-            raise unittest.SkipTest()
-
-        f, text = structurizedFile(f)
-        doc = DocumentWithImages()(text)
-
-        factory = DocBook if f not in requires_images else DocBookChapterWithFigures
-
-        docbook = factory()(doc)
-        self._compare(f, docbook, '.xml')
-
-
-
-for f in files:
-    f = os.path.basename(f)
-    test = lambda self, f=f: self._check_html(f)
-    test_xml = lambda self, f=f: self._check_docbook(f)
-
-    bn = os.path.basename(f)
-    setattr(StngTests, 'test_html_' + bn, test)
-    setattr(StngTests, 'test_xml_' + bn, test_xml)
-
+        result = doc.doc_description(with_example)
+        self.assertIsInstance(result, stng.StructuredTextDescription)
+        self.assertIsInstance(result.getSubparagraphs()[0], stng.StructuredTextExample)
+        self.assertEqual(result._src, ':')
 
 class BasicTests(unittest.TestCase):
 
     def _test(self, stxtxt, expected):
-        from zope.structuredtext import stng
-        from zope.structuredtext.document import DocumentWithImages
         from zope.structuredtext.html import HTMLWithImages
         doc = stng.structurize(stxtxt)
         doc = DocumentWithImages()(doc)
