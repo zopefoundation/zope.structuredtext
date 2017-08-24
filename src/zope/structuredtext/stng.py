@@ -149,7 +149,7 @@ def structurize(paragraphs, delimiter=re.compile(para_delim)):
             if result > 0:
                 currentlevel = result
             currentindent = indent
-            if not level:
+            if not level: # pragma: no cover Can we ever even get here?
                 struct.append(StructuredTextParagraph(paragraph,
                                                       indent=indent,
                                                       level=currentlevel))
@@ -349,8 +349,8 @@ class StructuredTextTable(StructuredTextParagraph):
     _getColumns = getColumns
 
     def setColumns(self, columns):
-        for index in range(len(self._rows)):
-            self._rows[index].setColumns(columns[index])
+        for index, row in enumerate(self._rows):
+            row.setColumns(columns[index])
 
     _setColumns = setColumns
 

@@ -93,7 +93,6 @@ class TestFiles(unittest.TestCase):
 
     def _check_html(self, f):
         # HTML regression test
-        from zope.structuredtext.html import HTMLWithImages
         __traceback_info__ = f
 
         stext = structurizedFile(f)
@@ -109,8 +108,6 @@ class TestFiles(unittest.TestCase):
         self._compare(f, html)
 
     def _check_docbook(self, f):
-        from zope.structuredtext.docbook import DocBook
-        from zope.structuredtext.docbook import DocBookChapterWithFigures
         __traceback_info__ = f
 
         fails_to_docbook = {
@@ -511,6 +508,73 @@ class TestDocBookBook(unittest.TestCase):
 
         self.assertEqual(str(book),
                          '<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN">\n<book>\n<title>title</title>\n\nchapter1\n\n\nchapter2\n\n\n</book>\n')
+
+class TestSTNGFunctions(unittest.TestCase):
+
+    def test_findlevel_empty(self):
+        self.assertEqual(0, stng.findlevel({}, 42))
+
+    def test_structurize_empty(self):
+        paragraphs = ''
+        result = stng.structurize(paragraphs)
+        self.assertIsInstance(result, stng.StructuredTextDocument)
+
+class TestStructuredTextDocument(unittest.TestCase):
+
+    def test_set_texts_noop(self):
+        doc = stng.StructuredTextDocument()
+        self.assertEqual((), doc.getColorizableTexts())
+        doc.setColorizableTexts(self)
+        self.assertEqual((), doc.getColorizableTexts())
+
+
+class TestStructuredTextExample(unittest.TestCase):
+
+    def test_set_texts_noop(self):
+        doc = stng.StructuredTextExample(())
+        self.assertEqual((), doc.getColorizableTexts())
+        doc.setColorizableTexts(self)
+        self.assertEqual((), doc.getColorizableTexts())
+
+
+class TestStructuredTextParagraph(unittest.TestCase):
+
+    def test_attributes(self):
+        p = stng.StructuredTextParagraph(src='', k=42)
+        self.assertEqual(p.getAttribute("k"), 42)
+        self.assertIsNone(p.getAttribute('does not exist'))
+        self.assertIsNone(p.getAttributeNode('does not exist'))
+        self.assertIsInstance(p.getAttributeNode('k'), stdom.Attr)
+        nnmap = p.getAttributes()
+        self.assertIsInstance(nnmap, stdom.NamedNodeMap)
+
+class TestStructuredTextRow(unittest.TestCase):
+
+    def test_set_columns(self):
+        # What we set gets wrapped in another list
+        row = stng.StructuredTextRow((), {})
+        row.setColumns(self)
+        self.assertEqual([self], row.getColumns())
+
+
+class TestStructuredTextMarkup(unittest.TestCase):
+
+    def test_repr(self):
+        m = stng.StructuredTextMarkup('value')
+        self.assertEqual("StructuredTextMarkup('value')", repr(m))
+
+
+class TestStructuredTextTable(unittest.TestCase):
+
+    def test_get_columns(self):
+
+        row = stng.StructuredTextRow((), {})
+        table = stng.StructuredTextTable((), '', ())
+        table._rows = [row]
+
+        self.assertEqual([[[]]], table.getColumns())
+
+        table.setColumns(table.getColumns())
 
 def test_suite():
     suite = unittest.defaultTestLoader.loadTestsFromName(__name__)
