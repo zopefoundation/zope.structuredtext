@@ -191,21 +191,6 @@ class StructuredTextParagraph(stdom.Element):
             src = [src]
         return src+self._subs
 
-    def getAttribute(self, name):
-        return getattr(self, name, None)
-
-    def getAttributeNode(self, name):
-        if hasattr(self, name):
-            return stdom.Attr(name, getattr(self, name))
-        else:
-            return None
-
-    def getAttributes(self):
-        d = {}
-        for a in self._attributes:
-            d[a] = getattr(self, a, '')
-        return stdom.NamedNodeMap(d)
-
     def getSubparagraphs(self):
         return self._subs
 
