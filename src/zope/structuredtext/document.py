@@ -64,7 +64,7 @@ class Document(object):
         'doc_description',
         'doc_header',
         'doc_table',
-        ]
+    ]
 
     #'doc_inner_link',
     #'doc_named_link',
@@ -81,7 +81,7 @@ class Document(object):
         'doc_underline',
         'doc_sgml',
         'doc_xref',
-        ]
+    ]
 
     def __call__(self, doc):
         if isinstance(doc, string_types):

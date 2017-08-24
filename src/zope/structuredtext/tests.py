@@ -17,6 +17,7 @@ import glob
 import os
 
 from zope.structuredtext import stng
+from zope.structuredtext import stdom
 from zope.structuredtext.document import DocumentWithImages
 
 here = os.path.dirname(__file__)
@@ -44,6 +45,8 @@ class MockParagraph(object):
     co_texts = ()
     sub_paragraphs = ()
     indent = 0
+    node_type = stdom.TEXT_NODE
+    node_value = ''
 
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
@@ -54,6 +57,12 @@ class MockParagraph(object):
 
     def getSubparagraphs(self):
         return self.sub_paragraphs
+
+    def getNodeType(self):
+        return self.node_type
+
+    def getNodeValue(self):
+        return self.node_value
 
 class TestFiles(unittest.TestCase):
 
@@ -170,6 +179,44 @@ class TestDocument(unittest.TestCase):
         self.assertIsInstance(result, stng.StructuredTextDescription)
         self.assertIsInstance(result.getSubparagraphs()[0], stng.StructuredTextExample)
         self.assertEqual(result._src, ':')
+
+    def test_parse_returns_string(self):
+        doc = DocumentWithImages()
+        returns = ['', ('a string', 0, 0)]
+        def text_type(arg):
+            return returns.pop()
+
+        result = doc.parse('raw_string', text_type)
+        self.assertEqual('a stringraw_string', result)
+
+    def test_parse_returns_list(self):
+        doc = DocumentWithImages()
+        returns = ['', ([1], 0, 0)]
+
+        def text_type(arg):
+            return returns.pop()
+
+        result = doc.parse('raw_string', text_type)
+        self.assertEqual([1, 'raw_string'], result)
+
+    def test_header_empty(self):
+        doc = DocumentWithImages()
+        header = MockParagraph(sub_paragraphs=self, co_texts=[''])
+
+        result = doc.doc_header(header)
+        self.assertIsNone(result)
+
+    def test_header_example(self):
+        doc = DocumentWithImages()
+        header = MockParagraph(sub_paragraphs=[MockParagraph()], co_texts=["::"])
+        result = doc.doc_header(header)
+        self.assertIsInstance(result, stng.StructuredTextExample)
+
+    def test_inner_link_is_not_named_link(self):
+        doc = DocumentWithImages()
+        result = doc.doc_inner_link('...[abc]')
+        self.assertIsInstance(result, tuple)
+        self.assertIsInstance(result[0], stng.StructuredTextInnerLink)
 
 class BasicTests(unittest.TestCase):
 
