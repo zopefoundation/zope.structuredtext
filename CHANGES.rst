@@ -9,6 +9,10 @@
 
 - Drop support for Python 2.6 and 3.3.
 
+- Support several new elements (inner and named links, underlines,
+  etc) in the docbook writer.
+
+- 100% test coverage, maintained by CI and tox.
 
 4.1.0 (2014-12-29)
 ==================
