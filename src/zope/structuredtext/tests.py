@@ -467,6 +467,16 @@ class HTMLDocumentTests(unittest.TestCase):
         html.paragraph(doc, level=1, output=l.append)
         self.assertEqual(l, ['<p>', '</p>\n', '<p>', '</p>\n'])
 
+    def test_image_with_key(self):
+        doc = MockParagraph(key='abc', href='def', node_value='123')
+        html = HTMLWithImages()
+        l = []
+        html.image(doc, 1, output=l.append)
+        self.assertEqual(l,
+                         ['<a name="abc"></a>\n',
+                          '<img src="def" alt="123" />\n',
+                          '<p><b>Figure abc</b> 123</p>\n'])
+
 
 def test_suite():
     suite = unittest.defaultTestLoader.loadTestsFromName(__name__)
