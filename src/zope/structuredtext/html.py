@@ -237,22 +237,16 @@ class HTML(object):
         for row in doc.getRows()[0]:
             output("<tr>\n")
             for column in row.getColumns()[0]:
-                if hasattr(column, "getAlign"):
-                    str = ('<%s colspan="%s" align="%s" valign="%s">'
-                           % (column.getType(),
-                              column.getSpan(),
-                              column.getAlign(),
-                              column.getValign()))
-                else:
-                    str = '<td colspan="%s">' % column.getSpan()
+                str = ('<%s colspan="%s" align="%s" valign="%s">'
+                       % (column.getType(),
+                          column.getSpan(),
+                          column.getAlign(),
+                          column.getValign()))
                 output(str)
                 for c in column.getChildNodes():
                     getattr(self, self.element_types[c.getNodeName()]
                            )(c, level, output)
-                if hasattr(column, "getType"):
-                    output("</"+column.getType()+">\n")
-                else:
-                    output("</td>\n")
+                output("</" + column.getType() + ">\n")
             output("</tr>\n")
         output("</table>\n")
 
