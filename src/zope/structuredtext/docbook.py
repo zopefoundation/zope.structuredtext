@@ -282,7 +282,9 @@ class DocBookBook(object):
                '<book>\n')
         out = out + '<title>%s</title>\n' % self.title
         for chapter in self.chapters:
-            out = out + chapter + '\n</book>\n'
+            out = out + chapter + '\n'
+
+        out += '\n</book>\n'
 
         return out
 

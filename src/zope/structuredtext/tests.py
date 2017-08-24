@@ -20,6 +20,8 @@ from zope.structuredtext import stng
 from zope.structuredtext import stdom
 from zope.structuredtext.document import DocumentWithImages
 from zope.structuredtext.html import HTMLWithImages
+from zope.structuredtext.docbook import DocBook
+from zope.structuredtext.docbook import DocBookChapterWithFigures
 
 here = os.path.dirname(__file__)
 regressions = os.path.join(here, 'regressions')
@@ -477,6 +479,38 @@ class HTMLDocumentTests(unittest.TestCase):
                           '<img src="def" alt="123" />\n',
                           '<p><b>Figure abc</b> 123</p>\n'])
 
+
+class DocBookOutputTests(unittest.TestCase):
+
+    def test_literal_text(self):
+        doc = MockParagraph(node_name='StructuredTextLiteral', node_value='   ')
+        docbook = DocBook()
+        l = []
+        docbook._text(doc, 1, output=l.append)
+        self.assertEqual(l, ['   '])
+
+class DocBookChapterWithFiguresOutputTests(unittest.TestCase):
+
+    def test_image_with_key(self):
+        doc = MockParagraph(key='abc', href='def', node_value='123')
+        docbook = DocBookChapterWithFigures()
+        l = []
+        docbook.image(doc, 1, output=l.append)
+        self.assertEqual(l,
+                         ['<figure id="abc"><title>123</title>\n',
+                          '<graphic fileref="def"></graphic>\n</figure>\n'])
+
+class TestDocBookBook(unittest.TestCase):
+
+    def test_output(self):
+        from zope.structuredtext.docbook import DocBookBook
+
+        book = DocBookBook('title')
+        book.addChapter("\nchapter1\n")
+        book.addChapter("\nchapter2\n")
+
+        self.assertEqual(str(book),
+                         '<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN">\n<book>\n<title>title</title>\n\nchapter1\n\n\nchapter2\n\n\n</book>\n')
 
 def test_suite():
     suite = unittest.defaultTestLoader.loadTestsFromName(__name__)
