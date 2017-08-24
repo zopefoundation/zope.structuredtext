@@ -19,6 +19,7 @@ import os
 from zope.structuredtext import stng
 from zope.structuredtext import stdom
 from zope.structuredtext.document import DocumentWithImages
+from zope.structuredtext.html import HTMLWithImages
 
 here = os.path.dirname(__file__)
 regressions = os.path.join(here, 'regressions')
@@ -47,6 +48,8 @@ class MockParagraph(object):
     indent = 0
     node_type = stdom.TEXT_NODE
     node_value = ''
+    node_name = None
+    child_nodes = None
 
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
@@ -63,6 +66,12 @@ class MockParagraph(object):
 
     def getNodeValue(self):
         return self.node_value
+
+    def getNodeName(self):
+        return self.node_name
+
+    def getChildNodes(self):
+        return self.child_nodes
 
 class TestFiles(unittest.TestCase):
 
@@ -218,13 +227,12 @@ class TestDocument(unittest.TestCase):
         self.assertIsInstance(result, tuple)
         self.assertIsInstance(result[0], stng.StructuredTextInnerLink)
 
-class BasicTests(unittest.TestCase):
+class HTMLDocumentTests(unittest.TestCase):
 
-    def _test(self, stxtxt, expected):
-        from zope.structuredtext.html import HTMLWithImages
+    def _test(self, stxtxt, expected, html=HTMLWithImages):
         doc = stng.structurize(stxtxt)
         doc = DocumentWithImages()(doc)
-        output = HTMLWithImages()(doc, level=1)
+        output = html()(doc, level=1)
 
         msg = ("Text:      %s\n" % stxtxt
                + "Converted: %s\n" % output
@@ -444,6 +452,20 @@ class BasicTests(unittest.TestCase):
         # whereas it should use \w+ and re.U if the string is Unicode.
         self._test(u"h\xe9 **y\xe9** xx",
                    u"h\xe9 <strong>y\xe9</strong> xx")
+
+    def test_paragraph_not_nestable(self):
+        first_child_not_nestable = MockParagraph(node_name='not nestable or known')
+        second_child_nestable = MockParagraph(node_name="#text")
+        third_child_not_nestable = MockParagraph(node_name='not nestable or known')
+        doc = MockParagraph(child_nodes=[first_child_not_nestable,
+                                         second_child_nestable,
+                                         third_child_not_nestable])
+
+        html = HTMLWithImages()
+        html.dispatch = lambda *args: None
+        l = []
+        html.paragraph(doc, level=1, output=l.append)
+        self.assertEqual(l, ['<p>', '</p>\n', '<p>', '</p>\n'])
 
 
 def test_suite():
