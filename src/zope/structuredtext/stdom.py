@@ -95,35 +95,19 @@ class ParentNode(object):
 
         return NodeList(r)
 
-    def getFirstChild(self, type=type, sts=string_types):  # pragma: no cover (not used in this project)
+    def getFirstChild(self, type=type, sts=string_types):
         """
         The first child of this node. If there is no such node
         this returns None
         """
-        children = self.getChildren()
+        raise NotImplementedError()
 
-        if not children:
-            return None
-
-        n = children[0]
-
-        if isinstance(n, sts):
-            n = TextNode(n)
-
-        return n.__of__(self)
-
-    def getLastChild(self, type=type, sts=string_types): # pragma: no cover (not used in this project)
+    def getLastChild(self, type=type, sts=string_types):
         """
         The last child of this node.  If there is no such node
         this returns None.
         """
-        children = self.getChildren()
-        if not children:
-            return None
-        n = children[-1]
-        if isinstance(n, sts):
-            n = TextNode(n)
-        return n.__of__(self)
+        raise NotImplementedError()
 
 class NodeWrapper(ParentNode):
     """
@@ -143,7 +127,7 @@ class NodeWrapper(ParentNode):
         The parent of this node.  All nodes except Document
         DocumentFragment and Attr may have a parent
         """
-        return self.aq_parent # pragma: no cover (not used in this project)
+        raise NotImplementedError()
 
     def _getDOMIndex(self, children, getattr=getattr):
         i = 0
@@ -214,7 +198,7 @@ class NodeWrapper(ParentNode):
         """
         The Document object associated with this node, if any.
         """
-        return self.aq_parent.getOwnerDocument() # pragma: no cover (not used)
+        raise NotImplementedError()
 
 class Node(ParentNode):
     """Node Interface
@@ -243,7 +227,7 @@ class Node(ParentNode):
     def getChildren(self):
         """Get a Python sequence of children
         """
-        return () # pragma: no cover (not used in this project)
+        raise NotImplementedError()
 
     def getPreviousSibling(self):
         """
@@ -276,15 +260,22 @@ class Node(ParentNode):
         Returns true if the node has any children, false
         if it doesn't.
         """
-        return len(self.getChildren()) # pragma: no cover (not used in this project)
+        raise NotImplementedError()
+
+
+    _NODE_TYPE = None
+
+    def getNodeType(self):
+        """A code representing the type of the node."""
+        return self._NODE_TYPE
+
 
 class TextNode(Node):
 
     def __init__(self, str):
         self._value = str
 
-    def getNodeType(self):
-        return TEXT_NODE
+    _NODE_TYPE = TEXT_NODE
 
     def getNodeName(self):
         return '#text'
@@ -305,9 +296,7 @@ class Element(Node):
 
     getNodeName = getTagName
 
-    def getNodeType(self):
-        """A code representing the type of the node."""
-        return ELEMENT_NODE
+    _NODE_TYPE = ELEMENT_NODE
 
     def getNodeValue(self):
         r = []
@@ -344,7 +333,7 @@ class Element(Node):
             d[a] = getattr(self, a, '')
         return NamedNodeMap(d)
 
-    def getElementsByTagName(self, tagname): # pragma: no cover (not used in this project)
+    def getElementsByTagName(self, tagname):
         """
         Returns a NodeList of all the Elements with a given tag
         name in the order in which they would be encountered in a
@@ -352,20 +341,7 @@ class Element(Node):
         The name of the tag to match (* = all tags). Return Value: A new
         NodeList object containing all the matched Elements.
         """
-        nodeList = []
-        for child in self.getChildren():
-            if not hasattr(child, 'getNodeType'):
-                continue
-            if (child.getNodeType() == ELEMENT_NODE
-                and child.getTagName() == tagname
-                or tagname == '*'):
-
-                nodeList.append(child)
-
-            if hasattr(child, 'getElementsByTagName'):
-                n1 = child.getElementsByTagName(tagname)
-                nodeList = nodeList + n1._data
-        return NodeList(nodeList)
+        raise NotImplementedError()
 
 class NodeList(object):
     """NodeList interface - Provides the abstraction of an ordered
@@ -381,13 +357,10 @@ class NodeList(object):
     def __getitem__(self, index, type=type, sts=string_types):
         return self._data[index]
 
-    def __getslice__(self, i, j):
-        return self._data[i:j]
-
-    def item(self, index): # pragma: no cover (not used in this project)
+    def item(self, index):
         """Returns the index-th item in the collection
         """
-        return self._data.get(index, None)
+        raise NotImplementedError()
 
     def getLength(self):
         """The length of the NodeList
@@ -409,35 +382,32 @@ class NamedNodeMap(object):
     def __init__(self, data=None):
         self._data = data if data is not None else {}
 
-    def item(self, index): # pragma: no cover (not used in this project)
+    def item(self, index):
         """Returns the index-th item in the map.
 
-        This is broken on Python 3 and random on Python 2.
+        This is arbitrary because maps have no order.
         """
-        return self._data.values().get(index, None)
+        raise NotImplementedError()
 
+    def __getitem__(self, key):
+        raise NotImplementedError()
 
-    def __getitem__(self, key): # pragma: no cover (not used in this project)
-        if isinstance(key, int):
-            return self.item(key)
-        return self._data[key]
-
-    def getLength(self): # pragma: no cover (not used in this project)
+    def getLength(self):
         """
         The length of the NodeList
         """
-        return len(self._data)
+        raise NotImplementedError()
 
     __len__ = getLength
 
-    def getNamedItem(self, name): # pragma: no cover (not used in this project)
+    def getNamedItem(self, name):
         """
         Retrieves a node specified by name. Parameters:
         name Name of a node to retrieve. Return Value A Node (of any
         type) with the specified name, or None if the specified name
         did not identify any node in the map.
         """
-        return self._data.get(name, None)
+        raise NotImplementedError()
 
 class Attr(Node):
     """
@@ -450,33 +420,25 @@ class Attr(Node):
         self.value = value
         self.specified = specified
 
-    def getNodeName(self): # pragma: no cover (not used in this project)
+    def getNodeName(self):
         """
         The name of this node, depending on its type
         """
-        return self.name
+        raise NotImplementedError()
 
-    def getName(self): # pragma: no cover (not used in this project)
-        """
-        Returns the name of this attribute.
-        """
-        return self.name
+    getName = getNodeName
 
-    def getNodeValue(self): # pragma: no cover (not used in this project)
+    def getNodeValue(self):
         """
         The value of this node, depending on its type
         """
-        return self.value
+        raise NotImplementedError()
 
-    def getNodeType(self): # pragma: no cover (not used in this project)
-        """
-        A code representing the type of the node.
-        """
-        return ATTRIBUTE_NODE
+    _NODE_TYPE = ATTRIBUTE_NODE
 
-    def getSpecified(self): # pragma: no cover (not used in this project)
+    def getSpecified(self):
         """
         If this attribute was explicitly given a value in the
         original document, this is true; otherwise, it is false.
         """
-        return self.specified
+        raise NotImplementedError()

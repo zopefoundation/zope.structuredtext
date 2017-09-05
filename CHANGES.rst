@@ -18,6 +18,9 @@
 
 - 100% test coverage, maintained by CI and tox.
 
+- Unused internal code in the ``stdom`` module was removed. See `issue
+  3 <https://github.com/zopefoundation/zope.structuredtext/issues/3>`_.
+
 4.1.0 (2014-12-29)
 ==================
 
