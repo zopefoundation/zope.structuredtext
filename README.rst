@@ -1,20 +1,20 @@
-=========================
- ``zope.structuredtext``
-=========================
+=====================
+ zope.structuredtext
+=====================
 
-.. image:: https://img.shields.io/pypi/v/zope.ramcache.svg
-        :target: https://pypi.python.org/pypi/zope.ramcache/
+.. image:: https://img.shields.io/pypi/v/zope.structuredtext.svg
+        :target: https://pypi.python.org/pypi/zope.structuredtext/
         :alt: Latest release
 
-.. image:: https://img.shields.io/pypi/pyversions/zope.ramcache.svg
-        :target: https://pypi.org/project/zope.ramcache/
+.. image:: https://img.shields.io/pypi/pyversions/zope.structuredtext.svg
+        :target: https://pypi.org/project/zope.structuredtext/
         :alt: Supported Python versions
 
-.. image:: https://travis-ci.org/zopefoundation/zope.ramcache.png?branch=master
-        :target: https://travis-ci.org/zopefoundation/zope.ramcache
+.. image:: https://travis-ci.org/zopefoundation/zope.structuredtext.png?branch=master
+        :target: https://travis-ci.org/zopefoundation/zope.structuredtext
 
-.. image:: https://coveralls.io/repos/github/zopefoundation/zope.ramcache/badge.svg?branch=master
-        :target: https://coveralls.io/github/zopefoundation/zope.ramcache?branch=master
+.. image:: https://coveralls.io/repos/github/zopefoundation/zope.structuredtext/badge.svg?branch=master
+        :target: https://coveralls.io/github/zopefoundation/zope.structuredtext?branch=master
 
 .. image:: https://readthedocs.org/projects/zopestructuredtext/badge/?version=latest
         :target: https://zopestructuredtext.readthedocs.org/en/latest/
