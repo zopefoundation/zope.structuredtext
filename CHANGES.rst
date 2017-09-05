@@ -9,8 +9,12 @@
 
 - Drop support for Python 2.6 and 3.3.
 
+- Add support for PyPy and PyPy3.
+
 - Support several new elements (inner and named links, underlines,
   etc) in the docbook writer.
+
+- Fix the XML output of ``DocBookBook``.
 
 - 100% test coverage, maintained by CI and tox.
 
