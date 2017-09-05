@@ -232,6 +232,7 @@
 <p>    If desired, the current rules for looking up attributes in complex
     expressions can best be understood through repeated application of
     the <code>__of__</code> method:</p>
+
 <dl>
 <dt>    <code>a.x</code></dt>
 <dd><code>x.__of__(a)</code></dd>
@@ -243,6 +244,7 @@
 <dd><code>c.__of__(b.__of__(a))</code></dd>
 <dt>    <code>a.b.c.x</code></dt>
 <dd><code>x.__of__(a).__of__(b.__of__(a)).__of__(c.__of__(b.__of__(a)))</code></dd>
+
 </dl>
 <p>    and by keeping in mind that attribute lookup in a wrapper
     is done by trying to lookup the attribute in the wrapped object

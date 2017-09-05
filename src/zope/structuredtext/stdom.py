@@ -12,42 +12,40 @@
 ##############################################################################
 """DOM implementation in StructuredText: read-only methods
 """
-try:
-    string_types = (unicode, str)
-except NameError:   # pragma: NO COVER Py3k
-    string_types = (str,)
+
+string_types = (str,) if bytes is not str else (unicode, str)
 
 __metaclass__ = type
 
 # Node type codes
 # ---------------
 
-ELEMENT_NODE                  = 1
-ATTRIBUTE_NODE                = 2
-TEXT_NODE                     = 3
-CDATA_SECTION_NODE            = 4
-ENTITY_REFERENCE_NODE         = 5
-ENTITY_NODE                   = 6
-PROCESSING_INSTRUCTION_NODE   = 7
-COMMENT_NODE                  = 8
-DOCUMENT_NODE                 = 9
-DOCUMENT_TYPE_NODE            = 10
-DOCUMENT_FRAGMENT_NODE        = 11
-NOTATION_NODE                 = 12
+ELEMENT_NODE = 1
+ATTRIBUTE_NODE = 2
+TEXT_NODE = 3
+CDATA_SECTION_NODE = 4
+ENTITY_REFERENCE_NODE = 5
+ENTITY_NODE = 6
+PROCESSING_INSTRUCTION_NODE = 7
+COMMENT_NODE = 8
+DOCUMENT_NODE = 9
+DOCUMENT_TYPE_NODE = 10
+DOCUMENT_FRAGMENT_NODE = 11
+NOTATION_NODE = 12
 
 # Exception codes
 # ---------------
 
-INDEX_SIZE_ERR                = 1
-DOMSTRING_SIZE_ERR            = 2
-HIERARCHY_REQUEST_ERR         = 3
-WRONG_DOCUMENT_ERR            = 4
-INVALID_CHARACTER_ERR         = 5
-NO_DATA_ALLOWED_ERR           = 6
-NO_MODIFICATION_ALLOWED_ERR   = 7
-NOT_FOUND_ERR                 = 8
-NOT_SUPPORTED_ERR             = 9
-INUSE_ATTRIBUTE_ERR           = 10
+INDEX_SIZE_ERR = 1
+DOMSTRING_SIZE_ERR = 2
+HIERARCHY_REQUEST_ERR = 3
+WRONG_DOCUMENT_ERR = 4
+INVALID_CHARACTER_ERR = 5
+NO_DATA_ALLOWED_ERR = 6
+NO_MODIFICATION_ALLOWED_ERR = 7
+NOT_FOUND_ERR = 8
+NOT_SUPPORTED_ERR = 9
+INUSE_ATTRIBUTE_ERR = 10
 
 # Exceptions
 # ----------
@@ -78,7 +76,7 @@ class InUseAttributeException(DOMException):
 # Node classes
 # ------------
 
-class ParentNode:
+class ParentNode(object):
     """
     A node that can have children, or, more precisely, that implements
     the child access methods of the DOM.
@@ -92,12 +90,12 @@ class ParentNode:
         r = []
         for n in self.getChildren():
             if isinstance(n, sts):
-                n=TextNode(n)
+                n = TextNode(n)
             r.append(n.__of__(self))
 
         return NodeList(r)
 
-    def getFirstChild(self, type=type, sts=string_types):
+    def getFirstChild(self, type=type, sts=string_types):  # pragma: no cover (not used in this project)
         """
         The first child of this node. If there is no such node
         this returns None
@@ -114,7 +112,7 @@ class ParentNode:
 
         return n.__of__(self)
 
-    def getLastChild(self, type=type, sts=string_types):
+    def getLastChild(self, type=type, sts=string_types): # pragma: no cover (not used in this project)
         """
         The last child of this node.  If there is no such node
         this returns None.
@@ -124,9 +122,8 @@ class ParentNode:
             return None
         n = children[-1]
         if isinstance(n, sts):
-            n=TextNode(n)
+            n = TextNode(n)
         return n.__of__(self)
-
 
 class NodeWrapper(ParentNode):
     """
@@ -135,8 +132,8 @@ class NodeWrapper(ParentNode):
     """
 
     def __init__(self, aq_self, aq_parent):
-        self.aq_self=aq_self
-        self.aq_parent=aq_parent
+        self.aq_self = aq_self
+        self.aq_parent = aq_parent
 
     def __getattr__(self, name):
         return getattr(self.aq_self, name)
@@ -146,17 +143,16 @@ class NodeWrapper(ParentNode):
         The parent of this node.  All nodes except Document
         DocumentFragment and Attr may have a parent
         """
-        return self.aq_parent
+        return self.aq_parent # pragma: no cover (not used in this project)
 
     def _getDOMIndex(self, children, getattr=getattr):
-        i=0
-        self=self.aq_self
+        i = 0
+        self = self.aq_self
         for child in children:
             if getattr(child, 'aq_self', child) is self:
-                self._DOMIndex=i
+                self._DOMIndex = i
                 return i
-            i=i+1
-        return None
+            i = i + 1
 
     def getPreviousSibling(self):
         """
@@ -165,22 +161,26 @@ class NodeWrapper(ParentNode):
         """
 
         children = self.aq_parent.getChildren()
-        if not children:
+        if not children: # pragma: no cover
             return None
 
-        index=getattr(self, '_DOMIndex', None)
+        index = getattr(self, '_DOMIndex', None)
         if index is None:
-            index=self._getDOMIndex(children)
-            if index is None: return None
+            index = self._getDOMIndex(children)
+            if index is None:
+                return None # pragma: no cover
 
-        index=index-1
-        if index < 0: return None
-        try: n=children[index]
-        except IndexError: return None
+        index = index - 1
+        if index < 0:
+            return None
+        try:
+            n = children[index]
+        except IndexError: # pragma: no cover
+            return None
         else:
-            if isinstance(n,  string_types):
-                n=TextNode(n)
-            n._DOMIndex=index
+            if isinstance(n, string_types):
+                n = TextNode(n)
+            n._DOMIndex = index
             return n.__of__(self)
 
 
@@ -190,30 +190,31 @@ class NodeWrapper(ParentNode):
         there is no such node, this returns None.
         """
         children = self.aq_parent.getChildren()
-        if not children:
+        if not children: # pragma: no cover
             return None
 
-        index=getattr(self, '_DOMIndex', None)
-        if index is None:
-            index=self._getDOMIndex(children)
+        index = getattr(self, '_DOMIndex', None)
+        if index is None: # pragma: no cover
+            index = self._getDOMIndex(children)
             if index is None:
                 return None
 
-        index=index+1
-        try: n=children[index]
-        except IndexError:
+        index = index + 1
+        try:
+            n = children[index]
+        except IndexError: # pragma: no cover
             return None
         else:
-            if type(n) in string_types:
-                n=TextNode(n)
-            n._DOMIndex=index
+            if isinstance(n, string_types): # pragma: no cover
+                n = TextNode(n)
+            n._DOMIndex = index
             return n.__of__(self)
 
     def getOwnerDocument(self):
         """
         The Document object associated with this node, if any.
         """
-        return self.aq_parent.getOwnerDocument()
+        return self.aq_parent.getOwnerDocument() # pragma: no cover (not used)
 
 class Node(ParentNode):
     """Node Interface
@@ -232,7 +233,6 @@ class Node(ParentNode):
     def getNodeValue(self):
         """The value of this node, depending on its type
         """
-        return None
 
     def getParentNode(self):
         """
@@ -243,7 +243,7 @@ class Node(ParentNode):
     def getChildren(self):
         """Get a Python sequence of children
         """
-        return ()
+        return () # pragma: no cover (not used in this project)
 
     def getPreviousSibling(self):
         """
@@ -262,7 +262,7 @@ class Node(ParentNode):
         Returns a NamedNodeMap containing the attributes
         of this node (if it is an element) or None otherwise.
         """
-        return None
+
 
     def getOwnerDocument(self):
         """The Document object associated with this node, if any.
@@ -276,11 +276,12 @@ class Node(ParentNode):
         Returns true if the node has any children, false
         if it doesn't.
         """
-        return len(self.getChildren())
+        return len(self.getChildren()) # pragma: no cover (not used in this project)
 
 class TextNode(Node):
 
-    def __init__(self, str): self._value=str
+    def __init__(self, str):
+        self._value = str
 
     def getNodeType(self):
         return TEXT_NODE
@@ -302,19 +303,17 @@ class Element(Node):
         """The name of the element"""
         return self.__class__.__name__
 
-    def getNodeName(self):
-        """The name of this node, depending on its type"""
-        return self.__class__.__name__
+    getNodeName = getTagName
 
     def getNodeType(self):
         """A code representing the type of the node."""
         return ELEMENT_NODE
 
     def getNodeValue(self):
-        r=[]
+        r = []
         for c in self.getChildren():
             if not isinstance(c, string_types):
-                c=c.getNodeValue()
+                c = c.getNodeValue()
             r.append(c)
         return ''.join(r)
 
@@ -327,29 +326,25 @@ class Element(Node):
     # Element Methods
     # ---------------
 
-    _attributes=()
-
-    def getAttribute(self, name): return getattr(self, name, None)
-    def getAttributeNode(self, name):
-        if hasattr(self, name):
-            return Attr(name, getattr(self, name))
-
-    def getAttributes(self):
-        d={}
-        for a in self._attributes:
-            d[a]=getattr(self, a, '')
-        return NamedNodeMap(d)
+    _attributes = ()
 
     def getAttribute(self, name):
         """Retrieves an attribute value by name."""
-        return None
+        return getattr(self, name, None)
 
     def getAttributeNode(self, name):
         """ Retrieves an Attr node by name or None if
         there is no such attribute. """
-        return None
+        if hasattr(self, name):
+            return Attr(name, getattr(self, name))
 
-    def getElementsByTagName(self, tagname):
+    def getAttributes(self):
+        d = {}
+        for a in self._attributes:
+            d[a] = getattr(self, a, '')
+        return NamedNodeMap(d)
+
+    def getElementsByTagName(self, tagname): # pragma: no cover (not used in this project)
         """
         Returns a NodeList of all the Elements with a given tag
         name in the order in which they would be encountered in a
@@ -359,18 +354,20 @@ class Element(Node):
         """
         nodeList = []
         for child in self.getChildren():
-            if not hasattr(child, 'getNodeType'): continue
-            if (child.getNodeType()==ELEMENT_NODE and \
-                child.getTagName()==tagname or tagname== '*'):
+            if not hasattr(child, 'getNodeType'):
+                continue
+            if (child.getNodeType() == ELEMENT_NODE
+                and child.getTagName() == tagname
+                or tagname == '*'):
 
                 nodeList.append(child)
 
             if hasattr(child, 'getElementsByTagName'):
-                n1       = child.getElementsByTagName(tagname)
+                n1 = child.getElementsByTagName(tagname)
                 nodeList = nodeList + n1._data
         return NodeList(nodeList)
 
-class NodeList:
+class NodeList(object):
     """NodeList interface - Provides the abstraction of an ordered
     collection of nodes.
 
@@ -378,7 +375,7 @@ class NodeList:
     'for..in' constructs.
     """
 
-    def __init__(self,list=None):
+    def __init__(self, list=None):
         self._data = list or []
 
     def __getitem__(self, index, type=type, sts=string_types):
@@ -387,7 +384,7 @@ class NodeList:
     def __getslice__(self, i, j):
         return self._data[i:j]
 
-    def item(self, index):
+    def item(self, index): # pragma: no cover (not used in this project)
         """Returns the index-th item in the collection
         """
         return self._data.get(index, None)
@@ -399,7 +396,7 @@ class NodeList:
 
     __len__ = getLength
 
-class NamedNodeMap:
+class NamedNodeMap(object):
     """
     NamedNodeMap interface - Is used to represent collections
     of nodes that can be accessed by name.  NamedNodeMaps are not
@@ -410,23 +407,22 @@ class NamedNodeMap:
     """
 
     def __init__(self, data=None):
-        if data is None:
-            data = {}
-        self._data = data
+        self._data = data if data is not None else {}
 
-    def item(self, index):
-        """Returns the index-th item in the map
+    def item(self, index): # pragma: no cover (not used in this project)
+        """Returns the index-th item in the map.
+
+        This is broken on Python 3 and random on Python 2.
         """
         return self._data.values().get(index, None)
-        
 
-    def __getitem__(self, key):
+
+    def __getitem__(self, key): # pragma: no cover (not used in this project)
         if isinstance(key, int):
             return self.item(key)
-        else:
-            return self._data[key]
+        return self._data[key]
 
-    def getLength(self):
+    def getLength(self): # pragma: no cover (not used in this project)
         """
         The length of the NodeList
         """
@@ -434,7 +430,7 @@ class NamedNodeMap:
 
     __len__ = getLength
 
-    def getNamedItem(self, name):
+    def getNamedItem(self, name): # pragma: no cover (not used in this project)
         """
         Retrieves a node specified by name. Parameters:
         name Name of a node to retrieve. Return Value A Node (of any
@@ -454,31 +450,31 @@ class Attr(Node):
         self.value = value
         self.specified = specified
 
-    def getNodeName(self):
+    def getNodeName(self): # pragma: no cover (not used in this project)
         """
         The name of this node, depending on its type
         """
         return self.name
 
-    def getName(self):
+    def getName(self): # pragma: no cover (not used in this project)
         """
         Returns the name of this attribute.
         """
         return self.name
 
-    def getNodeValue(self):
+    def getNodeValue(self): # pragma: no cover (not used in this project)
         """
         The value of this node, depending on its type
         """
         return self.value
 
-    def getNodeType(self):
+    def getNodeType(self): # pragma: no cover (not used in this project)
         """
         A code representing the type of the node.
         """
         return ATTRIBUTE_NODE
 
-    def getSpecified(self):
+    def getSpecified(self): # pragma: no cover (not used in this project)
         """
         If this attribute was explicitly given a value in the
         original document, this is true; otherwise, it is false.

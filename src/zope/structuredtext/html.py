@@ -15,15 +15,15 @@
 
 try:
     from html import escape
-except ImportError:  # pragma: NO COVER Python2
+except ImportError:  # pragma: no cover Python2
     from cgi import escape
-else:                # pragma: NO COVER Py3k
+else:                # pragma: no cover Py3k
     from functools import partial
     escape = partial(escape, quote=False)
 
 __metaclass__ = type
 
-class HTML:
+class HTML(object):
 
     paragraph_nestable = {
         '#text': '_text',
@@ -36,7 +36,7 @@ class HTML:
         'StructuredTextNamedLink':'namedLink',
         'StructuredTextUnderline':'underline',
         'StructuredTextSGML':'sgml', # this might or might not be valid
-        }
+    }
 
     element_types = paragraph_nestable.copy()
     element_types.update({
@@ -51,14 +51,14 @@ class HTML:
         'StructuredTextSection': 'section',
         'StructuredTextSectionTitle': 'sectionTitle',
         'StructuredTextTable':'table',
-        })
+    })
 
     def dispatch(self, doc, level, output):
         getattr(self, self.element_types[doc.getNodeName()]
                )(doc, level, output)
 
     def __call__(self, doc, level=1, header=True):
-        r=[]
+        r = []
         self.header = header
         self.dispatch(doc, level-1, r.append)
         return ''.join(r)
@@ -67,14 +67,14 @@ class HTML:
         output(doc.getNodeValue())
 
     def document(self, doc, level, output):
-        children=doc.getChildNodes()
+        children = doc.getChildNodes()
 
         if self.header:
             output('<html>\n')
-            if (children and
-                 children[0].getNodeName() == 'StructuredTextSection'):
+            if (children
+                and children[0].getNodeName() == 'StructuredTextSection'):
                 output('<head>\n<title>%s</title>\n</head>\n' %
-                         children[0].getChildNodes()[0].getNodeValue())
+                       children[0].getChildNodes()[0].getNodeValue())
             output('<body>\n')
 
         for c in children:
@@ -86,7 +86,7 @@ class HTML:
             output('</html>\n')
 
     def section(self, doc, level, output):
-        children=doc.getChildNodes()
+        children = doc.getChildNodes()
         for c in children:
             getattr(self, self.element_types[c.getNodeName()]
                    )(c, level+1, output)
@@ -98,16 +98,6 @@ class HTML:
                    )(c, level, output)
         output('</h%d>\n' % (level))
 
-    def description(self, doc, level, output):
-        p=doc.getPreviousSibling()
-        if p is None or  p.getNodeName() is not doc.getNodeName():
-            output('<dl>\n')
-        for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
-        n=doc.getNextSibling()
-        if n is None or n.getNodeName() is not doc.getNodeName():
-            output('</dl>\n')
 
     def descriptionTitle(self, doc, level, output):
         output('<dt>')
@@ -123,42 +113,35 @@ class HTML:
                    )(c, level, output)
         output('</dd>\n')
 
-    def bullet(self, doc, level, output):
-        p=doc.getPreviousSibling()
-        if p is None or p.getNodeName() is not doc.getNodeName():
-            output('\n<ul>\n')
-        output('<li>')
+    def _list(self, doc, level, output, list_tag, item_tag='li'):
+        p = doc.getPreviousSibling()
+        if p is None or p.getNodeName() != doc.getNodeName():
+            output('\n<' + list_tag + '>\n')
+        if item_tag:
+            output('<' + item_tag + '>')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
                    )(c, level, output)
-        n=doc.getNextSibling()
-        output('</li>\n')
-        if n is None or n.getNodeName() is not doc.getNodeName():
-            output('\n</ul>\n')
+        n = doc.getNextSibling()
+        if item_tag:
+            output('</' + item_tag + '>\n')
+        if n is None or n.getNodeName() != doc.getNodeName():
+            output('\n</' + list_tag + '>\n')
+
+    def description(self, doc, level, output):
+        self._list(doc, level, output, 'dl', item_tag=None)
+
+    def bullet(self, doc, level, output):
+        self._list(doc, level, output, "ul")
 
     def numbered(self, doc, level, output):
-        p=doc.getPreviousSibling()
-        if p is None or p.getNodeName() is not doc.getNodeName():
-            output('\n<ol>\n')
-        output('<li>')
-        for c in doc.getChildNodes():
-            getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
-        n=doc.getNextSibling()
-        output('</li>\n')
-        if n is None or n.getNodeName() is not doc.getNodeName():
-            output('\n</ol>\n')
+        self._list(doc, level, output, "ol")
 
     def example(self, doc, level, output):
-        i=0
         for c in doc.getChildNodes():
-            if i==0:
-                output('\n<pre>\n')
-                output(escape(c.getNodeValue()))
-                output('\n</pre>\n')
-            else:
-                getattr(self, self.element_types[c.getNodeName()])(
-                    c, level, output)
+            output('\n<pre>\n')
+            output(escape(c.getNodeValue()))
+            output('\n</pre>\n')
 
     def paragraph(self, doc, level, output):
         output('<p>')
@@ -213,7 +196,7 @@ class HTML:
         output("</u>")
 
     def innerLink(self, doc, level, output):
-        output('<a href="#ref');
+        output('<a href="#ref')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
                    )(c, level, output)
@@ -234,16 +217,16 @@ class HTML:
                    )(c, level, output)
         output(']</a>')
 
-    def sgml(self,doc,level,output):
+    def sgml(self, doc, level, output):
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
                    )(c, level, output)
 
     def xref(self, doc, level, output):
         val = doc.getNodeValue()
-        output('<a href="#ref%s">[%s]</a>' % (val, val) )
+        output('<a href="#ref%s">[%s]</a>' % (val, val))
 
-    def table(self,doc,level,output):
+    def table(self, doc, level, output):
         """
         A StructuredTextTable holds StructuredTextRow(s) which
         holds StructuredTextColumn(s). A StructuredTextColumn
@@ -254,22 +237,16 @@ class HTML:
         for row in doc.getRows()[0]:
             output("<tr>\n")
             for column in row.getColumns()[0]:
-                if hasattr(column,"getAlign"):
-                    str = ('<%s colspan="%s" align="%s" valign="%s">'
-                                % (column.getType(),
-                                   column.getSpan(),
-                                   column.getAlign(),
-                                   column.getValign()))
-                else:
-                    str = '<td colspan="%s">' % column.getSpan()
+                str = ('<%s colspan="%s" align="%s" valign="%s">'
+                       % (column.getType(),
+                          column.getSpan(),
+                          column.getAlign(),
+                          column.getValign()))
                 output(str)
                 for c in column.getChildNodes():
                     getattr(self, self.element_types[c.getNodeName()]
                            )(c, level, output)
-                if hasattr(column,"getType"):
-                    output("</"+column.getType()+">\n")
-                else:
-                    output("</td>\n")
+                output("</" + column.getType() + ">\n")
             output("</tr>\n")
         output("</table>\n")
 
@@ -277,7 +254,7 @@ class HTMLWithImages(HTML):
 
     paragraph_nestable = HTML.paragraph_nestable.copy()
     paragraph_nestable.update({'StructuredTextImage': 'image'})
-    
+
     element_types = HTML.element_types.copy()
     element_types.update({'StructuredTextImage': 'image'})
 
@@ -285,7 +262,7 @@ class HTMLWithImages(HTML):
         if hasattr(doc, 'key'):
             output('<a name="%s"></a>\n' % doc.key)
         output('<img src="%s" alt="%s" />\n'
-                    % (doc.href, doc.getNodeValue()))
+               % (doc.href, doc.getNodeValue()))
         if doc.getNodeValue() and hasattr(doc, 'key'):
             output('<p><b>Figure %s</b> %s</p>\n'
-                        % (doc.key, doc.getNodeValue()))
+                   % (doc.key, doc.getNodeValue()))

@@ -10,7 +10,8 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-""" Zope structured text markeup
+"""
+Zope structured text markeup
 
 Consider the following example::
 
@@ -18,9 +19,11 @@ Consider the following example::
   >>> from zope.structuredtext.document import DocumentWithImages
   >>> from zope.structuredtext.html import HTMLWithImages
   >>> from zope.structuredtext.docbook import DocBook
+  >>> from zope.structuredtext.docbook import DocBookChapterWithFigures
+  >>> from zope.structuredtext.docbook import DocBookArticle
 
-  We first need to structurize the string and make a full-blown
-  document out of it:
+We first need to structurize the string and make a full-blown
+document out of it::
 
   >>> structured_string = '''
   ... Title Here
@@ -29,10 +32,28 @@ Consider the following example::
   >>> struct = structurize(structured_string)
   >>> doc = DocumentWithImages()(struct)
 
-  Now feed it to some output generator, in this case HTML or DocBook:
+Now feed it to some output generator, in this case HTML or DocBook::
 
-  >>> output = HTMLWithImages()(doc, level=1)
-  >>> output = DocBook()(doc, level=1)
+  >>> HTMLWithImages()(doc, level=1)
+  '<html>...'
+  >>> DocBook()(doc, level=1)
+  '<!DOCTYPE book ...<book>...'
+  >>> DocBookArticle()(doc, level=1)
+  '<!DOCTYPE article ...<article>...'
+  >>> DocBookChapterWithFigures()(doc, level=1)
+  '<chapter>...'
+
+For HTML, there is a shortcut::
+
+  >>> from zope.structuredtext import stx2html
+  >>> stx2html(structured_string)
+  '<html>...'
+
+If we have references in the text we can use a different function::
+
+  >>> from zope.structuredtext import stx2htmlWithReferences
+  >>> stx2htmlWithReferences(structured_string)
+  '<html>...'
 
 """
 __docformat__ = 'restructuredtext'
@@ -45,11 +66,13 @@ from zope.structuredtext.document import DocumentWithImages
 from zope.structuredtext.html import HTMLWithImages
 
 def stx2html(aStructuredString, level=1, header=1):
+    """A shortcut to produce HTML. """
     st = structurize(aStructuredString)
     doc = DocumentWithImages()(st)
     return HTMLWithImages()(doc, header=header, level=level)
 
 def stx2htmlWithReferences(text, level=1, header=1):
+    """A shortcut to produce HTML with references"""
     text = re.sub(
         r'[\000\n]\.\. \[([0-9_%s-]+)\]' % ascii_letters,
         r'\n  <a name="\1">[\1]</a>',

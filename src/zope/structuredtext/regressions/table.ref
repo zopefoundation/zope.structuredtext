@@ -68,5 +68,39 @@
 </td>
 </tr>
 </table>
+<table border="1" cellpadding="2">
+<tr>
+<td colspan="1" align="left" valign="middle"><p> Column 1   </p>
+</td>
+<td colspan="1" align="left" valign="middle"><p>  Column </p>
+</td>
+</tr>
+<tr>
+<td colspan="1" align="left" valign="top"><p> Align Top  </p>
+</td>
+<td colspan="2" align="center" valign="top"><p>          OK               </p>
+</td>
+</tr>
+<tr>
+<td colspan="1" align="left" valign="bottom"><p> Align Bot  </p>
+</td>
+<td colspan="2" align="center" valign="bottom"><p>          OK               </p>
+</td>
+</tr>
+<tr>
+<td colspan="1" align="left" valign="middle"><p> Align Mid  
+ Note the   </p>
+</td>
+<td colspan="2" align="center" valign="middle"><p>          OK               
+  offset unequal.          </p>
+</td>
+</tr>
+<tr>
+<td colspan="1" align="left" valign="middle"><p>Align left  </p>
+</td>
+<td colspan="2" align="right" valign="middle"><p>                Align Right</p>
+</td>
+</tr>
+</table>
 </body>
 </html>
