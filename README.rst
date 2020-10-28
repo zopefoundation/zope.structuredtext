@@ -10,8 +10,8 @@
         :target: https://pypi.org/project/zope.structuredtext/
         :alt: Supported Python versions
 
-.. image:: https://travis-ci.org/zopefoundation/zope.structuredtext.svg?branch=master
-        :target: https://travis-ci.org/zopefoundation/zope.structuredtext
+.. image:: https://travis-ci.com/zopefoundation/zope.structuredtext.svg?branch=master
+        :target: https://travis-ci.com/zopefoundation/zope.structuredtext
 
 .. image:: https://coveralls.io/repos/github/zopefoundation/zope.structuredtext/badge.svg?branch=master
         :target: https://coveralls.io/github/zopefoundation/zope.structuredtext?branch=master
