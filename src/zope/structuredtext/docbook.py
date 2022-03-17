@@ -16,6 +16,7 @@ from __future__ import print_function
 
 __metaclass__ = type
 
+
 class DocBook(object):
     """ Structured text document renderer for Docbook.
     """
@@ -34,17 +35,17 @@ class DocBook(object):
         'StructuredTextLiteral': 'literal',
         'StructuredTextEmphasis': 'emphasis',
         'StructuredTextStrong': 'strong',
-        'StructuredTextUnderline':'underline',
+        'StructuredTextUnderline': 'underline',
         'StructuredTextLink': 'link',
-        'StructuredTextInnerLink':'innerLink',
-        'StructuredTextNamedLink':'namedLink',
+        'StructuredTextInnerLink': 'innerLink',
+        'StructuredTextNamedLink': 'namedLink',
         'StructuredTextXref': 'xref',
         'StructuredTextSGML': 'sgml',
     }
 
     def dispatch(self, doc, level, output):
         getattr(self, self.element_types[doc.getNodeName()]
-               )(doc, level, output)
+                )(doc, level, output)
 
     def __call__(self, doc, level=1):
         r = []
@@ -62,12 +63,12 @@ class DocBook(object):
         output('<book>\n')
         children = doc.getChildNodes()
         if (children
-            and children[0].getNodeName() == 'StructuredTextSection'):
+                and children[0].getNodeName() == 'StructuredTextSection'):
             output('<title>%s</title>'
-                % children[0].getChildNodes()[0].getNodeValue())
+                   % children[0].getChildNodes()[0].getNodeValue())
         for c in children:
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('</book>\n')
 
     def section(self, doc, level, output):
@@ -75,7 +76,7 @@ class DocBook(object):
         children = doc.getChildNodes()
         for c in children:
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level+1, output)
+                    )(c, level + 1, output)
         output('\n</section>\n')
 
     def sectionTitle(self, doc, level, output):
@@ -83,18 +84,18 @@ class DocBook(object):
         for c in doc.getChildNodes():
             try:
                 getattr(self, self.element_types[c.getNodeName()]
-                       )(c, level, output)
-            except Exception: # pragma: no cover
+                        )(c, level, output)
+            except Exception:  # pragma: no cover
                 print("failed", c.getNodeName(), c)
         output('</title>\n')
 
     def description(self, doc, level, output):
         p = doc.getPreviousSibling()
-        if p is None or  p.getNodeName() != doc.getNodeName():
+        if p is None or p.getNodeName() != doc.getNodeName():
             output('<variablelist>\n')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         n = doc.getNextSibling()
         if n is None or n.getNodeName() != doc.getNodeName():
             output('</variablelist>\n')
@@ -103,14 +104,14 @@ class DocBook(object):
         output('<varlistentry><term>\n')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('</term>\n')
 
     def descriptionBody(self, doc, level, output):
         output('<listitem><para>\n')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('</para></listitem>\n')
         output('</varlistentry>\n')
 
@@ -122,7 +123,7 @@ class DocBook(object):
 
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         n = doc.getNextSibling()
         output('</para></listitem>\n')
         if n is None or n.getNodeName() != doc.getNodeName():
@@ -138,7 +139,7 @@ class DocBook(object):
         for c in doc.getChildNodes():
             output('<programlisting>\n<![CDATA[\n')
             ##
-            ## eek.  A ']]>' in your body will break this...
+            # eek.  A ']]>' in your body will break this...
             ##
             output(prestrip(c.getNodeValue()))
             output('\n]]></programlisting>\n')
@@ -154,36 +155,36 @@ class DocBook(object):
         output('<ulink url="%s">' % doc.href)
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('</ulink>')
 
     def innerLink(self, doc, level, output):
         output('<ulink href="#ref')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('">[')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output(']</ulink>')
 
     def namedLink(self, doc, level, output):
         output('<anchor id="ref')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('"/>[')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output(']')
 
     def _emphasis(self, doc, level, output, role):
         output('<emphasis Role="%s">' % role)
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('</emphasis> ')
 
     def emphasis(self, doc, level, output):
@@ -225,19 +226,21 @@ def prestrip(v):
         nlines.append(line[indent:])
     return '\n'.join(nlines)
 
+
 class DocBookChapter(DocBook):
 
     def document(self, doc, level, output):
         output('<chapter>\n')
         children = doc.getChildNodes()
         if (children
-            and children[0].getNodeName() == 'StructuredTextSection'):
+                and children[0].getNodeName() == 'StructuredTextSection'):
             output('<title>%s</title>'
                    % children[0].getChildNodes()[0].getNodeValue())
         for c in children[0].getChildNodes()[1:]:
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('</chapter>\n')
+
 
 class DocBookChapterWithFigures(DocBookChapter):
 
@@ -252,6 +255,7 @@ class DocBookChapterWithFigures(DocBookChapter):
             output('<figure><title>%s</title>\n' % doc.getNodeValue())
         output('<graphic fileref="%s"></graphic>\n</figure>\n' % doc.href)
 
+
 class DocBookArticle(DocBook):
 
     def document(self, doc, level, output):
@@ -259,12 +263,12 @@ class DocBookArticle(DocBook):
         output('<article>\n')
         children = doc.getChildNodes()
         if (children
-            and children[0].getNodeName() == 'StructuredTextSection'):
+                and children[0].getNodeName() == 'StructuredTextSection'):
             output('<articleinfo>\n<title>%s</title>\n</articleinfo>\n' %
                    children[0].getChildNodes()[0].getNodeValue())
         for c in children:
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('</article>\n')
 
 

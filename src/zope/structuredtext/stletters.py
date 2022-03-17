@@ -15,12 +15,14 @@
 
 import string
 
+
 def punc_func(exclude):
     punc = r''
     for char in string.punctuation:
         if char not in exclude:
             punc = punc + r'\%s' % char
     return punc
+
 
 digits = string.digits
 letters = string.ascii_letters

@@ -19,15 +19,17 @@ from . import stdom
 
 __metaclass__ = type
 
+
 def indention(str, front=re.compile(r"^\s+").match):
     """Find the number of leading spaces. If none, return 0.
     """
     result = front(str)
     if result is not None:
         start, end = result.span()
-        return end-start
+        return end - start
     else:
         return 0     # no leading spaces
+
 
 def insert(struct, top, level):
     """Find what will be the parant paragraph of a sentence and return
@@ -36,14 +38,15 @@ def insert(struct, top, level):
     """
     if top - 1 not in range(len(struct)):
         if struct:
-            return struct[len(struct)-1].getSubparagraphs()
+            return struct[len(struct) - 1].getSubparagraphs()
         return struct
-    run = struct[top-1]
+    run = struct[top - 1]
     i = 0
-    while i+1 < level:
-        run = run.getSubparagraphs()[len(run.getSubparagraphs())-1]
+    while i + 1 < level:
+        run = run.getSubparagraphs()[len(run.getSubparagraphs()) - 1]
         i = i + 1
     return run.getSubparagraphs()
+
 
 def display(struct):
     """Runs through the structure and prints out the paragraphs. If
@@ -56,6 +59,7 @@ def display(struct):
         for x in struct.getSubparagraphs():
             display(x)
 
+
 def display2(struct):
     """Runs through the structure and prints out the paragraphs. If
     the insertion works correctly, display's results should mimic the
@@ -66,6 +70,7 @@ def display2(struct):
     if struct.getSubparagraphs():
         for x in struct.getSubparagraphs():
             display(x)
+
 
 def findlevel(levels, indent):
     """Remove all level information of levels with a greater level of
@@ -86,7 +91,8 @@ def findlevel(levels, indent):
     for key in keys:
         if key > highest:
             highest = key
-    return highest-1
+    return highest - 1
+
 
 def flatten(obj, append):
     if obj.getNodeType() == stdom.TEXT_NODE:
@@ -96,7 +102,8 @@ def flatten(obj, append):
             flatten(child, append)
 
 
-para_delim = r'(\n\s*\n|\r\n\s*\r\n)' # UNIX or DOS line endings, respectively
+para_delim = r'(\n\s*\n|\r\n\s*\r\n)'  # UNIX or DOS line endings, respectively
+
 
 def structurize(paragraphs, delimiter=re.compile(para_delim)):
     """Accepts paragraphs, which is a list of lines to be
@@ -107,7 +114,7 @@ def structurize(paragraphs, delimiter=re.compile(para_delim)):
 
     currentlevel = 0
     currentindent = 0
-    levels = {0:0}
+    levels = {0: 0}
     level = 0        # which header are we under
     struct = []       # the structure to be returned
     run = struct
@@ -115,7 +122,7 @@ def structurize(paragraphs, delimiter=re.compile(para_delim)):
     paragraphs = paragraphs.expandtabs()
     paragraphs = '%s%s%s' % ('\n\n', paragraphs, '\n\n')
     paragraphs = delimiter.split(paragraphs)
-    paragraphs = [x for x in  paragraphs if x.strip()]
+    paragraphs = [x for x in paragraphs if x.strip()]
 
     if not paragraphs:
         return StructuredTextDocument()
@@ -132,7 +139,7 @@ def structurize(paragraphs, delimiter=re.compile(para_delim)):
             level = level + 1
             currentlevel = 0
             currentindent = 0
-            levels = {0:0}
+            levels = {0: 0}
             struct.append(StructuredTextParagraph(paragraph,
                                                   indent=indent,
                                                   level=currentlevel))
@@ -149,7 +156,7 @@ def structurize(paragraphs, delimiter=re.compile(para_delim)):
             if result > 0:
                 currentlevel = result
             currentindent = indent
-            if not level: # pragma: no cover Can we ever even get here?
+            if not level:  # pragma: no cover Can we ever even get here?
                 struct.append(StructuredTextParagraph(paragraph,
                                                       indent=indent,
                                                       level=currentlevel))
@@ -189,7 +196,7 @@ class StructuredTextParagraph(stdom.Element):
         src = self._src
         if not isinstance(src, list):
             src = [src]
-        return src+self._subs
+        return src + self._subs
 
     def getSubparagraphs(self):
         return self._subs
@@ -206,13 +213,14 @@ class StructuredTextParagraph(stdom.Element):
     def __repr__(self):
         r = []
         a = r.append
-        a((' '*(self.indent or 0))
+        a((' ' * (self.indent or 0))
           + ('%s(' % self.__class__.__name__)
           + str(self._src) + ', [')
         for p in self._subs:
             a(repr(p))
-        a((' '*(self.indent or 0))+'])')
+        a((' ' * (self.indent or 0)) + '])')
         return '\n'.join(r)
+
 
 class StructuredTextDocument(StructuredTextParagraph):
     """A StructuredTextDocument holds StructuredTextParagraphs
@@ -237,9 +245,10 @@ class StructuredTextDocument(StructuredTextParagraph):
         a = r.append
         a('%s([' % self.__class__.__name__)
         for p in self._subs:
-            a(repr(p)+',')
+            a(repr(p) + ',')
         a('])')
         return '\n'.join(r)
+
 
 class StructuredTextExample(StructuredTextParagraph):
     """Represents a section of document with literal text, as for examples"""
@@ -252,24 +261,30 @@ class StructuredTextExample(StructuredTextParagraph):
 
     def getColorizableTexts(self):
         return ()
+
     def setColorizableTexts(self, src):
-        pass # never color examples
+        pass  # never color examples
+
 
 class StructuredTextBullet(StructuredTextParagraph):
     """Represents a section of a document with a title and a body
     """
 
+
 class StructuredTextNumbered(StructuredTextParagraph):
     """Represents a section of a document with a title and a body
     """
+
 
 class StructuredTextDescriptionTitle(StructuredTextParagraph):
     """Represents a section of a document with a title and a body
     """
 
+
 class StructuredTextDescriptionBody(StructuredTextParagraph):
     """Represents a section of a document with a title and a body
     """
+
 
 class StructuredTextDescription(StructuredTextParagraph):
     """Represents a section of a document with a title and a body
@@ -289,11 +304,14 @@ class StructuredTextDescription(StructuredTextParagraph):
         return (StructuredTextDescriptionTitle(self._title),
                 StructuredTextDescriptionBody(self._src, self._subs))
 
+
 class StructuredTextSectionTitle(StructuredTextParagraph):
     """Represents a section of a document with a title and a body"""
 
+
 class StructuredTextSection(StructuredTextParagraph):
     """Represents a section of a document with a title and a body"""
+
     def __init__(self, src, subs=None, **kw):
         super(StructuredTextSection, self).__init__(
             StructuredTextSectionTitle(src), subs, **kw)
@@ -305,6 +323,8 @@ class StructuredTextSection(StructuredTextParagraph):
         self._src.setColorizableTexts(src)
 
 # a StructuredTextTable holds StructuredTextRows
+
+
 class StructuredTextTable(StructuredTextParagraph):
     """
     rows is a list of lists containing tuples, which
@@ -362,14 +382,16 @@ class StructuredTextTable(StructuredTextParagraph):
         for row_index in range(len(self._rows)):
             for column_index in range(len(self._rows[row_index]._columns)):
                 self._rows[row_index
-                          ]._columns[column_index
-                                    ].setColorizableTexts((texts[0],))
+                           ]._columns[column_index
+                                      ].setColorizableTexts((texts[0],))
                 texts = texts[1:]
 
     _getColorizableTexts = getColorizableTexts
     _setColorizableTexts = setColorizableTexts
 
 # StructuredTextRow holds StructuredTextColumns
+
+
 class StructuredTextRow(StructuredTextParagraph):
 
     def __init__(self, row, kw):
@@ -442,8 +464,10 @@ class StructuredTextColumn(StructuredTextParagraph):
 class StructuredTextTableHeader(StructuredTextParagraph):
     pass
 
+
 class StructuredTextTableData(StructuredTextParagraph):
     pass
+
 
 class StructuredTextMarkup(stdom.Element):
 
@@ -468,35 +492,46 @@ class StructuredTextMarkup(stdom.Element):
     def __repr__(self):
         return '%s(%s)' % (self.__class__.__name__, repr(self._value))
 
+
 class StructuredTextLiteral(StructuredTextMarkup):
     def getColorizableTexts(self):
         return ()
+
     def setColorizableTexts(self, v):
         pass
+
 
 class StructuredTextEmphasis(StructuredTextMarkup):
     pass
 
+
 class StructuredTextStrong(StructuredTextMarkup):
     pass
+
 
 class StructuredTextInnerLink(StructuredTextMarkup):
     pass
 
+
 class StructuredTextNamedLink(StructuredTextMarkup):
     pass
+
 
 class StructuredTextUnderline(StructuredTextMarkup):
     pass
 
+
 class StructuredTextSGML(StructuredTextMarkup):
     pass
+
 
 class StructuredTextLink(StructuredTextMarkup):
     pass
 
+
 class StructuredTextXref(StructuredTextMarkup):
     pass
+
 
 class StructuredTextImage(StructuredTextMarkup):
     """A simple embedded image
