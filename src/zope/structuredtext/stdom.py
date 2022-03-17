@@ -13,9 +13,9 @@
 """DOM implementation in StructuredText: read-only methods
 """
 
-if bytes is not str:
-    string_types = (str,)  # PY3
-else:
+if bytes is not str:  # pragma: PY3
+    string_types = (str,)
+else:  # pragma: PY2
     string_types = (unicode, str)  # noqa: F821 undefined name 'unicode'
 
 __metaclass__ = type

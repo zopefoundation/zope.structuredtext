@@ -15,9 +15,9 @@
 
 try:
     from html import escape
-except ImportError:  # pragma: no cover Python2
+except ImportError:  # pragma: PY2
     from cgi import escape
-else:                # pragma: no cover Py3k
+else:  # pragma: PY3
     from functools import partial
     escape = partial(escape, quote=False)
 

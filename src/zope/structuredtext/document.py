@@ -40,9 +40,9 @@ from zope.structuredtext.stng import StructuredTextUnderline
 from zope.structuredtext.stng import StructuredTextXref
 from zope.structuredtext.stng import structurize
 
-if bytes is not str:
-    string_types = (str,)  # PY3
-else:
+if bytes is not str:  # pragma: PY3
+    string_types = (str,)
+else:  # pragma: PY2
     string_types = (unicode, str)  # noqa: F821 undefined name 'unicode'
 
 __metaclass__ = type
