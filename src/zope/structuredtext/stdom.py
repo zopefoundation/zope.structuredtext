@@ -13,7 +13,10 @@
 """DOM implementation in StructuredText: read-only methods
 """
 
-string_types = (str,) if bytes is not str else (unicode, str)
+if bytes is not str:  # pragma: PY3
+    string_types = (str,)
+else:  # pragma: PY2
+    string_types = (unicode, str)  # noqa: F821 undefined name 'unicode'
 
 __metaclass__ = type
 
@@ -50,31 +53,53 @@ INUSE_ATTRIBUTE_ERR = 10
 # Exceptions
 # ----------
 
+
 class DOMException(Exception):
     pass
+
+
 class IndexSizeException(DOMException):
     code = INDEX_SIZE_ERR
+
+
 class DOMStringSizeException(DOMException):
     code = DOMSTRING_SIZE_ERR
+
+
 class HierarchyRequestException(DOMException):
     code = HIERARCHY_REQUEST_ERR
+
+
 class WrongDocumentException(DOMException):
     code = WRONG_DOCUMENT_ERR
+
+
 class InvalidCharacterException(DOMException):
     code = INVALID_CHARACTER_ERR
+
+
 class NoDataAllowedException(DOMException):
     code = NO_DATA_ALLOWED_ERR
+
+
 class NoModificationAllowedException(DOMException):
     code = NO_MODIFICATION_ALLOWED_ERR
+
+
 class NotFoundException(DOMException):
     code = NOT_FOUND_ERR
+
+
 class NotSupportedException(DOMException):
     code = NOT_SUPPORTED_ERR
+
+
 class InUseAttributeException(DOMException):
     code = INUSE_ATTRIBUTE_ERR
 
 # Node classes
 # ------------
+
 
 class ParentNode(object):
     """
@@ -108,6 +133,7 @@ class ParentNode(object):
         this returns None.
         """
         raise NotImplementedError()
+
 
 class NodeWrapper(ParentNode):
     """
@@ -145,21 +171,21 @@ class NodeWrapper(ParentNode):
         """
 
         children = self.aq_parent.getChildren()
-        if not children: # pragma: no cover
+        if not children:  # pragma: no cover
             return None
 
         index = getattr(self, '_DOMIndex', None)
         if index is None:
             index = self._getDOMIndex(children)
             if index is None:
-                return None # pragma: no cover
+                return None  # pragma: no cover
 
         index = index - 1
         if index < 0:
             return None
         try:
             n = children[index]
-        except IndexError: # pragma: no cover
+        except IndexError:  # pragma: no cover
             return None
         else:
             if isinstance(n, string_types):
@@ -167,18 +193,17 @@ class NodeWrapper(ParentNode):
             n._DOMIndex = index
             return n.__of__(self)
 
-
     def getNextSibling(self):
         """
         The node immediately preceding this node.  If
         there is no such node, this returns None.
         """
         children = self.aq_parent.getChildren()
-        if not children: # pragma: no cover
+        if not children:  # pragma: no cover
             return None
 
         index = getattr(self, '_DOMIndex', None)
-        if index is None: # pragma: no cover
+        if index is None:  # pragma: no cover
             index = self._getDOMIndex(children)
             if index is None:
                 return None
@@ -186,10 +211,10 @@ class NodeWrapper(ParentNode):
         index = index + 1
         try:
             n = children[index]
-        except IndexError: # pragma: no cover
+        except IndexError:  # pragma: no cover
             return None
         else:
-            if isinstance(n, string_types): # pragma: no cover
+            if isinstance(n, string_types):  # pragma: no cover
                 n = TextNode(n)
             n._DOMIndex = index
             return n.__of__(self)
@@ -199,6 +224,7 @@ class NodeWrapper(ParentNode):
         The Document object associated with this node, if any.
         """
         raise NotImplementedError()
+
 
 class Node(ParentNode):
     """Node Interface
@@ -247,7 +273,6 @@ class Node(ParentNode):
         of this node (if it is an element) or None otherwise.
         """
 
-
     def getOwnerDocument(self):
         """The Document object associated with this node, if any.
         """
@@ -261,7 +286,6 @@ class Node(ParentNode):
         if it doesn't.
         """
         raise NotImplementedError()
-
 
     _NODE_TYPE = None
 
@@ -282,6 +306,7 @@ class TextNode(Node):
 
     def getNodeValue(self):
         return self._value
+
 
 class Element(Node):
     """Element interface
@@ -343,6 +368,7 @@ class Element(Node):
         """
         raise NotImplementedError()
 
+
 class NodeList(object):
     """NodeList interface - Provides the abstraction of an ordered
     collection of nodes.
@@ -368,6 +394,7 @@ class NodeList(object):
         return len(self._data)
 
     __len__ = getLength
+
 
 class NamedNodeMap(object):
     """
@@ -408,6 +435,7 @@ class NamedNodeMap(object):
         did not identify any node in the map.
         """
         raise NotImplementedError()
+
 
 class Attr(Node):
     """

@@ -65,11 +65,13 @@ from zope.structuredtext.stng import structurize
 from zope.structuredtext.document import DocumentWithImages
 from zope.structuredtext.html import HTMLWithImages
 
+
 def stx2html(aStructuredString, level=1, header=1):
     """A shortcut to produce HTML. """
     st = structurize(aStructuredString)
     doc = DocumentWithImages()(st)
     return HTMLWithImages()(doc, header=header, level=level)
+
 
 def stx2htmlWithReferences(text, level=1, header=1):
     """A shortcut to produce HTML with references"""

@@ -15,13 +15,14 @@
 
 try:
     from html import escape
-except ImportError:  # pragma: no cover Python2
+except ImportError:  # pragma: PY2
     from cgi import escape
-else:                # pragma: no cover Py3k
+else:  # pragma: PY3
     from functools import partial
     escape = partial(escape, quote=False)
 
 __metaclass__ = type
+
 
 class HTML(object):
 
@@ -32,10 +33,10 @@ class HTML(object):
         'StructuredTextStrong': 'strong',
         'StructuredTextLink': 'link',
         'StructuredTextXref': 'xref',
-        'StructuredTextInnerLink':'innerLink',
-        'StructuredTextNamedLink':'namedLink',
-        'StructuredTextUnderline':'underline',
-        'StructuredTextSGML':'sgml', # this might or might not be valid
+        'StructuredTextInnerLink': 'innerLink',
+        'StructuredTextNamedLink': 'namedLink',
+        'StructuredTextUnderline': 'underline',
+        'StructuredTextSGML': 'sgml',  # this might or might not be valid
     }
 
     element_types = paragraph_nestable.copy()
@@ -50,17 +51,17 @@ class HTML(object):
         'StructuredTextDescriptionBody': 'descriptionBody',
         'StructuredTextSection': 'section',
         'StructuredTextSectionTitle': 'sectionTitle',
-        'StructuredTextTable':'table',
+        'StructuredTextTable': 'table',
     })
 
     def dispatch(self, doc, level, output):
         getattr(self, self.element_types[doc.getNodeName()]
-               )(doc, level, output)
+                )(doc, level, output)
 
     def __call__(self, doc, level=1, header=True):
         r = []
         self.header = header
-        self.dispatch(doc, level-1, r.append)
+        self.dispatch(doc, level - 1, r.append)
         return ''.join(r)
 
     def _text(self, doc, level, output):
@@ -72,14 +73,14 @@ class HTML(object):
         if self.header:
             output('<html>\n')
             if (children
-                and children[0].getNodeName() == 'StructuredTextSection'):
+                    and children[0].getNodeName() == 'StructuredTextSection'):
                 output('<head>\n<title>%s</title>\n</head>\n' %
                        children[0].getChildNodes()[0].getNodeValue())
             output('<body>\n')
 
         for c in children:
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
 
         if self.header:
             output('</body>\n')
@@ -89,28 +90,27 @@ class HTML(object):
         children = doc.getChildNodes()
         for c in children:
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level+1, output)
+                    )(c, level + 1, output)
 
     def sectionTitle(self, doc, level, output):
         output('<h%d>' % (level))
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('</h%d>\n' % (level))
-
 
     def descriptionTitle(self, doc, level, output):
         output('<dt>')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('</dt>\n')
 
     def descriptionBody(self, doc, level, output):
         output('<dd>')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('</dd>\n')
 
     def _list(self, doc, level, output, list_tag, item_tag='li'):
@@ -121,7 +121,7 @@ class HTML(object):
             output('<' + item_tag + '>')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         n = doc.getNextSibling()
         if item_tag:
             output('</' + item_tag + '>\n')
@@ -165,14 +165,14 @@ class HTML(object):
         output('<a href="%s">' % doc.href)
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('</a>')
 
     def emphasis(self, doc, level, output):
         output('<em>')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('</em>')
 
     def literal(self, doc, level, output):
@@ -185,42 +185,42 @@ class HTML(object):
         output('<strong>')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('</strong>')
 
     def underline(self, doc, level, output):
         output("<u>")
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output("</u>")
 
     def innerLink(self, doc, level, output):
         output('<a href="#ref')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('">[')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output(']</a>')
 
     def namedLink(self, doc, level, output):
         output('<a name="ref')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output('">[')
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
         output(']</a>')
 
     def sgml(self, doc, level, output):
         for c in doc.getChildNodes():
             getattr(self, self.element_types[c.getNodeName()]
-                   )(c, level, output)
+                    )(c, level, output)
 
     def xref(self, doc, level, output):
         val = doc.getNodeValue()
@@ -245,10 +245,11 @@ class HTML(object):
                 output(str)
                 for c in column.getChildNodes():
                     getattr(self, self.element_types[c.getNodeName()]
-                           )(c, level, output)
+                            )(c, level, output)
                 output("</" + column.getType() + ">\n")
             output("</tr>\n")
         output("</table>\n")
+
 
 class HTMLWithImages(HTML):
 

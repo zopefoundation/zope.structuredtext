@@ -34,14 +34,17 @@ def readFile(dirname, fname):
         lines = myfile.readlines()
     return ''.join(lines)
 
+
 def structurizedFile(f):
     raw_text = readFile(regressions, f)
     text = stng.structurize(raw_text)
     return text
 
+
 def structurizedFiles():
     for f in files:
         yield structurizedFile(f)
+
 
 class MockParagraph(object):
 
@@ -75,6 +78,7 @@ class MockParagraph(object):
     def getChildNodes(self):
         return self.child_nodes
 
+
 class TestFiles(unittest.TestCase):
 
     maxDiff = None
@@ -83,7 +87,7 @@ class TestFiles(unittest.TestCase):
         expected_filename = filename.replace('.stx', expected_extension)
         try:
             expected = readFile(regressions, expected_filename)
-        except IOError: # pragma: no cover
+        except IOError:  # pragma: no cover
             full_expected_fname = os.path.join(regressions, expected_filename)
             if not os.path.exists(full_expected_fname):
                 with open(full_expected_fname, 'w') as f:
@@ -125,17 +129,16 @@ class TestFiles(unittest.TestCase):
         text = structurizedFile(f)
         doc = DocumentWithImages()(text)
 
-        factory = DocBook if f not in requires_images else DocBookChapterWithFigures
+        factory = (
+            DocBook if f not in requires_images else DocBookChapterWithFigures)
 
         docbook = factory()(doc)
         self._compare(f, docbook, '.xml')
 
-
-
     for f in files:
         f = os.path.basename(f)
-        html = lambda self, f=f: self._check_html(f)
-        xml = lambda self, f=f: self._check_docbook(f)
+        def html(self, f=f): return self._check_html(f)
+        def xml(self, f=f): return self._check_docbook(f)
 
         bn = os.path.basename(f).replace('.', '_')
         locals()['test_html_' + bn] = html
@@ -152,7 +155,7 @@ class TestDocument(unittest.TestCase):
             doc = DocumentWithImages()
             self.assertTrue(doc(text))
 
-            def reprs(x): # coverage
+            def reprs(x):  # coverage
                 self.assertTrue(repr(x))
                 if not hasattr(x, 'getChildren'):
                     return
@@ -185,12 +188,15 @@ class TestDocument(unittest.TestCase):
 
         result = doc.doc_description(with_example)
         self.assertIsInstance(result, stng.StructuredTextDescription)
-        self.assertIsInstance(result.getSubparagraphs()[0], stng.StructuredTextExample)
+        self.assertIsInstance(
+            result.getSubparagraphs()[0],
+            stng.StructuredTextExample)
         self.assertEqual(result._src, ':')
 
     def test_parse_returns_string(self):
         doc = DocumentWithImages()
         returns = ['', ('a string', 0, 0)]
+
         def text_type(arg):
             return returns.pop()
 
@@ -216,7 +222,10 @@ class TestDocument(unittest.TestCase):
 
     def test_header_example(self):
         doc = DocumentWithImages()
-        header = MockParagraph(sub_paragraphs=[MockParagraph()], co_texts=["::"])
+        header = MockParagraph(
+            sub_paragraphs=[
+                MockParagraph()],
+            co_texts=["::"])
         result = doc.doc_header(header)
         self.assertIsInstance(result, stng.StructuredTextExample)
 
@@ -225,6 +234,7 @@ class TestDocument(unittest.TestCase):
         result = doc.doc_inner_link('...[abc]')
         self.assertIsInstance(result, tuple)
         self.assertIsInstance(result[0], stng.StructuredTextInnerLink)
+
 
 class HTMLDocumentTests(unittest.TestCase):
 
@@ -249,7 +259,6 @@ class HTMLDocumentTests(unittest.TestCase):
     def testUnderline1(self):
         self._test("xx _this is html_",
                    "<u>this is html</u>")
-
 
     def testUnderline1NonASCII(self):
         self._test("xx _D\xc3\xbcsseldorf underlined_",
@@ -291,7 +300,6 @@ class HTMLDocumentTests(unittest.TestCase):
         self._test("this is '__a_literal__' eh",
                    "<code>__a_literal__</code>")
 
-
     def testUnderscoresInLiteral2NonASCII(self):
         self._test("this is '__literally_D\xc3\xbcsseldorf__' eh",
                    "<code>__literally_D\xc3\xbcsseldorf__</code>")
@@ -325,8 +333,9 @@ class HTMLDocumentTests(unittest.TestCase):
                    '<code>"literal":http://www.zope.org/.</code>')
 
     def testLinkInLiteralNonASCII(self):
-        self._test("this is a '\"D\xc3\xbcsseldorf\":http://www.zope.org/.' eh",
-                   '<code>"D\xc3\xbcsseldorf":http://www.zope.org/.</code>')
+        self._test(
+            "this is a '\"D\xc3\xbcsseldorf\":http://www.zope.org/.' eh",
+            '<code>"D\xc3\xbcsseldorf":http://www.zope.org/.</code>')
 
     def testLink(self):
         self._test('"foo":http://www.zope.org/foo/bar',
@@ -335,38 +344,53 @@ class HTMLDocumentTests(unittest.TestCase):
         self._test('"foo":http://www.zope.org/foo/bar/%20x',
                    '<p><a href="http://www.zope.org/foo/bar/%20x">foo</a></p>')
 
-        self._test('"foo":http://www.zope.org/foo/bar?arg1=1&arg2=2',
-                   '<p><a href="http://www.zope.org/foo/bar?arg1=1&arg2=2">foo</a></p>')
+        self._test(
+            '"foo":http://www.zope.org/foo/bar?arg1=1&arg2=2',
+            '<p><a href="http://www.zope.org/foo/bar?arg1=1&arg2=2">'
+            'foo</a></p>')
 
         self._test('"foo bar":http://www.zope.org/foo/bar',
                    '<p><a href="http://www.zope.org/foo/bar">foo bar</a></p>')
 
-        self._test('"[link goes here]":http://www.zope.org/foo/bar',
-                   '<p><a href="http://www.zope.org/foo/bar">[link goes here]</a></p>')
+        self._test(
+            '"[link goes here]":http://www.zope.org/foo/bar',
+            '<p><a href="http://www.zope.org/foo/bar">[link goes here]</a></p>'
+        )
 
-        self._test('"[Dad\'s car]":http://www.zope.org/foo/bar',
-                   '<p><a href="http://www.zope.org/foo/bar">[Dad\'s car]</a></p>')
+        self._test(
+            '"[Dad\'s car]":http://www.zope.org/foo/bar',
+            '<p><a href="http://www.zope.org/foo/bar">[Dad\'s car]</a></p>')
 
     def testLinkNonASCII(self):
-        self._test('"D\xc3\xbcsseldorf":http://www.zope.org/foo/bar',
-                   '<p><a href="http://www.zope.org/foo/bar">D\xc3\xbcsseldorf</a></p>')
+        self._test(
+            '"D\xc3\xbcsseldorf":http://www.zope.org/foo/bar',
+            '<p><a href="http://www.zope.org/foo/bar">'
+            'D\xc3\xbcsseldorf</a></p>')
 
-        self._test('"D\xc3\xbcsseldorf":http://www.zope.org/foo/bar/%20x',
-                   '<p><a href="http://www.zope.org/foo/bar/%20x">D\xc3\xbcsseldorf</a></p>')
+        self._test(
+            '"D\xc3\xbcsseldorf":http://www.zope.org/foo/bar/%20x',
+            '<p><a href="http://www.zope.org/foo/bar/%20x">'
+            'D\xc3\xbcsseldorf</a></p>')
 
         self._test(
             '"D\xc3\xbcsseldorf":http://www.zope.org/foo/bar?arg1=1&arg2=2',
-            '<p><a href="http://www.zope.org/foo/bar?arg1=1&arg2=2">D\xc3\xbcsseldorf</a></p>')
+            '<p><a href="http://www.zope.org/foo/bar?arg1=1&arg2=2">'
+            'D\xc3\xbcsseldorf</a></p>')
 
-        self._test('"D\xc3\xbcsseldorf am Rhein":http://www.zope.org/foo/bar',
-                   '<p><a href="http://www.zope.org/foo/bar">D\xc3\xbcsseldorf am Rhein</a></p>')
+        self._test(
+            '"D\xc3\xbcsseldorf am Rhein":http://www.zope.org/foo/bar',
+            '<p><a href="http://www.zope.org/foo/bar">'
+            'D\xc3\xbcsseldorf am Rhein</a></p>')
 
-        self._test('"[D\xc3\xbcsseldorf am Rhein]":http://www.zope.org/foo/bar',
-                   '<p><a href="http://www.zope.org/foo/bar">[D\xc3\xbcsseldorf am Rhein]</a></p>')
+        self._test(
+            '"[D\xc3\xbcsseldorf am Rhein]":http://www.zope.org/foo/bar',
+            '<p><a href="http://www.zope.org/foo/bar">'
+            '[D\xc3\xbcsseldorf am Rhein]</a></p>')
 
         self._test(
             '"[D\xc3\xbcsseldorf\'s Homepage]":http://www.zope.org/foo/bar',
-            '<p><a href="http://www.zope.org/foo/bar">[D\xc3\xbcsseldorf\'s Homepage]</a></p>')
+            '<p><a href="http://www.zope.org/foo/bar">'
+            '[D\xc3\xbcsseldorf\'s Homepage]</a></p>')
 
     def testImgLink(self):
         self._test('"foo":img:http://www.zope.org/bar.gif',
@@ -375,49 +399,68 @@ class HTMLDocumentTests(unittest.TestCase):
         self._test('"foo":img:http://www.zope.org:8080/bar.gif',
                    '<img src="http://www.zope.org:8080/bar.gif" alt="foo" />')
 
-        self._test('"foo":img:http://www.zope.org:8080/foo/bar?arg=1',
-                   '<img src="http://www.zope.org:8080/foo/bar?arg=1" alt="foo" />')
+        self._test(
+            '"foo":img:http://www.zope.org:8080/foo/bar?arg=1',
+            '<img src="http://www.zope.org:8080/foo/bar?arg=1" alt="foo" />')
 
-        self._test('"foo":img:http://www.zope.org:8080/foo/b%20ar?arg=1',
-                   '<img src="http://www.zope.org:8080/foo/b%20ar?arg=1" alt="foo" />')
+        self._test(
+            '"foo":img:http://www.zope.org:8080/foo/b%20ar?arg=1',
+            '<img src="http://www.zope.org:8080/foo/b%20ar?arg=1" alt="foo" />'
+        )
 
-        self._test('"foo bar":img:http://www.zope.org:8080/foo/bar',
-                   '<img src="http://www.zope.org:8080/foo/bar" alt="foo bar" />')
+        self._test(
+            '"foo bar":img:http://www.zope.org:8080/foo/bar',
+            '<img src="http://www.zope.org:8080/foo/bar" alt="foo bar" />')
 
-        self._test('"[link goes here]":img:http://www.zope.org:8080/foo/bar',
-                   '<img src="http://www.zope.org:8080/foo/bar" alt="[link goes here]" />')
+        self._test(
+            '"[link goes here]":img:http://www.zope.org:8080/foo/bar',
+            '<img src="http://www.zope.org:8080/foo/bar"'
+            ' alt="[link goes here]" />')
 
-        self._test('"[Dad\'s new car]":img:http://www.zope.org:8080/foo/bar',
-                   '<img src="http://www.zope.org:8080/foo/bar" alt="[Dad\'s new car]" />')
+        self._test(
+            '"[Dad\'s new car]":img:http://www.zope.org:8080/foo/bar',
+            '<img src="http://www.zope.org:8080/foo/bar"'
+            ' alt="[Dad\'s new car]" />')
 
     def testImgLinkNonASCII(self):
         self._test(
             '"D\xc3\xbcsseldorf":img:http://www.zope.org/bar.gif',
-            '<img src="http://www.zope.org/bar.gif" alt="D\xc3\xbcsseldorf" />')
+            '<img src="http://www.zope.org/bar.gif" alt="D\xc3\xbcsseldorf" />'
+        )
 
         self._test(
             '"D\xc3\xbcsseldorf":img:http://www.zope.org:8080/bar.gif',
-            '<img src="http://www.zope.org:8080/bar.gif" alt="D\xc3\xbcsseldorf" />')
+            '<img src="http://www.zope.org:8080/bar.gif"'
+            ' alt="D\xc3\xbcsseldorf" />')
 
         self._test(
             '"D\xc3\xbcsseldorf":img:http://www.zope.org:8080/foo/bar?arg=1',
-            '<img src="http://www.zope.org:8080/foo/bar?arg=1" alt="D\xc3\xbcsseldorf" />')
+            '<img src="http://www.zope.org:8080/foo/bar?arg=1"'
+            ' alt="D\xc3\xbcsseldorf" />')
 
         self._test(
-            '"D\xc3\xbcsseldorf":img:http://www.zope.org:8080/foo/b%20ar?arg=1',
-            '<img src="http://www.zope.org:8080/foo/b%20ar?arg=1" alt="D\xc3\xbcsseldorf" />')
+            '"D\xc3\xbcsseldorf"'
+            ':img:http://www.zope.org:8080/foo/b%20ar?arg=1',
+            '<img src="http://www.zope.org:8080/foo/b%20ar?arg=1"'
+            ' alt="D\xc3\xbcsseldorf" />')
 
         self._test(
-            '"D\xc3\xbcsseldorf am Rhein":img:http://www.zope.org:8080/foo/bar',
-            '<img src="http://www.zope.org:8080/foo/bar" alt="D\xc3\xbcsseldorf am Rhein" />')
+            '"D\xc3\xbcsseldorf am Rhein"'
+            ':img:http://www.zope.org:8080/foo/bar',
+            '<img src="http://www.zope.org:8080/foo/bar"'
+            ' alt="D\xc3\xbcsseldorf am Rhein" />')
 
         self._test(
-            '"[D\xc3\xbcsseldorf am Rhein]":img:http://www.zope.org:8080/foo/bar',
-            '<img src="http://www.zope.org:8080/foo/bar" alt="[D\xc3\xbcsseldorf am Rhein]" />')
+            '"[D\xc3\xbcsseldorf am Rhein]"'
+            ':img:http://www.zope.org:8080/foo/bar',
+            '<img src="http://www.zope.org:8080/foo/bar"'
+            ' alt="[D\xc3\xbcsseldorf am Rhein]" />')
 
         self._test(
-            '"[D\xc3\xbcsseldorf\'s Homepage]":img:http://www.zope.org:8080/foo/bar',
-            '<img src="http://www.zope.org:8080/foo/bar" alt="[D\xc3\xbcsseldorf\'s Homepage]" />')
+            '"[D\xc3\xbcsseldorf\'s Homepage]"'
+            ':img:http://www.zope.org:8080/foo/bar',
+            '<img src="http://www.zope.org:8080/foo/bar"'
+            ' alt="[D\xc3\xbcsseldorf\'s Homepage]" />')
 
     def testBulletList(self):
         self._test("* item in a list", "<ul>\n<li>item in a list</li>")
@@ -453,25 +496,27 @@ class HTMLDocumentTests(unittest.TestCase):
                    u"h\xe9 <strong>y\xe9</strong> xx")
 
     def test_paragraph_not_nestable(self):
-        first_child_not_nestable = MockParagraph(node_name='not nestable or known')
+        first_child_not_nestable = MockParagraph(
+            node_name='not nestable or known')
         second_child_nestable = MockParagraph(node_name="#text")
-        third_child_not_nestable = MockParagraph(node_name='not nestable or known')
+        third_child_not_nestable = MockParagraph(
+            node_name='not nestable or known')
         doc = MockParagraph(child_nodes=[first_child_not_nestable,
                                          second_child_nestable,
                                          third_child_not_nestable])
 
         html = HTMLWithImages()
         html.dispatch = lambda *args: None
-        l = []
-        html.paragraph(doc, level=1, output=l.append)
-        self.assertEqual(l, ['<p>', '</p>\n', '<p>', '</p>\n'])
+        l_ = []
+        html.paragraph(doc, level=1, output=l_.append)
+        self.assertEqual(l_, ['<p>', '</p>\n', '<p>', '</p>\n'])
 
     def test_image_with_key(self):
         doc = MockParagraph(key='abc', href='def', node_value='123')
         html = HTMLWithImages()
-        l = []
-        html.image(doc, 1, output=l.append)
-        self.assertEqual(l,
+        l_ = []
+        html.image(doc, 1, output=l_.append)
+        self.assertEqual(l_,
                          ['<a name="abc"></a>\n',
                           '<img src="def" alt="123" />\n',
                           '<p><b>Figure abc</b> 123</p>\n'])
@@ -480,22 +525,26 @@ class HTMLDocumentTests(unittest.TestCase):
 class DocBookOutputTests(unittest.TestCase):
 
     def test_literal_text(self):
-        doc = MockParagraph(node_name='StructuredTextLiteral', node_value='   ')
+        doc = MockParagraph(
+            node_name='StructuredTextLiteral',
+            node_value='   ')
         docbook = DocBook()
-        l = []
-        docbook._text(doc, 1, output=l.append)
-        self.assertEqual(l, ['   '])
+        l_ = []
+        docbook._text(doc, 1, output=l_.append)
+        self.assertEqual(l_, ['   '])
+
 
 class DocBookChapterWithFiguresOutputTests(unittest.TestCase):
 
     def test_image_with_key(self):
         doc = MockParagraph(key='abc', href='def', node_value='123')
         docbook = DocBookChapterWithFigures()
-        l = []
-        docbook.image(doc, 1, output=l.append)
-        self.assertEqual(l,
+        l_ = []
+        docbook.image(doc, 1, output=l_.append)
+        self.assertEqual(l_,
                          ['<figure id="abc"><title>123</title>\n',
                           '<graphic fileref="def"></graphic>\n</figure>\n'])
+
 
 class TestDocBookBook(unittest.TestCase):
 
@@ -506,8 +555,15 @@ class TestDocBookBook(unittest.TestCase):
         book.addChapter("\nchapter1\n")
         book.addChapter("\nchapter2\n")
 
-        self.assertEqual(str(book),
-                         '<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN">\n<book>\n<title>title</title>\n\nchapter1\n\n\nchapter2\n\n\n</book>\n')
+        self.assertEqual(
+            str(book),
+            '<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN">'
+            '\n<book>'
+            '\n<title>title</title>'
+            '\n\nchapter1'
+            '\n\n\nchapter2'
+            '\n\n\n</book>\n')
+
 
 class TestSTNGFunctions(unittest.TestCase):
 
@@ -518,6 +574,7 @@ class TestSTNGFunctions(unittest.TestCase):
         paragraphs = ''
         result = stng.structurize(paragraphs)
         self.assertIsInstance(result, stng.StructuredTextDocument)
+
 
 class TestStructuredTextDocument(unittest.TestCase):
 
@@ -548,6 +605,7 @@ class TestStructuredTextParagraph(unittest.TestCase):
         nnmap = p.getAttributes()
         self.assertIsInstance(nnmap, stdom.NamedNodeMap)
 
+
 class TestStructuredTextRow(unittest.TestCase):
 
     def test_set_columns(self):
@@ -575,6 +633,7 @@ class TestStructuredTextTable(unittest.TestCase):
         self.assertEqual([[[]]], table.getColumns())
 
         table.setColumns(table.getColumns())
+
 
 def test_suite():
     suite = unittest.defaultTestLoader.loadTestsFromName(__name__)
