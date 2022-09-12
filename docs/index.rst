@@ -39,7 +39,7 @@ Document Object Model (DOM) API. It should be possible to process
 :class:`~.StructuredTextNode` hierarchies using XML tools such as XSLT.
 
 The second step in using StructuredText is to apply additional
-structuring rules based on text content. A variety of differentText
+structuring rules based on text content. A variety of different text
 rules can be used.  Typically, these are used to implement a
 structured text language for producing documents, but any sort of
 structured text language could be implemented in the second
