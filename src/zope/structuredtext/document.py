@@ -14,12 +14,12 @@
 """
 import re
 
+from zope.structuredtext.stletters import dbl_quoted_punc
 from zope.structuredtext.stletters import letters
 from zope.structuredtext.stletters import literal_punc
-from zope.structuredtext.stletters import under_punc
-from zope.structuredtext.stletters import strongem_punc
 from zope.structuredtext.stletters import phrase_delimiters
-from zope.structuredtext.stletters import dbl_quoted_punc
+from zope.structuredtext.stletters import strongem_punc
+from zope.structuredtext.stletters import under_punc
 from zope.structuredtext.stng import StructuredTextBullet
 from zope.structuredtext.stng import StructuredTextDescription
 from zope.structuredtext.stng import StructuredTextDocument
@@ -28,17 +28,18 @@ from zope.structuredtext.stng import StructuredTextExample
 from zope.structuredtext.stng import StructuredTextImage
 from zope.structuredtext.stng import StructuredTextInnerLink
 from zope.structuredtext.stng import StructuredTextLink
+from zope.structuredtext.stng import StructuredTextLiteral
 from zope.structuredtext.stng import StructuredTextNamedLink
 from zope.structuredtext.stng import StructuredTextNumbered
-from zope.structuredtext.stng import StructuredTextLiteral
 from zope.structuredtext.stng import StructuredTextParagraph
-from zope.structuredtext.stng import StructuredTextSGML
 from zope.structuredtext.stng import StructuredTextSection
+from zope.structuredtext.stng import StructuredTextSGML
 from zope.structuredtext.stng import StructuredTextStrong
 from zope.structuredtext.stng import StructuredTextTable
 from zope.structuredtext.stng import StructuredTextUnderline
 from zope.structuredtext.stng import StructuredTextXref
 from zope.structuredtext.stng import structurize
+
 
 if bytes is not str:  # pragma: PY3
     string_types = (str,)

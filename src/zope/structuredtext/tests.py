@@ -11,17 +11,19 @@
 #
 ##############################################################################
 from __future__ import print_function
+
 import doctest
-import unittest
 import glob
 import os
+import unittest
 
-from zope.structuredtext import stng
 from zope.structuredtext import stdom
-from zope.structuredtext.document import DocumentWithImages
-from zope.structuredtext.html import HTMLWithImages
+from zope.structuredtext import stng
 from zope.structuredtext.docbook import DocBook
 from zope.structuredtext.docbook import DocBookChapterWithFigures
+from zope.structuredtext.document import DocumentWithImages
+from zope.structuredtext.html import HTMLWithImages
+
 
 here = os.path.dirname(__file__)
 regressions = os.path.join(here, 'regressions')
