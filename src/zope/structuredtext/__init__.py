@@ -61,9 +61,9 @@ __docformat__ = 'restructuredtext'
 import re
 from string import ascii_letters
 
-from zope.structuredtext.stng import structurize
 from zope.structuredtext.document import DocumentWithImages
 from zope.structuredtext.html import HTMLWithImages
+from zope.structuredtext.stng import structurize
 
 
 def stx2html(aStructuredString, level=1, header=1):
