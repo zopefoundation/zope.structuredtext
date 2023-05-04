@@ -41,15 +41,7 @@ from zope.structuredtext.stng import StructuredTextXref
 from zope.structuredtext.stng import structurize
 
 
-if bytes is not str:  # pragma: PY3
-    string_types = (str,)
-else:  # pragma: PY2
-    string_types = (unicode, str)  # noqa: F821 undefined name 'unicode'
-
-__metaclass__ = type
-
-
-class Document(object):
+class Document:
     """
     Class instance calls [ex.=> x()] require a structured text
     structure. Doc will then parse each paragraph in the structure
@@ -88,7 +80,7 @@ class Document(object):
     ]
 
     def __call__(self, doc):
-        if isinstance(doc, string_types):
+        if isinstance(doc, str):
             doc = structurize(doc)
             doc.setSubparagraphs(self.color_paragraphs(
                 doc.getSubparagraphs()))
@@ -111,7 +103,7 @@ class Document(object):
 
         tmp = []    # the list to be returned if raw_string is split
 
-        if isinstance(text_type, string_types):
+        if isinstance(text_type, str):
             text_type = getattr(self, text_type)
 
         while True:
@@ -124,7 +116,7 @@ class Document(object):
             if start:
                 tmp.append(raw_string[:start])
 
-            if isinstance(t, string_types):
+            if isinstance(t, str):
                 # if we get a string back, add it to text to be parsed
                 raw_string = t + raw_string[end:len(raw_string)]
             else:
@@ -154,13 +146,13 @@ class Document(object):
 
         for text_type in types:
 
-            if isinstance(text, string_types):
+            if isinstance(text, str):
                 text = self.parse(text, text_type)
             elif isinstance(text, list):  # Waaaa
                 result = []
 
                 for s in text:
-                    if isinstance(s, string_types):
+                    if isinstance(s, str):
                         s = self.parse(s, text_type)
                         if isinstance(s, list):
                             result.extend(s)
@@ -185,7 +177,7 @@ class Document(object):
     def color_paragraphs(self, raw_paragraphs,
                          type=type,
                          sequence_types=(tuple, list),
-                         sts=string_types):
+                         sts=str):
         result = []
         for paragraph in raw_paragraphs:
             if paragraph.getNodeName() != 'StructuredTextParagraph':
@@ -211,8 +203,7 @@ class Document(object):
             else:
                 # copy, retain attributes
                 atts = getattr(paragraph, '_attributes', [])
-                kw = dict([(att, getattr(paragraph, att))
-                           for att in atts])
+                kw = {att: getattr(paragraph, att) for att in atts}
                 subs = self.color_paragraphs(paragraph.getSubparagraphs())
                 new_paragraphs = StructuredTextParagraph(
                     paragraph.getColorizableTexts()[0], subs, **kw),

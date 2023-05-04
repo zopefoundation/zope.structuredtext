@@ -13,13 +13,6 @@
 """DOM implementation in StructuredText: read-only methods
 """
 
-if bytes is not str:  # pragma: PY3
-    string_types = (str,)
-else:  # pragma: PY2
-    string_types = (unicode, str)  # noqa: F821 undefined name 'unicode'
-
-__metaclass__ = type
-
 # Node type codes
 # ---------------
 
@@ -101,13 +94,13 @@ class InUseAttributeException(DOMException):
 # ------------
 
 
-class ParentNode(object):
+class ParentNode:
     """
     A node that can have children, or, more precisely, that implements
     the child access methods of the DOM.
     """
 
-    def getChildNodes(self, type=type, sts=string_types):
+    def getChildNodes(self, type=type, sts=str):
         """
         Returns a NodeList that contains all children of this node.
         If there are no children, this is a empty NodeList
@@ -120,14 +113,14 @@ class ParentNode(object):
 
         return NodeList(r)
 
-    def getFirstChild(self, type=type, sts=string_types):
+    def getFirstChild(self, type=type, sts=str):
         """
         The first child of this node. If there is no such node
         this returns None
         """
         raise NotImplementedError()
 
-    def getLastChild(self, type=type, sts=string_types):
+    def getLastChild(self, type=type, sts=str):
         """
         The last child of this node.  If there is no such node
         this returns None.
@@ -188,7 +181,7 @@ class NodeWrapper(ParentNode):
         except IndexError:  # pragma: no cover
             return None
         else:
-            if isinstance(n, string_types):
+            if isinstance(n, str):
                 n = TextNode(n)
             n._DOMIndex = index
             return n.__of__(self)
@@ -214,7 +207,7 @@ class NodeWrapper(ParentNode):
         except IndexError:  # pragma: no cover
             return None
         else:
-            if isinstance(n, string_types):  # pragma: no cover
+            if isinstance(n, str):  # pragma: no cover
                 n = TextNode(n)
             n._DOMIndex = index
             return n.__of__(self)
@@ -326,7 +319,7 @@ class Element(Node):
     def getNodeValue(self):
         r = []
         for c in self.getChildren():
-            if not isinstance(c, string_types):
+            if not isinstance(c, str):
                 c = c.getNodeValue()
             r.append(c)
         return ''.join(r)
@@ -369,7 +362,7 @@ class Element(Node):
         raise NotImplementedError()
 
 
-class NodeList(object):
+class NodeList:
     """NodeList interface - Provides the abstraction of an ordered
     collection of nodes.
 
@@ -380,7 +373,7 @@ class NodeList(object):
     def __init__(self, list=None):
         self._data = list or []
 
-    def __getitem__(self, index, type=type, sts=string_types):
+    def __getitem__(self, index, type=type, sts=str):
         return self._data[index]
 
     def item(self, index):
@@ -396,7 +389,7 @@ class NodeList(object):
     __len__ = getLength
 
 
-class NamedNodeMap(object):
+class NamedNodeMap:
     """
     NamedNodeMap interface - Is used to represent collections
     of nodes that can be accessed by name.  NamedNodeMaps are not

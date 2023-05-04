@@ -10,7 +10,6 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-from __future__ import print_function
 
 import doctest
 import glob
@@ -32,7 +31,7 @@ files = glob.glob(regressions + '/*stx')
 
 
 def readFile(dirname, fname):
-    with open(os.path.join(dirname, fname), "r") as myfile:
+    with open(os.path.join(dirname, fname)) as myfile:
         lines = myfile.readlines()
     return ''.join(lines)
 
@@ -48,7 +47,7 @@ def structurizedFiles():
         yield structurizedFile(f)
 
 
-class MockParagraph(object):
+class MockParagraph:
 
     co_texts = ()
     sub_paragraphs = ()
@@ -89,7 +88,7 @@ class TestFiles(unittest.TestCase):
         expected_filename = filename.replace('.stx', expected_extension)
         try:
             expected = readFile(regressions, expected_filename)
-        except IOError:  # pragma: no cover
+        except OSError:  # pragma: no cover
             full_expected_fname = os.path.join(regressions, expected_filename)
             if not os.path.exists(full_expected_fname):
                 with open(full_expected_fname, 'w') as f:
@@ -494,8 +493,8 @@ class HTMLDocumentTests(unittest.TestCase):
     def testUnicodeContent(self):
         # This fails because ST uses the default locale to get "letters"
         # whereas it should use \w+ and re.U if the string is Unicode.
-        self._test(u"h\xe9 **y\xe9** xx",
-                   u"h\xe9 <strong>y\xe9</strong> xx")
+        self._test("h\xe9 **y\xe9** xx",
+                   "h\xe9 <strong>y\xe9</strong> xx")
 
     def test_paragraph_not_nestable(self):
         first_child_not_nestable = MockParagraph(

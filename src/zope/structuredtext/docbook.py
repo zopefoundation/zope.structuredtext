@@ -12,13 +12,9 @@
 ##############################################################################
 """ Render STX document as docbook.
 """
-from __future__ import print_function
 
 
-__metaclass__ = type
-
-
-class DocBook(object):
+class DocBook:
     """ Structured text document renderer for Docbook.
     """
     element_types = {
@@ -273,7 +269,7 @@ class DocBookArticle(DocBook):
         output('</article>\n')
 
 
-class DocBookBook(object):
+class DocBookBook:
 
     def __init__(self, title=''):
         self.title = title
