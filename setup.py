@@ -37,7 +37,7 @@ long_description = (
 
 setup(
     name='zope.structuredtext',
-    version='5.0.dev0',
+    version='5.0',
     author='Zope Foundation and Contributors',
     author_email='zope-dev@zope.dev',
     description='StructuredText parser',
