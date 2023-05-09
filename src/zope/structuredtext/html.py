@@ -12,19 +12,14 @@
 ##############################################################################
 """ HTML renderer for STX documents.
 """
-
-try:
-    from html import escape
-except ImportError:  # pragma: PY2
-    from cgi import escape
-else:  # pragma: PY3
-    from functools import partial
-    escape = partial(escape, quote=False)
-
-__metaclass__ = type
+from functools import partial
+from html import escape
 
 
-class HTML(object):
+escape = partial(escape, quote=False)
+
+
+class HTML:
 
     paragraph_nestable = {
         '#text': '_text',
@@ -224,7 +219,7 @@ class HTML(object):
 
     def xref(self, doc, level, output):
         val = doc.getNodeValue()
-        output('<a href="#ref%s">[%s]</a>' % (val, val))
+        output('<a href="#ref{}">[{}]</a>'.format(val, val))
 
     def table(self, doc, level, output):
         """

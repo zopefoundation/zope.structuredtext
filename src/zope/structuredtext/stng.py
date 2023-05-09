@@ -12,14 +12,10 @@
 ##############################################################################
 """ Core document model.
 """
-from __future__ import print_function
 
 import re
 
 from . import stdom
-
-
-__metaclass__ = type
 
 
 def indention(str, front=re.compile(r"^\s+").match):
@@ -122,7 +118,7 @@ def structurize(paragraphs, delimiter=re.compile(para_delim)):
     run = struct
 
     paragraphs = paragraphs.expandtabs()
-    paragraphs = '%s%s%s' % ('\n\n', paragraphs, '\n\n')
+    paragraphs = '{}{}{}'.format('\n\n', paragraphs, '\n\n')
     paragraphs = delimiter.split(paragraphs)
     paragraphs = [x for x in paragraphs if x.strip()]
 
@@ -231,7 +227,7 @@ class StructuredTextDocument(StructuredTextParagraph):
     _attributes = ()
 
     def __init__(self, subs=None, **kw):
-        super(StructuredTextDocument, self).__init__('', subs, **kw)
+        super().__init__('', subs, **kw)
 
     def getChildren(self):
         return self._subs
@@ -259,7 +255,7 @@ class StructuredTextExample(StructuredTextParagraph):
         t = []
         for s in subs:
             flatten(s, t.append)
-        super(StructuredTextExample, self).__init__('\n\n'.join(t), (), **kw)
+        super().__init__('\n\n'.join(t), (), **kw)
 
     def getColorizableTexts(self):
         return ()
@@ -293,7 +289,7 @@ class StructuredTextDescription(StructuredTextParagraph):
     """
 
     def __init__(self, title, src, subs, **kw):
-        super(StructuredTextDescription, self).__init__(src, subs, **kw)
+        super().__init__(src, subs, **kw)
         self._title = title
 
     def getColorizableTexts(self):
@@ -315,7 +311,7 @@ class StructuredTextSection(StructuredTextParagraph):
     """Represents a section of a document with a title and a body"""
 
     def __init__(self, src, subs=None, **kw):
-        super(StructuredTextSection, self).__init__(
+        super().__init__(
             StructuredTextSectionTitle(src), subs, **kw)
 
     def getColorizableTexts(self):
@@ -336,7 +332,7 @@ class StructuredTextTable(StructuredTextParagraph):
     """
 
     def __init__(self, rows, src, subs, **kw):
-        super(StructuredTextTable, self).__init__(subs, **kw)
+        super().__init__(subs, **kw)
         self._rows = []
         for row in rows:
             if row:
@@ -404,7 +400,7 @@ class StructuredTextRow(StructuredTextParagraph):
         EX
         [('this is column one',1), ('this is column two',1)]
         """
-        super(StructuredTextRow, self).__init__([], **kw)
+        super().__init__([], **kw)
 
         self._columns = []
         for column in row:
@@ -436,7 +432,7 @@ class StructuredTextColumn(StructuredTextParagraph):
     """
 
     def __init__(self, text, span, align, valign, typ, kw):
-        super(StructuredTextColumn, self).__init__(text, [], **kw)
+        super().__init__(text, [], **kw)
         self._span = span
         self._align = align
         self._valign = valign
@@ -492,7 +488,7 @@ class StructuredTextMarkup(stdom.Element):
         self._value = v[0]
 
     def __repr__(self):
-        return '%s(%s)' % (self.__class__.__name__, repr(self._value))
+        return '{}({})'.format(self.__class__.__name__, repr(self._value))
 
 
 class StructuredTextLiteral(StructuredTextMarkup):
