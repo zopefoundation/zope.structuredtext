@@ -95,7 +95,6 @@ pygments_style = 'sphinx'
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
-
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  Major themes that come with
@@ -169,7 +168,6 @@ html_static_path = ['_static']
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'zopestructuredtextdoc'
 
-
 # -- Options for LaTeX output --------------------------------------------------
 
 # The paper size ('letter' or 'a4').
@@ -181,8 +179,8 @@ htmlhelp_basename = 'zopestructuredtextdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'zopestructuredtext.tex', u'zope.structuredtext Documentation',
-   u'Zope Foundation and Contributors', 'manual'),
+    ('index', 'zopestructuredtext.tex', 'zope.structuredtext Documentation',
+     'Zope Foundation and Contributors', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -204,13 +202,16 @@ latex_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    'https://docs.python.org/': None,
+    'python': ('https://docs.python.org/', None),
 }
 
-extlinks = {'issue': ('https://github.com/zopefoundation/zope.structuredtext/issues/%s',
-                      'issue #'),
-            'pr': ('https://github.com/zopefoundation/zope.structuredtext/pull/%s',
-                   'pull request #')}
+extlinks = {
+    'issue':
+    ('https://github.com/zopefoundation/zope.structuredtext/issues/%s',
+     'issue #'),
+    'pr': ('https://github.com/zopefoundation/zope.structuredtext/pull/%s',
+           'pull request #')
+}
 
 autodoc_default_flags = [
     'members',
