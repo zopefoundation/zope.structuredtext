@@ -219,7 +219,7 @@ class HTML:
 
     def xref(self, doc, level, output):
         val = doc.getNodeValue()
-        output('<a href="#ref{}">[{}]</a>'.format(val, val))
+        output(f'<a href="#ref{val}">[{val}]</a>')
 
     def table(self, doc, level, output):
         """
