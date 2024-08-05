@@ -488,7 +488,7 @@ class StructuredTextMarkup(stdom.Element):
         self._value = v[0]
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, repr(self._value))
+        return f'{self.__class__.__name__}({repr(self._value)})'
 
 
 class StructuredTextLiteral(StructuredTextMarkup):
