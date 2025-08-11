@@ -5,15 +5,11 @@
 5.1 (unreleased)
 ================
 
-- Add support for Python 3.13.
-
-- Drop support for Python 3.8.
-
-- Drop support for Python 3.7.
-
-- Add support for Python 3.12.
+- Add support for Python 3.12, 3.13.
 
 - Add support for Sphinx 8.
+
+- Drop support for Python 3.7, 3.8.
 
 
 5.0 (2023-05-09)
