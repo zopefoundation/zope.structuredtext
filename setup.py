@@ -20,7 +20,6 @@
 """
 import os
 
-from setuptools import find_packages
 from setuptools import setup
 
 
@@ -37,7 +36,7 @@ long_description = (
 
 setup(
     name='zope.structuredtext',
-    version='5.2.dev0',
+    version='6.0.dev0',
     author='Zope Foundation and Contributors',
     author_email='zope-dev@zope.dev',
     description='StructuredText parser',
@@ -60,16 +59,13 @@ setup(
     ],
     url='http://github.com/zopefoundation/zope.structuredtext',
     license='ZPL-2.1',
-    packages=find_packages('src'),
-    package_dir={'': 'src'},
-    namespace_packages=['zope', ],
     python_requires='>=3.9',
     install_requires=[
         'setuptools',
     ],
     extras_require={
         'test': [
-            'zope.testrunner',
+            'zope.testrunner >= 6.4',
         ],
         'docs': [
             'Sphinx',
