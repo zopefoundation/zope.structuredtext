@@ -633,7 +633,7 @@ class Document:
 
     def doc_underline(self,
                       s,
-                      expr=re.compile(r'_([\w%s\s]+)_([\s%s]|$)'
+                      expr=re.compile(r'_((?:[^\W_]|[%s\s])+)_([\s%s]|$)'
                                       % (under_punc, phrase_delimiters),
                                       re.UNICODE).search):
 

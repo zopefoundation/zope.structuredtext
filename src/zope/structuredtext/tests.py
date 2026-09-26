@@ -265,6 +265,24 @@ class HTMLDocumentTests(unittest.TestCase):
         self._test("xx _D\xc3\xbcsseldorf underlined_",
                    "<u>D\xc3\xbcsseldorf underlined</u>")
 
+    def testUnderlineManyUnderscoresIsFast(self):
+        # A run of many "word char delimiter" tokens used to make
+        # doc_underline's regular expression backtrack catastrophically,
+        # taking longer and longer (effectively forever) the more
+        # underscores were added. See
+        # https://github.com/zopefoundation/zope.structuredtext/issues/10
+        import time
+        text = 'x \r\n' + '_ ' * 40
+        start = time.time()
+        stng.structurize(text)
+        doc = DocumentWithImages()(stng.structurize(text))
+        HTMLWithImages()(doc, level=1)
+        elapsed = time.time() - start
+        self.assertLess(
+            elapsed, 5,
+            "parsing took %.2f seconds, doc_underline may be "
+            "backtracking catastrophically again" % elapsed)
+
     def testEmphasis(self):
         self._test("xx *this is html* xx",
                    "xx <em>this is html</em> xx")

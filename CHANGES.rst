@@ -5,6 +5,13 @@
 6.1 (unreleased)
 ================
 
+- Fix catastrophic backtracking in the ``doc_underline`` regular
+  expression that made parsing text containing a run of underscore
+  characters (for example ``_ _ _ _ _ _ _ _ _ _ _ _ _ _``) take
+  exponentially longer the more underscores were present, effectively
+  hanging on realistic input. (`#10
+  <https://github.com/zopefoundation/zope.structuredtext/issues/10>`_)
+
 - Move package metadata from setup.py to pyproject.toml.
 
 - Add support for Python 3.14.
