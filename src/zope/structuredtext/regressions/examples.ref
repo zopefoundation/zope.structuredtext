@@ -14,7 +14,7 @@
 <li>A word <strong>strong</strong>.</li>
 <li>An inline example: <code>1+2</code>.</li>
 <li>Another example with a different format:
-    ``x='spam''' or ``y='spam''' or ``<dtml-var spam>'<code>.</code><p>    We can use expressions in the DTML var tag as 
+    ``x='spam''' or ``y='spam''' or ``<dtml-var spam>'<code>.</code><p>    We can use expressions in the DTML var tag as
     in ``<dtml-var "x+'.txt'">''</p>
 </li>
 <li>A mult-line example:

@@ -51,7 +51,7 @@
 </ul>
 <p>    Each approach has it's strengths.  Extension types provide much greater
     control to the programmer and, generally, better performance.  Because
-    extension types are written in C, the programmer has greater access to 
+    extension types are written in C, the programmer has greater access to
     external resources. (Note that Python's use of the term type has
     little to do with the notion of type as a formal specification.)</p>
 <p>    Classes provide a higher level of abstraction and are generally much
@@ -61,7 +61,7 @@
     strings, that are useful for documentation and discovery.  Classes
     act as factories for creating instances, while separate functions
     must be provided to create instances of types.</p>
-<p>    It would be useful to combine the features of the two approaches.  It 
+<p>    It would be useful to combine the features of the two approaches.  It
     would be useful to be able to have better support for inheritance for
     types, or to be able to subclass from types in Python.  It would be
     useful to be able to have class-like meta-data support for types and
@@ -229,7 +229,7 @@
 
 <ul>
 <li>The include file, <code>ExtensionClass.h</code>, must be included.</li>
-<li>The type structure is declared to be of type <code>PyExtensionClass</code>, rather 
+<li>The type structure is declared to be of type <code>PyExtensionClass</code>, rather
       than of type <code>PyTypeObject</code>.</li>
 <li>The type structure has an additional member that must be defined
       after the documentation string.  This extra member is a method chain
@@ -240,8 +240,8 @@
       of method definitions.  A macro, <code>METHOD_CHAIN</code> is defined in
       <code>ExtensionClass.h</code> that converts a method list to a method chain.
       (See the example below.)</li>
-<li>Module functions that create new instances must be replaced by 
-      <code>__init__</code> methods that initialize, but does not create storage for 
+<li>Module functions that create new instances must be replaced by
+      <code>__init__</code> methods that initialize, but does not create storage for
       instances.</li>
 <li>The extension class must be initialized and exported to the module
       with:
@@ -378,7 +378,7 @@
 
           class CustomMethod(ExtensionClass.Base):
 
-            def __call__(self,ob): 
+            def __call__(self,ob):
               print 'a %s was called' % ob.__class__.__name__
 
             class wrapper:
@@ -605,10 +605,10 @@
 <p><a name="ref3">[3]</a> Beaudry, D., <a href="http://www.python.org/workshops/1994-11/BuiltInClasses/BuiltInClasses_1.html">Deriving Built-In Classes in Python</a>,
  Proceedings of the First International Python Workshop.</p>
 <p><a name="ref4">[4]</a> Van Rossum, G., <a href="http://www.python.org/workshops/1996-06/notes/thursday.html">Don Beaudry Hack - MESS</a>,
- presented in the Developer's Future Enhancements session of the 
+ presented in the Developer's Future Enhancements session of the
  4th Python Workshop. </p>
 <p><a name="ref5">[5]</a> Fulton, J., <a href="http://www.digicool.com/jim/MetaType.c">Meta-Type Object</a>,
- This is a small proposal, the text of which is contained in a 
+ This is a small proposal, the text of which is contained in a
  sample implementation source file,  </p>
 <p><a name="ref6">[6]</a> Beaudry, D., and Ascher, D., <a href="http://starship.skyport.net/~da/mess/">The Meta-Extension Set</a>.</p>
 </body>

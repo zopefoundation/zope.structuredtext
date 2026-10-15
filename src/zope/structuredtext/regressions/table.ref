@@ -10,7 +10,7 @@
 <tr>
 <td colspan="1" align="left" valign="top"><p> <code>__str__</code> </p>
 </td>
-<td colspan="1" align="left" valign="middle"><p>  This method converts the            
+<td colspan="1" align="left" valign="middle"><p>  This method converts the
    the object to a string.            </p>
 
 <ul>
@@ -19,7 +19,7 @@
 <tr>
 <th colspan="1" align="center" valign="top"><p>  Name   </p>
 </th>
-<th colspan="1" align="left" valign="middle"><p>  Favorite       
+<th colspan="1" align="left" valign="middle"><p>  Favorite
   Color          </p>
 </th>
 </tr>
@@ -88,10 +88,10 @@
 </td>
 </tr>
 <tr>
-<td colspan="1" align="left" valign="middle"><p> Align Mid  
+<td colspan="1" align="left" valign="middle"><p> Align Mid
  Note the   </p>
 </td>
-<td colspan="2" align="center" valign="middle"><p>          OK               
+<td colspan="2" align="center" valign="middle"><p>          OK
   offset unequal.          </p>
 </td>
 </tr>
