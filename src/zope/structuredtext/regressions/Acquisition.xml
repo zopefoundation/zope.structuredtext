@@ -69,7 +69,7 @@ When an object that supports acquisition is accessed through
 <para>
 
 Aquisition wrappers provide access to the wrapped objects
-    through the attributes <literal>aq_parent</literal>, <literal>aq_self</literal>, <literal>aq_base</literal>.  
+    through the attributes <literal>aq_parent</literal>, <literal>aq_self</literal>, <literal>aq_base</literal>.
     In the example above, the expressions:<programlisting>
 <![CDATA[
 'c.a.aq_parent is c'
@@ -399,8 +399,8 @@ Note that heuristics are used to avoid most of the repeated
 </section>
 <para>
 
-<anchor id="ref1"/>[1]Gil, J., Lorenz, D., 
-   <ulink url="http://www.bell-labs.com/people/cope/oopsla/Oopsla96TechnicalProgramAbstracts.html#GilLorenz">Environmental Acquisition--A New Inheritance-Like Abstraction Mechanism</ulink>, 
+<anchor id="ref1"/>[1]Gil, J., Lorenz, D.,
+   <ulink url="http://www.bell-labs.com/people/cope/oopsla/Oopsla96TechnicalProgramAbstracts.html#GilLorenz">Environmental Acquisition--A New Inheritance-Like Abstraction Mechanism</ulink>,
    OOPSLA '96 Proceedings, ACM SIG-PLAN, October, 1996</para>
 
 </book>

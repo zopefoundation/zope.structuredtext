@@ -58,7 +58,7 @@ static struct PyMethodDef MM_methods[] = {
     {"push", (PyCFunction) MM_push, 1,
      "push(mapping_object) -- Add a data source"},
     {"pop",  (PyCFunction) MM_pop,  1,
-     "pop() -- Remove and return the last data source added"}, 
+     "pop() -- Remove and return the last data source added"},
     {NULL,              NULL}           /* sentinel */
 };
 
@@ -125,7 +125,7 @@ static PyMappingMethods MM_as_mapping = {
 
 /* -------------------------------------------------------- */
 
-static char MMtype__doc__[] = 
+static char MMtype__doc__[] =
 "MultiMapping -- Combine multiple mapping objects for lookup"
 ;
 
@@ -169,7 +169,7 @@ initMultiMapping(){
           "MultiMapping -- Wrap multiple mapping objects for lookup",
           (PyObject*)NULL,PYTHON_API_VERSION);
 
-    if (PyErr_Occurred()) 
+    if (PyErr_Occurred())
        Py_FatalError("can't initialize module MultiMapping");
 }
 ]]></programlisting>
@@ -254,7 +254,7 @@ static struct PyMethodDef MM_methods[] = {
     {"push", (PyCFunction) MM_push, 1,
      "push(mapping_object) -- Add a data source"},
     {"pop",  (PyCFunction) MM_pop,  1,
-     "pop() -- Remove and return the last data source added"}, 
+     "pop() -- Remove and return the last data source added"},
     {NULL,              NULL}           /* sentinel */
 };
 
@@ -318,7 +318,7 @@ static PyMappingMethods MM_as_mapping = {
 
 /* -------------------------------------------------------- */
 
-static char MMtype__doc__[] = 
+static char MMtype__doc__[] =
 "MultiMapping -- Combine multiple mapping objects for lookup"
 ;
 
@@ -364,7 +364,7 @@ initMultiMapping()
     d = PyModule_GetDict(m);
     PyExtensionClass_Export(d,"MultiMapping",MMtype);
 
-    if (PyErr_Occurred()) 
+    if (PyErr_Occurred())
        Py_FatalError("can't initialize module MultiMapping");
 }
 ]]></programlisting>

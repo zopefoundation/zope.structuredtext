@@ -25,7 +25,7 @@ An inline example: <literal>1+2</literal>.</para></listitem>
 Another example with a different format:
     ``x='spam''' or ``y='spam''' or ``<dtml-var spam>'<literal>.</literal><para>
 
-We can use expressions in the DTML var tag as 
+We can use expressions in the DTML var tag as
     in ``<dtml-var "x+'.txt'">''</para>
 
 </para></listitem>

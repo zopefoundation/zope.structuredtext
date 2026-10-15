@@ -10,13 +10,13 @@ Small Trials for Structured Text Formatting
   - A word: _underlined_.
 
   - A word **strong**.
- 
+
   - An inline example: '1+2'.
 
   - Another example with a different format:
     ``x='spam''' or ``y='spam''' or ``<dtml-var spam>''.'
 
-    We can use expressions in the DTML var tag as 
+    We can use expressions in the DTML var tag as
     in ``<dtml-var "x+'.txt'">''
 
   - A mult-line example::
@@ -44,4 +44,3 @@ should contain a reference to this footnote, footnote "[1]".)
   |||| A Simple Two-column Table ||
   || Column A || Column B ||
   || Apples   || Oranges  ||
-

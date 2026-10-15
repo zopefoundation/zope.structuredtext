@@ -54,7 +54,7 @@
     that performs attribute lookup in <code>c</code> when an attribute
     cannot be found in <code>a</code>.</p>
 <p>    Aquisition wrappers provide access to the wrapped objects
-    through the attributes <code>aq_parent</code>, <code>aq_self</code>, <code>aq_base</code>.  
+    through the attributes <code>aq_parent</code>, <code>aq_self</code>, <code>aq_base</code>.
     In the example above, the expressions:</p>
 
 <pre>
@@ -254,8 +254,8 @@
     lookups. For example, in the expression: <code>a.b.c.x.foo</code>, the object
     <code>a</code> is searched no more than once, even though it is wrapped three
     times.</p>
-<p><a name="ref1">[1]</a> Gil, J., Lorenz, D., 
-   <a href="http://www.bell-labs.com/people/cope/oopsla/Oopsla96TechnicalProgramAbstracts.html#GilLorenz">Environmental Acquisition--A New Inheritance-Like Abstraction Mechanism</a>, 
+<p><a name="ref1">[1]</a> Gil, J., Lorenz, D.,
+   <a href="http://www.bell-labs.com/people/cope/oopsla/Oopsla96TechnicalProgramAbstracts.html#GilLorenz">Environmental Acquisition--A New Inheritance-Like Abstraction Mechanism</a>,
    OOPSLA '96 Proceedings, ACM SIG-PLAN, October, 1996</p>
 </body>
 </html>

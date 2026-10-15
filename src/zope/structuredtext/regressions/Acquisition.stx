@@ -53,9 +53,9 @@ Acquisition
     cannot be found in 'a'.
 
     Aquisition wrappers provide access to the wrapped objects
-    through the attributes 'aq_parent', 'aq_self', 'aq_base'.  
+    through the attributes 'aq_parent', 'aq_self', 'aq_base'.
     In the example above, the expressions::
-      
+
        'c.a.aq_parent is c'
 
     and::
@@ -77,28 +77,28 @@ Acquisition
 
     Two styles of acquisition are supported in the current
     ExtensionClass release, implicit and explicit aquisition.
-  
+
     Implicit acquisition
-    
+
       Implicit acquisition is so named because it searches for
       attributes from the environment automatically whenever an
       attribute cannot be obtained directly from an object or
       through inheritence.
-  
+
       An attribute may be implicitly acquired if it's name does
       not begin with an underscore, '_'.
-  
+
       To support implicit acquisition, an object should inherit
       from the mix-in class 'Acquisition.Implicit'.
-  
+
     Explicit Acquisition
-  
+
       When explicit acquisition is used, attributes are not
       automatically obtained from the environment.  Instead, the
       method 'aq_aquire' must be used, as in::
-  
+
 	print c.a.aq_acquire('color')
-  
+
       To support explicit acquisition, an object should inherit
       from the mix-in class 'Acquisition.Explicit'.
 
@@ -157,30 +157,30 @@ Acquisition
       For example, in::
 
 	from Acquisition import Explicit
-	
+
 	class HandyForTesting:
 	    def __init__(self, name): self.name=name
 	    def __str__(self):
 		return "%s(%s)" % (self.name, self.__class__.__name__)
 	    __repr__=__str__
-	
+
 	class E(Explicit, HandyForTesting): pass
-	
+
 	class Nice(HandyForTesting):
 	    isNice=1
 	    def __str__(self):
 		return HandyForTesting.__str__(self)+' and I am nice!'
 	    __repr__=__str__
-	
+
 	a=E('a')
 	a.b=E('b')
 	a.b.c=E('c')
 	a.p=Nice('spam')
 	a.b.p=E('p')
-	
+
 	def find_nice(self, ancestor, name, object, extra):
 	    return hasattr(object,'isNice') and object.isNice
-	
+
 	print a.b.c.aq_acquire('p', find_nice)
 
       The filtered acquisition in the last line skips over the first
@@ -210,13 +210,13 @@ Acquisition
     Consider the following example::
 
       from Acquisition import Implicit
-      
+
       class C(Implicit):
 	  def __init__(self, name): self.name=name
 	  def __str__(self):
 	      return "%s(%s)" % (self.name, self.__class__.__name__)
 	  __repr__=__str__
-      
+
       a=C("a")
       a.b=C("b")
       a.b.pref="spam"
@@ -268,8 +268,8 @@ Acquisition
     'a' is searched no more than once, even though it is wrapped three
     times.
 
-.. [1] Gil, J., Lorenz, D., 
+.. [1] Gil, J., Lorenz, D.,
    "Environmental Acquisition--A New Inheritance-Like Abstraction Mechanism",
-   http://www.bell-labs.com/people/cope/oopsla/Oopsla96TechnicalProgramAbstracts.html#GilLorenz, 
+   http://www.bell-labs.com/people/cope/oopsla/Oopsla96TechnicalProgramAbstracts.html#GilLorenz,
    OOPSLA '96 Proceedings, ACM SIG-PLAN, October, 1996
-	 
+
